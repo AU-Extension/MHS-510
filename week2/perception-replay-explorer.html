@@ -1,0 +1,1204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perception replay explorer</title>
+<meta name="description" content="MHS 510 Week 2 interactive: One missed 2 p.m. dose at room 409, found at the 7 p.m. handoff, replayed through four pairs of eyes. See the attribution errors light up, then rebuild the incident with the facts only.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Figtree:ital,wght@0,300..900;1,300..900&family=JetBrains+Mono:wght@100..800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/renderers/CSS2DRenderer.js"></script>
+<style>
+  /* ===== MHS 510 "4 West unit board" theme v1 (a nursing unit status whiteboard: linen page, navy ink, teal actions). Paste as the first block of every page's <style>. ===== */
+  :root{
+    --au-red:#E1141E; --au-red-dark:#A3282B;
+    /* base: linen page, soft panels, navy ink */
+    --paper:#F6F3EE; --paper-deep:#ECE7DF; --panel:#FFFFFF; --panel-2:#F4F1EB; --line:#D9D3C8; --line-2:#C4BCAE;
+    --ink:#14233A; --ink-2:#36465E; --muted:#66728A;
+    /* accents with fixed meanings (the same thing gets the same color on every page) */
+    --teal:#0E7C86;    /* primary actions and the student's own moves */
+    --coral:#D4453F;   /* conflict and risk */
+    --amber:#C27A08;   /* caution and in-progress */
+    --green:#1F8A4C;   /* stable, positive, correct */
+    --violet:#6A4FC8;  /* leadership moves and theory tags */
+    --slate:#5B6B82;   /* neutral data */
+    --teal-soft:rgba(14,124,134,.10); --coral-soft:rgba(212,69,63,.10); --amber-soft:rgba(194,122,8,.12); --green-soft:rgba(31,138,76,.10); --violet-soft:rgba(106,79,200,.10); --slate-soft:rgba(91,107,130,.10);
+    --ok:var(--green); --bad:var(--coral); --warn:var(--amber);
+    --ok-soft:var(--green-soft); --bad-soft:var(--coral-soft); --warn-soft:var(--amber-soft);
+    --font-display:"Bricolage Grotesque","Figtree","Helvetica Neue",sans-serif;
+    --font-body:"Figtree","Helvetica Neue",sans-serif;
+    --font-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+    --mono:var(--font-mono); --sans:var(--font-body); --display:var(--font-display);
+    --r:10px; --radius:10px; --lab:10px;
+    --shadow:0 1px 2px rgba(20,35,58,.06),0 8px 22px rgba(20,35,58,.07);
+    --shadow-sm:0 1px 2px rgba(20,35,58,.08);
+    /* legacy names used by older page code and shared markup, mapped to the light theme */
+    --board:#ECE7DF; --board-deep:#F6F3EE; --bg:#F6F3EE; --card:#FFFFFF; --edge:#D9D3C8; --edge-2:#C4BCAE; --dim:#66728A;
+    --silk:#14233A; --silk-2:#36465E; --silk-dim:#66728A; --copper:#0E7C86; --neon:#0E7C86;
+    --addr:#C27A08; --data:#0E7C86; --ctrl:#D4453F; --alu:#1F8A4C; --oper:#6A4FC8; --out:#1F8A4C; --led:#1F8A4C;
+    --code-bg:#EEF1F4; --code-ink:#14233A; --au-red-soft:rgba(225,20,30,.10);
+    --net-blue:#0E7C86; --net-green:#1F8A4C; --net-amber:#C27A08; --net-purple:#6A4FC8; --net-teal:#0E7C86;
+    color-scheme:light;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  html{background:var(--paper)}
+  [hidden]{display:none!important}
+  /* page: linen with a faint whiteboard grid and a soft teal wash at the top */
+  body{color:var(--ink);font-family:var(--font-body);font-size:15.5px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden;
+    background:
+      radial-gradient(900px 420px at 18% -8%,rgba(14,124,134,.10) 0%,transparent 65%),
+      radial-gradient(700px 360px at 92% 8%,rgba(106,79,200,.06) 0%,transparent 60%),
+      linear-gradient(rgba(20,35,58,.045) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(20,35,58,.045) 1px,transparent 1px),
+      var(--paper);
+    background-size:auto,auto,28px 28px,28px 28px,auto}
+  button,input,select,textarea{font:inherit;color:inherit}
+  a{color:var(--teal)}
+  :focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+  /* brand bar: white with the AU red rule (the logo PNG is cropped with a wrapper) */
+  .topbar{position:relative;z-index:5;background:#fff;border-bottom:3px solid var(--au-red);box-shadow:0 1px 0 rgba(20,35,58,.06)}
+  .topbar-inner{max-width:none;margin:0 auto;padding:8px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .au-logo{width:130px;height:36px;overflow:hidden;flex:none;display:block}
+  .au-logo img{width:145px;height:auto;margin:-28px 0 0 -8px;display:block}
+  .crumb{font-size:13px;color:#6B7280;letter-spacing:.02em;border-left:1px solid #E3E6EB;padding-left:16px}
+  .crumb b{color:#16181D;font-weight:600}
+  .crumb a{color:#A3282B;text-decoration:none}
+  /* page mode (challenges and pages with a scrolling layout) */
+  main,.wrap{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:26px 16px 36px}
+  .hero{margin:0 0 20px}
+  .eyebrow{display:block;margin:0;font:600 11px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--teal);background:none;padding:0}
+  h1{margin:6px 0 8px;font-family:var(--font-display);font-weight:700;font-size:clamp(26px,3.6vw,40px);line-height:1.1;letter-spacing:-.015em;text-wrap:balance;color:var(--ink);font-variation-settings:"opsz" 96}
+  h1 .num{color:var(--teal)}
+  h2{margin:0 0 10px;font-family:var(--font-display);font-weight:600;font-size:17px;letter-spacing:-.005em;color:var(--ink)}
+  h2 small,h3 small{color:var(--muted);font-weight:400;font-family:var(--font-body);font-size:.8em}
+  h3{margin:0 0 8px;font-family:var(--font-display);font-weight:600;font-size:14.5px;color:var(--ink)}
+  .lede{margin:0;color:var(--ink-2);font-size:16px;max-width:68ch}
+  .muted{color:var(--muted)}
+  .spec{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow-sm)}
+  .spec div{background:var(--panel);padding:10px 12px}
+  .spec b{display:block;font:700 17px var(--font-display);color:var(--ink)}
+  .spec span{font-size:12.5px;color:var(--muted)}
+  @media(min-width:960px){.hero.split{display:grid;grid-template-columns:1.35fr 1fr;gap:18px;align-items:end}}
+  /* cards: soft white panels with a faint ruled-line pattern, like a whiteboard with guide lines */
+  .card{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px;min-width:0;color:var(--ink);box-shadow:var(--shadow);
+    background-image:linear-gradient(180deg,rgba(255,255,255,.6),rgba(255,255,255,0) 60px),repeating-linear-gradient(180deg,transparent 0 27px,rgba(20,35,58,.035) 27px 28px)}
+  .card[data-ref]::after{content:attr(data-ref);position:absolute;top:10px;right:14px;font:600 9.5px var(--font-mono);letter-spacing:.12em;color:var(--slate);opacity:.7}
+  .grid{display:grid;gap:16px}
+  .grid>*{min-width:0}
+  @media(min-width:900px){.grid.two{grid-template-columns:minmax(0,1.45fr) minmax(0,1fr)}}
+  details,details.howto{border:1px solid var(--line);border-radius:var(--r);background:var(--panel);box-shadow:var(--shadow-sm)}
+  details.howto{margin:0 0 16px}
+  summary{cursor:pointer;padding:11px 14px;font:600 14px var(--font-display);color:var(--ink)}
+  details>*:not(summary){margin-left:14px;margin-right:14px}
+  details.howto ol,details.howto ul{margin:4px 14px 12px;padding-left:20px;color:var(--ink-2)}
+  details.howto li{margin-bottom:5px}
+  details.howto li::marker{color:var(--teal);font-weight:600}
+  .btn{border:1px solid var(--line-2);background:var(--panel);border-radius:8px;padding:9px 13px;font:600 13px var(--font-body);color:var(--ink);cursor:pointer;transition:border-color .2s,background .2s,box-shadow .2s;display:inline-flex;gap:6px;align-items:center;justify-content:center;box-shadow:var(--shadow-sm)}
+  .btn:hover:not(:disabled){border-color:var(--teal);background:var(--teal-soft)}
+  .btn.primary,.btn.go{background:var(--teal);border-color:var(--teal);color:#fff}
+  .btn.primary:hover:not(:disabled),.btn.go:hover:not(:disabled){background:#0B6A73;border-color:#0B6A73}
+  .btn[aria-pressed="true"],.btn.on{border-color:var(--teal);color:var(--teal);background:var(--teal-soft)}
+  .btn:disabled,.btn[disabled]{opacity:.45;cursor:not-allowed}
+  input[type=text],input[type=number],select,textarea{background:#fff;border:1px solid var(--line-2);border-radius:8px;padding:8px 10px;font:500 14px var(--font-body);color:var(--ink);min-width:0}
+  input[type=checkbox],input[type=radio],input[type=range]{accent-color:var(--teal)}
+  .mono,code,kbd{font-family:var(--font-mono);font-size:.9em}
+  code{background:rgba(20,35,58,.07);padding:1px 5px;border-radius:4px}
+  .cli{background:var(--code-bg);color:var(--code-ink);font:500 12.5px/1.6 var(--font-mono);border-radius:8px;padding:12px 14px;overflow:auto;white-space:pre;border:1px solid var(--line)}
+  .pill{display:inline-block;font:600 10.5px var(--font-mono);letter-spacing:.06em;padding:3px 8px;border-radius:999px;background:var(--panel-2);color:var(--ink-2);border:1px solid var(--line)}
+  .pill.teal{color:var(--teal);border-color:var(--teal);background:var(--teal-soft)}
+  .pill.violet{color:var(--violet);border-color:var(--violet);background:var(--violet-soft)}
+  .pill.coral{color:var(--coral);border-color:var(--coral);background:var(--coral-soft)}
+  .pill.amber{color:var(--amber);border-color:var(--amber);background:var(--amber-soft)}
+  .pill.green{color:var(--green);border-color:var(--green);background:var(--green-soft)}
+  .feedback{border-radius:8px;padding:11px 13px;margin-top:12px;font-size:14.5px;color:var(--ink)}
+  .feedback.ok{background:var(--green-soft);border:1px solid rgba(31,138,76,.5)}
+  .feedback.bad{background:var(--coral-soft);border:1px solid rgba(212,69,63,.5)}
+  .feedback.info{background:var(--teal-soft);border:1px solid rgba(14,124,134,.45)}
+  .score{display:flex;gap:12px;align-items:center;flex-wrap:wrap;font:600 12.5px var(--font-mono);color:var(--muted)}
+  .score .big{font:700 36px/1 var(--font-display);color:var(--ink);font-variant-numeric:tabular-nums}
+  table,table.data{border-collapse:collapse;width:100%;font:500 12.5px var(--font-mono);font-variant-numeric:tabular-nums}
+  th,table.data th{font-weight:600;color:var(--muted);text-align:left;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;padding:7px 8px;border-bottom:1px solid var(--line);background:var(--panel-2)}
+  td,table.data td{padding:5px 8px;border-bottom:1px solid rgba(20,35,58,.08)}
+  .scroll-x,.memwrap{overflow-x:auto}
+  .memwrap{border:1px solid var(--line);border-radius:8px;background:#fff}
+  svg text{font-family:var(--font-body)}
+  /* step-by-step explanation (page mode and app mode) */
+  .stepper{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:12px}
+  .caption,.narr{background:var(--panel-2);border:1px solid var(--line);border-radius:var(--r);padding:13px 15px;color:var(--ink)}
+  .caption{margin-top:12px;min-height:4.4em}
+  .caption .t{font:600 11px var(--font-mono);letter-spacing:.1em;color:var(--cap,var(--teal));margin-bottom:6px;text-transform:uppercase}
+  .caption p{margin:0}
+  .narr{display:flex;flex-direction:column;gap:8px}
+  .narr-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font:500 11px var(--font-mono);color:var(--muted)}
+  .ptag{display:inline-flex;align-items:center;gap:7px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink)}
+  .ptag::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--pc,var(--muted))}
+  .narr p{margin:0;font-size:15.5px;line-height:1.55;min-height:4.6em}
+  .controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .controls .btn{padding:10px 6px}
+  .speed{display:flex;align-items:center;gap:12px;font:500 12px var(--font-body);color:var(--muted)}
+  .speed input{flex:1;min-width:0}
+  .speed output{color:var(--ink);width:3.5em;text-align:right;font-variant-numeric:tabular-nums}
+  .hint{margin:0;font-size:12.5px;color:var(--muted)}
+  .rail{display:flex;gap:2px;margin:4px 0 12px;padding:4px;list-style:none;background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm)}
+  .rail>div,.rail>li{flex:1;text-align:center;font:600 11px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;padding:6px 8px;border-radius:7px;color:var(--muted);transition:background .25s,color .25s}
+  .rail>div small{display:block;font:400 10px var(--font-body);letter-spacing:.02em;text-transform:none;margin-top:2px;opacity:.85}
+  .rail>.on{background:var(--c,var(--teal));color:#fff}
+  .rail>.done{color:var(--c,var(--teal))}
+  /* live state (the unit board: a row of key figures) */
+  .regs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .reg{border:1px solid var(--line);border-radius:8px;padding:9px 11px;background:#fff;transition:border-color .3s,background .3s;min-width:0}
+  .reg.kv{display:grid;grid-template-columns:1fr auto;gap:1px 8px;align-items:baseline}
+  .reg.on,.reg.flash{border-color:var(--hc,var(--teal));background:var(--teal-soft)}
+  .reg .rn{font:600 12.5px var(--font-body);color:var(--ink-2)}
+  .reg .rv{font:700 18px var(--font-display);text-align:right;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .reg .rf{font-size:11.5px;color:var(--muted)}
+  .reg .rs{font:500 10.5px var(--font-mono);color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+  .reg.wide{grid-column:1/-1}
+  .reg .n{display:flex;justify-content:space-between;align-items:baseline;font:600 12.5px var(--font-body);color:var(--ink)}
+  .reg .n b{font:700 18px var(--font-display);font-variant-numeric:tabular-nums}
+  .bits{grid-column:1/-1;display:grid;grid-template-columns:repeat(var(--nb,8),1fr);gap:4px;margin-top:8px}
+  .bit{display:flex;flex-direction:column;align-items:center;gap:3px;font:500 9.5px var(--font-mono);color:var(--muted)}
+  .bit i{width:100%;height:16px;border-radius:3px;background:var(--panel-2);border:1px solid var(--line);transition:background .25s}
+  .bit.one i{background:var(--green);border-color:var(--green)}
+  .ledbits{display:flex;gap:4px;margin:6px 0 2px;flex-wrap:wrap}
+  .ledbits i{width:16px;height:16px;border-radius:3px;background:var(--panel-2);border:1px solid var(--line);font:600 9px/14px var(--font-mono);font-style:normal;color:var(--muted);text-align:center}
+  .ledbits i.on{background:var(--green);border-color:var(--green);color:#fff}
+  .tape{display:flex;flex-wrap:wrap;gap:4px;min-height:34px;align-content:flex-start}
+  .tape span{font:600 13px var(--font-mono);color:var(--green);background:var(--green-soft);border:1px solid rgba(31,138,76,.4);border-radius:5px;padding:3px 7px;font-variant-numeric:tabular-nums}
+  .tape em{font-style:normal;font-size:12px;color:var(--muted)}
+  .notice{margin:0;padding-left:18px;color:var(--ink-2);font-size:14px;display:flex;flex-direction:column;gap:6px}
+  .notice li::marker{color:var(--teal)}
+  .legend{display:flex;flex-wrap:wrap;gap:4px 14px;font:500 11px var(--font-mono);color:var(--ink-2);letter-spacing:.03em}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:16px;height:4px;border-radius:2px;background:var(--c)}
+  /* app mode: the 3D unit floor fills the left, a control rail sits on the right (stacks under the floor on phones) */
+  .app{display:grid;grid-template-columns:minmax(0,1fr) minmax(340px,410px);height:calc(100vh - 55px);min-height:560px}
+  .stage{position:relative;min-width:0;min-height:320px;overflow:hidden;touch-action:none;
+    background:radial-gradient(ellipse at 45% 35%,#FBFAF7 0%,#E6ECEF 70%,#DCE3E8 100%)}
+  .stage .gl{position:absolute;inset:0;display:block;z-index:1}
+  .stage .labels{position:absolute!important;top:0;left:0;z-index:2}
+  .stage .flat,.stage3d .flat{position:absolute;inset:0;width:100%;height:100%;z-index:1}
+  .nogl{position:absolute;left:0;right:0;top:0;padding:7px 12px;text-align:center;color:var(--ink-2);font-size:12.5px;z-index:4;background:rgba(255,255,255,.92);border-bottom:1px solid var(--line)}
+  .stage:has(.nogl:not([hidden])) .hud-top{top:48px}
+  .stage:has(.nogl:not([hidden])) .flat,.stage3d:has(.nogl:not([hidden])) .flat{top:36px;height:calc(100% - 36px)}
+  .hud{position:absolute;z-index:3;pointer-events:none;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .hud button,.hud a{pointer-events:auto}
+  .hud-top{top:14px;left:16px;right:16px}
+  .hud-bottom{bottom:14px;left:16px;right:16px;justify-content:space-between;align-items:flex-end}
+  .hud .phases,.hud .ticks,.hud .legend,.hud .views{background:rgba(255,255,255,.86);border:1px solid var(--line);border-radius:var(--r);backdrop-filter:blur(6px);box-shadow:var(--shadow-sm)}
+  .phases{list-style:none;margin:0;padding:4px;display:flex;gap:2px}
+  .phases li{font:600 11px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;padding:6px 10px;border-radius:7px;color:var(--muted);transition:background .25s,color .25s}
+  .phases li.on{background:var(--c,var(--teal));color:#fff}
+  .ticks{font:500 11.5px var(--font-mono);color:var(--muted);padding:9px 10px;font-variant-numeric:tabular-nums}
+  .ticks b{color:var(--ink);font-weight:700}
+  .hud .legend{padding:8px 12px}
+  .views{display:flex;gap:2px;padding:4px}
+  .views button{border:0;background:transparent;font:600 11.5px var(--font-body);padding:6px 10px;border-radius:7px;color:var(--muted);cursor:pointer}
+  .views button:hover{color:var(--ink)}
+  .views button.on{background:var(--teal);color:#fff}
+  .credit{flex-basis:100%;margin:2px 0 0 2px;font:700 14px var(--font-display);letter-spacing:.02em;color:var(--teal);text-shadow:0 0 3px #fff,0 0 8px #fff}
+  /* 3D tags: ink text with a white halo so they stay readable over the floor */
+  .tag,.stage3d .label3d{pointer-events:none;display:flex;flex-direction:column;align-items:center;font-family:var(--font-body);line-height:1.15;text-align:center;color:var(--ink);text-shadow:0 0 2px #fff,0 0 4px #fff,0 0 8px #fff}
+  .tag .nm{font-size:calc(var(--lab) * .9);font-weight:600;letter-spacing:.04em;color:var(--ink-2)}
+  .tag .vl{font-size:calc(var(--lab) * 1.3);font-weight:700;font-variant-numeric:tabular-nums;font-family:var(--font-display)}
+  .tag .sb{font-size:calc(var(--lab) * .78);color:var(--muted);letter-spacing:.02em}
+  .tag .sb:empty{display:none}
+  .tag.on .nm{color:var(--ink)}
+  .tag.on .vl{color:var(--teal)}
+  .tag.person .nm{font-family:var(--font-mono);font-size:calc(var(--lab) * .8);text-transform:uppercase;letter-spacing:.08em}
+  .cell .nm{font-size:calc(var(--lab) * .75)}
+  .cell .vl{font-size:calc(var(--lab) * 1.15)}
+  .zone{pointer-events:none;font-family:var(--font-mono);font-weight:600;font-size:calc(var(--lab) * .82);letter-spacing:.14em;text-transform:uppercase;color:var(--c,var(--slate));opacity:.9;white-space:nowrap;text-align:center;line-height:1.3;text-shadow:0 0 3px #fff,0 0 6px #fff}
+  .lcd{pointer-events:none;font-family:var(--font-display);font-weight:700;color:var(--teal);font-size:calc(var(--lab) * 2);font-variant-numeric:tabular-nums;text-shadow:0 0 3px #fff}
+  .pkt{pointer-events:none;font-family:var(--font-body);font-size:calc(var(--lab) * 1.1);font-weight:700;color:#fff;background:var(--c);padding:3px 8px;border-radius:999px;box-shadow:0 2px 8px rgba(20,35,58,.25);white-space:nowrap;border:1px solid rgba(255,255,255,.6)}
+  .panel{min-width:0;overflow-y:auto;background:var(--panel);border-left:1px solid var(--line);padding:20px 18px 28px;display:flex;flex-direction:column;gap:22px;
+    background-image:repeating-linear-gradient(180deg,transparent 0 27px,rgba(20,35,58,.035) 27px 28px)}
+  .panel h1{font-size:26px;margin:4px 0 6px}
+  /* the older make3D stage (page mode) */
+  .stage3d{position:relative;width:100%;aspect-ratio:16/10;min-height:280px;border-radius:var(--r);overflow:hidden;touch-action:none;border:1px solid var(--line);
+    background:radial-gradient(ellipse at 45% 35%,#FBFAF7 0%,#E6ECEF 70%,#DCE3E8 100%)}
+  @media(max-width:640px){.stage3d{aspect-ratio:4/3}}
+  .stage3d canvas,.stage3d .gl{position:absolute;inset:0;display:block;width:100%!important;height:100%!important}
+  .stage3d .labels{position:absolute!important;top:0;left:0;z-index:2}
+  .stage3d .fallback{position:absolute;left:0;right:0;bottom:0;padding:6px 10px;font-size:12px;color:var(--ink-2);background:rgba(255,255,255,.9);text-align:center}
+  .stage3d .label3d{position:absolute;transform:translate(-50%,-50%);white-space:nowrap;font-size:11px;font-weight:600}
+  .stage3d .label3d.pkt{color:#fff;text-shadow:none;background:var(--c,currentColor);padding:2px 7px;border-radius:999px}
+  footer.foot{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:16px;color:var(--muted);font-size:12.5px;border-top:1px solid var(--line)}
+  footer.foot .byline,.byline{margin-top:4px;font:700 14px var(--font-display)!important;letter-spacing:.02em;color:var(--teal)!important}
+  .reveal{animation:rise .7s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*80ms)}
+  @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  @media(max-width:860px){
+    .app .stage .zoomctl{top:56px;right:10px;transform:none;flex-direction:row}
+    .app{grid-template-columns:1fr;height:auto}
+    .app .stage{height:62vh;min-height:360px}
+    .panel{border-left:0;border-top:1px solid var(--line);overflow:visible}
+  }
+  @media(max-width:520px){
+    .hud .legend{font-size:10px;gap:3px 10px}
+    .phases li{padding:5px 7px;font-size:10px}
+    .controls{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .card{padding:14px}
+  }
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  .scroll-x{position:relative}
+  @media(max-width:640px){
+    :root{--lab:8px}
+    .tag .sb{display:none}
+    .scroll-x::before{content:"Swipe sideways to see the whole table";display:block;font:500 11px var(--font-mono);letter-spacing:.04em;color:var(--muted);margin:0 0 6px}
+  }
+  /* ===== end of theme ===== */
+  /* page-specific: perception replay explorer (app mode: the 4 West floor on the left, the control rail on the right) */
+  .controls{grid-template-columns:repeat(4,minmax(0,1fr))}
+  @media(max-width:520px){.controls{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  .eyes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+  .eyes .btn{flex-direction:column;gap:2px;padding:8px 6px;line-height:1.2;font-size:12px}
+  .eyes .btn small{font:500 10px var(--font-mono);letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+  .eyes .btn[aria-pressed="true"]{border-color:var(--violet);color:var(--violet);background:var(--violet-soft)}
+  .saw{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .saw div{border:1px solid var(--line);border-radius:8px;padding:9px 11px;background:#fff;font-size:13.5px}
+  .saw b{display:block;font:600 10.5px var(--font-mono);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+  .saw .s b{color:var(--teal)} .saw .a b{color:var(--coral)}
+  .biases{display:flex;flex-wrap:wrap;gap:6px}
+  .biases .pill{transition:background .3s,color .3s,border-color .3s;font-size:11px;padding:5px 9px}
+  .biases .pill.on{background:var(--coral);color:#fff;border-color:var(--coral)}
+  .biases .pill.ok{background:var(--green);color:#fff;border-color:var(--green)}
+  .bdef{font-size:13.5px;color:var(--ink-2);border:1px solid var(--line);border-left:3px solid var(--coral);border-radius:8px;padding:10px 12px;background:var(--panel-2);min-height:3.4em}
+  .bdef b{color:var(--ink)}
+  .cards{display:grid;gap:6px}
+  .cardq{border:1px solid var(--line);border-radius:8px;padding:9px 11px;background:#fff;display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;font-size:13.5px}
+  .cardq .ch{display:flex;gap:4px}
+  .cardq .ch .btn{padding:6px 9px;font-size:12px}
+  .cardq.fact{border-color:var(--green);background:var(--green-soft)} .cardq.assume{border-color:var(--coral);background:var(--coral-soft)}
+  .cardq .tm{font:600 11px var(--font-mono);color:var(--muted);margin-right:6px}
+  .conclusion{border:1px solid var(--line);border-left:3px solid var(--violet);border-radius:8px;padding:12px 14px;background:var(--panel-2);font-size:14px}
+  .conclusion h3{margin:0 0 6px;color:var(--violet);font-size:14px}
+  .conclusion p{margin:0 0 6px}
+  .cues{display:grid;gap:8px}
+  .cue{border:1px solid var(--line);border-radius:8px;padding:9px 11px;background:#fff;display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+  .cue .q{font-size:13.5px}
+  .cue .q b{display:block;font:600 11px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--violet)}
+  .cue .ch{display:flex;gap:4px}
+  .cue .ch .btn{padding:6px 10px;font-size:12px}
+  .cue .ch .btn[aria-pressed="true"]{border-color:var(--violet);color:var(--violet);background:var(--violet-soft)}
+  .verdict{border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--panel-2);font-size:14px}
+  .verdict .t{font:600 11px var(--font-mono);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;color:var(--vc,var(--slate))}
+  .verdict p{margin:0 0 4px}
+  .quiz-q{border-top:1px solid var(--line);padding:12px 0}
+  .quiz-q p{margin:0 0 8px;font-weight:500;font-size:14px}
+  .opts{display:flex;flex-wrap:wrap;gap:5px}
+  .opts .btn{font:500 12px var(--font-body);padding:7px 9px}
+  .opts .btn[disabled]{opacity:.45}
+  .opts .btn.right{opacity:1;background:var(--green-soft);border-color:var(--green);color:var(--green)}
+  .opts .btn.wrong{opacity:1;background:var(--coral-soft);border-color:var(--coral);color:var(--coral)}
+  .qbar{display:flex;gap:3px;margin:8px 0 2px}
+  .qbar i{flex:1;height:6px;border-radius:2px;background:var(--panel-2);border:1px solid var(--line)}
+  .qbar i.ok{background:var(--green);border-color:var(--green)}
+  .qbar i.bad{background:var(--coral);border-color:var(--coral)}
+  .panel footer{font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}
+  .info{font-size:13.5px;color:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:#fff}
+  .info b{color:var(--ink)}
+  .phases li{cursor:default}
+  .panel details table{margin:0 0 12px;width:calc(100% - 28px)}
+  .panel details td,.panel details th{font-family:var(--font-body);font-size:12.5px;vertical-align:top}
+  @media(max-width:600px){.stage:has(.nogl:not([hidden])) .hud-top{top:86px}.stage:has(.nogl:not([hidden])) .flat{top:74px;height:calc(100% - 74px)}.eyes{grid-template-columns:1fr 1fr}.saw{grid-template-columns:1fr}}
+
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="au-logo" href="https://github.com/AU-Extension" target="_blank" rel="noopener" aria-label="Atlantis University">
+      <img src="https://raw.githubusercontent.com/AU-Extension/items/main/aulogo1.png" alt="Atlantis University">
+    </a>
+    <div class="crumb"><a href="../index.html"><b>MHS 510</b> Leadership and Organizational Behavior</a> · Week 2 · Interactive A</div>
+  </div>
+</header>
+
+<div class="app">
+  <section class="stage" id="stage" aria-label="3D model of the 4 West floor around room 409. Drag to orbit, scroll or pinch to zoom, click a room or a person to read about it.">
+    <div class="hud hud-top">
+      <ol class="phases" id="phases" aria-label="Viewpoint"></ol>
+      <div class="ticks">4 West · <b id="hudClock">7:05 p.m.</b></div>
+      <p class="credit">By Professor De Leon</p>
+    </div>
+    <div class="hud hud-bottom">
+      <div class="legend" aria-label="Colors">
+        <span style="--c:var(--violet)"><i></i>manager</span>
+        <span style="--c:var(--teal)"><i></i>RN, a fact</span>
+        <span style="--c:var(--amber)"><i></i>family</span>
+        <span style="--c:var(--coral)"><i></i>an assumption, a bias</span>
+      </div>
+      <div class="views" role="group" aria-label="Camera views">
+        <button type="button" data-view="overview" class="on">Overview</button>
+        <button type="button" data-view="west">Room 409</button>
+        <button type="button" data-view="station">Station</button>
+        <button type="button" id="follow" class="on" aria-pressed="true" title="Move the camera to each step">Follow</button>
+      </div>
+    </div>
+    <div class="nogl" id="nogl" hidden>The 3D unit floor needs WebGL and the 3D libraries, which are not available here. The flat floor plan shows the same rooms, people, and steps, and the panel has every value.</div>
+  </section>
+
+  <aside class="panel">
+    <header>
+      <p class="eyebrow">MHS 510 · Week 2 · Explorer</p>
+      <h1>Perception replay explorer</h1>
+      <p class="lede">One missed 2 p.m. dose at room 409, found at the 7 p.m. handoff, replayed through four pairs of eyes. Watch each attribution error light up, then rebuild the incident from the facts alone and see how the manager's conclusion changes.</p>
+    </header>
+
+    <section aria-labelledby="eyes">
+      <h2 id="eyes">1. Replay the incident through four pairs of eyes</h2>
+      <p class="hint" style="margin:0 0 8px">Perception is the process of selecting, organizing, and interpreting what we notice. Each person noticed a different slice of the afternoon, and each filled the gaps with an assumption. Attribution is the cause we assign to a behavior: inside the person (internal) or in the situation (external).</p>
+      <div class="eyes" id="eyesBtns" role="group" aria-label="Viewpoints"></div>
+    </section>
+
+    <div id="player">
+      <section class="narr" aria-live="polite">
+        <div class="narr-head"><span class="ptag" id="ptag">Ready</span><span data-a="count"></span></div>
+        <p id="narration"></p>
+      </section>
+      <div class="controls" style="margin-top:12px">
+        <button type="button" class="btn primary" data-a="play">Run</button>
+        <button type="button" class="btn" data-a="next">Step</button>
+        <button type="button" class="btn" data-a="back">Step back</button>
+        <button type="button" class="btn" data-a="reset">Reset</button>
+      </div>
+      <div class="speed" style="margin-top:12px"><label for="speed">Speed</label><input type="range" id="speed" min="0.5" max="3" step="0.25" value="1"><output id="speedOut" for="speed">1×</output></div>
+      <p class="hint" style="margin-top:8px">Teal marks a fact in the record; coral marks an assumption or the bias behind it. Keyboard: Space steps, B steps back, R runs or pauses.</p>
+    </div>
+
+    <section aria-labelledby="sawh">
+      <h2 id="sawh">What they saw, what they assumed <small>live</small></h2>
+      <div class="saw" id="saw"><div class="s"><b>Saw</b><span id="sawS">Pick a viewpoint or press Run.</span></div><div class="a"><b>Assumed</b><span id="sawA"></span></div></div>
+      <div class="biases" id="biasList" style="margin-top:10px" aria-label="Attribution biases"></div>
+      <div class="bdef" id="bdef" style="margin-top:8px">The bias at work in each viewpoint lights up here, with its definition.</div>
+    </section>
+
+    <div class="info" id="info">Click a room or a person on the floor to read who they are in this incident.</div>
+
+    <section aria-labelledby="tlh">
+      <h2 id="tlh">2. Rebuild it with the facts only</h2>
+      <p class="hint" style="margin:0 0 8px">Twelve statements about the afternoon. Mark each one as a fact (it is in a record: the pharmacy log, the rapid response record, the assignment sheet, the equipment ticket, schedule.csv, the incident report) or an assumption (someone's interpretation). The manager's conclusion rebuilds itself from the facts you keep.</p>
+      <div class="cards" id="cards"></div>
+      <p class="hint" id="tlProg" style="margin:8px 0"></p>
+      <div class="conclusion" id="conclusion"></div>
+    </section>
+
+    <section aria-labelledby="cueh">
+      <h2 id="cueh">3. The CNA who is "always late"</h2>
+      <p class="hint" style="margin:0 0 8px">Thiago Albuquerque, a part-time night CNA since November 2025, has clocked in after 7:10 p.m. three times this month. Before deciding whether the cause is Thiago or the situation, Kelley's covariation model asks three questions. Toggle each cue and watch the verdict change.</p>
+      <div class="cues" id="cues"></div>
+      <div class="verdict" id="verdict" style="margin-top:10px"></div>
+    </section>
+
+    <section aria-labelledby="qz">
+      <h2 id="qz">4. Self-check: name the bias</h2>
+      <p class="hint" style="font-size:13.5px">Each sentence is something a 4 West manager might think. Pick the bias, or "no bias" when the thinking is sound.</p>
+      <div class="qbar" id="qbar" aria-hidden="true"></div>
+      <div id="quiz"></div>
+      <div class="score" id="qscore" style="margin-top:10px"></div>
+    </section>
+
+    <section>
+      <h2>Things to notice</h2>
+      <ul class="notice">
+        <li>Nobody in the replay lied. Each person saw a real slice of the afternoon and filled the rest with an assumption. That is the perceptual process doing what it always does.</li>
+        <li>The fundamental attribution error explains other people's behavior by who they are; the self-serving bias explains our own failures by the situation. Camila and Daniel made opposite errors about the same dose.</li>
+        <li>The first report a manager hears becomes the frame. Reading the record before forming a conclusion is the cheapest de-biasing tool there is.</li>
+        <li>Consistency, distinctiveness, and consensus are three questions, not a verdict. When one cue is missing, the right move is to gather it, not to guess.</li>
+        <li>Eleven of the eighteen medication errors on 4 West in six months involved an RN on an overtime shift. One careless nurse is a story; eleven of eighteen is a system.</li>
+      </ul>
+    </section>
+
+    <details>
+      <summary>How to use this interactive</summary>
+      <ol class="notice" style="margin:4px 12px 12px;padding-left:20px">
+        <li>Press Run, or Step through the seven moments: the record, four viewpoints, the manager's first conclusion, and the facts.</li>
+        <li>Read what each person saw and assumed; the bias behind the assumption lights up in coral with its definition.</li>
+        <li>In part 2, sort the twelve statements into facts and assumptions. The manager's conclusion rebuilds from the facts you keep.</li>
+        <li>In part 3, toggle the three cues of the covariation model for the CNA who is "always late" and read the verdict and the question to ask.</li>
+        <li>Finish with the six self-check questions.</li>
+      </ol>
+    </details>
+
+    <details>
+      <summary>The biases in this explorer</summary>
+      <table><thead><tr><th>Bias</th><th>What it is</th><th>In this incident</th></tr></thead><tbody id="biasTable"></tbody></table>
+    </details>
+
+    <footer>Atlantis University · School of Health · MHS 510 Leadership and Organizational Behavior<div class="byline">By Professor De Leon</div></footer>
+  </aside>
+</div>
+
+<script>
+(function () {
+const hasGSAP = typeof window.gsap !== 'undefined';
+// LAB3D START: MHS 510 Unit3D kit (a low-poly isometric nursing unit floor, ported from the EGN 325 Lab3D kit). Paste as one block.
+// Needs Three.js r147 (three.min.js), examples/js/controls/OrbitControls.js, examples/js/renderers/CSS2DRenderer.js and GSAP 3.12.5.
+// Returns null when any of them (or WebGL) is missing: then show .nogl and draw the 2D SVG floor plan fallback.
+//
+// const lab = Unit3D(stageEl, {
+//   floor: {w: 24, d: 14, cx: 0, cz: 0, title: '4 WEST · MED-SURG · 32 BEDS', corridors: [{z: 0, w: 3}]},
+//   views: {overview: {pos: [0, 19, 15], tgt: [0, 0, 0.5], want: 1.55}, station: {...}},
+//   colors: {teal: '#0E7C86'}
+// });
+// lab.room(id, x, z, w, d, label, {kind: 'patient'|'station'|'med'|'supply'|'break'|'risk', door: 'n'|'s'|'e'|'w'|'none', bed, num}) -> rec {g, mat, el, val, sub, kind, x, z, w, d}
+// lab.person(id, x, z, role, color, {nm}) -> rec {g, mat, el, val, sub, role, x, z}      lab.walk(rec, [{x,z}...], {dur}) -> GSAP timeline
+// lab.set(rec, value, sub, pop)   lab.hi(rec, color)   lab.clear()   lab.pop(rec)
+// lab.silkRect(x0, x1, z0, z1)   lab.zone(text, x, z, color)   lab.label(html, cls, x, y, z, parent)
+// lab.busMat(color, {base, rest})  lab.trace([{x,z}...], lines, mat)  lab.glowBus(mat)
+// lab.fly([{x,z}...], text, color, {y, dur}) -> GSAP timeline (packet sphere + halo + pill label: a message, a task, a handoff)
+// lab.setView(name)  lab.focusOn(x, z, dist)  lab.zoom(factor)  lab.intro()  lab.onPick(fn)  lab.clearPackets()  lab.onFrame(fn)
+// lab.chip(key, {x, z, w, d, nm}) is kept as an alias of lab.room for older markup; lab.finishPins() is a no-op.
+// Zoom buttons (+, -, FIT) and the + - 0 keys are added to the stage automatically (opts.zoomUI: false turns them off; opts.fitView picks the FIT view).
+function Unit3D(stage, opts) {
+  opts = opts || {};
+  const hasG = typeof window.gsap !== 'undefined';
+  if (!window.THREE || !THREE.OrbitControls || !THREE.CSS2DRenderer || !hasG) return null;
+  try { const t = document.createElement('canvas'); if (!(t.getContext('webgl') || t.getContext('experimental-webgl'))) return null; } catch (e) { return null; }
+  const T = THREE;
+  const RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const B = Object.assign({w: 24, d: 14, cx: 0, cz: 0, title: '4 WEST · MED-SURG', corridors: null, seed: 7}, opts.floor || opts.board || {});
+  if (!B.corridors) B.corridors = [{z: B.cz, w: 3}];
+  const C = Object.assign({teal: '#0E7C86', coral: '#D4453F', amber: '#C27A08', green: '#1F8A4C', violet: '#6A4FC8', slate: '#5B6B82', ink: '#14233A'}, opts.colors || {});
+  const KIND = {   // room kinds: floor tint on the texture, wall tint, accent
+    patient: {fill: '#CFE6E8', accent: C.teal}, station: {fill: '#DCD3F4', accent: C.violet}, med: {fill: '#F6DFB4', accent: C.amber},
+    supply: {fill: '#D3DBE4', accent: C.slate}, break: {fill: '#CDE8D7', accent: C.green}, risk: {fill: '#F5CECB', accent: C.coral}
+  };
+  const ROLE = {manager: C.violet, charge: C.violet, nurse: C.teal, rn: C.teal, lpn: C.teal, cna: C.green, tech: C.green, md: C.slate, physician: C.slate, np: C.slate,
+    family: C.amber, patient: C.amber, visitor: C.amber, student: C.teal, educator: C.violet, hr: C.slate};
+
+  const renderer = new T.WebGLRenderer({antialias: true, alpha: true, powerPreference: 'high-performance'});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.outputEncoding = T.sRGBEncoding;
+  renderer.toneMapping = T.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
+  renderer.shadowMap.enabled = true; renderer.shadowMap.type = T.PCFSoftShadowMap;
+  renderer.setClearColor(0x000000, 0);   // transparent: the stage's CSS gradient shows behind the floor
+  renderer.domElement.className = 'gl';
+  stage.prepend(renderer.domElement);
+  const labelR = new T.CSS2DRenderer();
+  labelR.domElement.className = 'labels';
+  renderer.domElement.after(labelR.domElement);
+
+  const scene = new T.Scene();
+  scene.fog = new T.Fog(0xe6ecef, 42, 85);
+  const camera = new T.PerspectiveCamera(38, 1, 0.1, 220);
+  const controls = new T.OrbitControls(camera, labelR.domElement);
+  controls.enableDamping = true; controls.dampingFactor = 0.08;
+  controls.maxPolarAngle = Math.PI * 0.46; controls.minDistance = 4; controls.maxDistance = 46;
+  controls.zoomSpeed = 1.1;
+  // keep the mouse wheel inside the 3D view: zoom the floor, do not scroll the page
+  stage.addEventListener('wheel', e => e.preventDefault(), {passive: false});
+
+  // soft daylight: a white sky with a pale ground bounce, a warm sun with soft shadows, a cool teal fill from behind
+  scene.add(new T.HemisphereLight(0xffffff, 0xd9dde2, 0.5));
+  const sun = new T.DirectionalLight(0xfff3df, 0.9); sun.position.set(-8, 18, 10); sun.castShadow = true;
+  sun.shadow.mapSize.set(2048, 2048);
+  Object.assign(sun.shadow.camera, {left: -B.w / 2 - 2, right: B.w / 2 + 2, top: B.d / 2 + 2, bottom: -B.d / 2 - 2, near: 1, far: 50});
+  sun.shadow.bias = -0.0006; sun.shadow.radius = 4; scene.add(sun);
+  const fill = new T.DirectionalLight(0x9fd8de, 0.25); fill.position.set(12, 8, -10); scene.add(fill);
+
+  // the floor slab: a canvas texture with floor tiles, corridors, room fills, room numbers and the unit title
+  const cv = document.createElement('canvas'); cv.width = 2048; cv.height = Math.round(2048 * B.d / B.w);
+  const S = cv.width / B.w, px = x => (x - B.cx + B.w / 2) * S, pz = z => (z - B.cz + B.d / 2) * S;
+  const roomsDrawn = [];
+  function drawFloor() {
+    const g = cv.getContext('2d'), W = cv.width, H = cv.height;
+    const grd = g.createLinearGradient(0, 0, W, H); grd.addColorStop(0, '#ECE7DE'); grd.addColorStop(1, '#E2DCD1');
+    g.fillStyle = grd; g.fillRect(0, 0, W, H);
+    // corridors: lighter bands with a dashed teal wayfinding line down the middle
+    B.corridors.forEach(c => {
+      g.fillStyle = '#F7F4EE';
+      if (c.z != null) g.fillRect(0, pz(c.z - c.w / 2), W, c.w * S); else g.fillRect(px(c.x - c.w / 2), 0, c.w * S, H);
+    });
+    // floor tiles (one world unit each)
+    g.strokeStyle = 'rgba(20,35,58,0.11)'; g.lineWidth = 2; g.beginPath();
+    for (let x = 0; x <= B.w; x++) { g.moveTo(x * S, 0); g.lineTo(x * S, H); }
+    for (let z = 0; z <= B.d; z++) { g.moveTo(0, z * S); g.lineTo(W, z * S); }
+    g.stroke();
+    B.corridors.forEach(c => {
+      g.save(); g.setLineDash([S * 0.5, S * 0.35]); g.strokeStyle = 'rgba(14,124,134,0.35)'; g.lineWidth = 5; g.beginPath();
+      if (c.z != null) { g.moveTo(0, pz(c.z)); g.lineTo(W, pz(c.z)); } else { g.moveTo(px(c.x), 0); g.lineTo(px(c.x), H); }
+      g.stroke(); g.restore();
+    });
+    // rooms: tinted fill, ink outline, a threshold mark at the door and the room number
+    roomsDrawn.forEach(r => {
+      const k = KIND[r.kind] || KIND.patient, x0 = px(r.x - r.w / 2), z0 = pz(r.z - r.d / 2), w = r.w * S, d = r.d * S;
+      g.fillStyle = k.fill; g.fillRect(x0, z0, w, d);
+      g.strokeStyle = 'rgba(20,35,58,0.45)'; g.lineWidth = 4; g.strokeRect(x0, z0, w, d);
+      if (r.door !== 'none') {
+        const dw = Math.min(1.1, r.w * 0.5, r.d * 0.5) * S; g.strokeStyle = k.accent; g.lineWidth = 8; g.beginPath();
+        if (r.door === 's') { g.moveTo(x0 + w / 2 - dw / 2, z0 + d); g.lineTo(x0 + w / 2 + dw / 2, z0 + d); }
+        else if (r.door === 'n') { g.moveTo(x0 + w / 2 - dw / 2, z0); g.lineTo(x0 + w / 2 + dw / 2, z0); }
+        else if (r.door === 'e') { g.moveTo(x0 + w, z0 + d / 2 - dw / 2); g.lineTo(x0 + w, z0 + d / 2 + dw / 2); }
+        else { g.moveTo(x0, z0 + d / 2 - dw / 2); g.lineTo(x0, z0 + d / 2 + dw / 2); }
+        g.stroke();
+      }
+      g.fillStyle = 'rgba(20,35,58,0.6)'; g.font = '700 ' + Math.round(S * Math.min(0.55, r.d * 0.16)) + 'px "JetBrains Mono", ui-monospace, monospace';
+      g.textBaseline = 'top'; g.fillText(r.num, x0 + S * 0.2, z0 + S * 0.16);
+    });
+    g.fillStyle = 'rgba(20,35,58,0.6)'; g.font = '700 ' + Math.round(S * 0.5) + 'px "Bricolage Grotesque", "Figtree", sans-serif'; g.textBaseline = 'alphabetic';
+    if (B.title) g.fillText(B.title, S * 0.5, H - S * 0.35);
+  }
+  drawFloor();
+  const tex = new T.CanvasTexture(cv); tex.encoding = T.sRGBEncoding; tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  function refreshFloor() { drawFloor(); tex.needsUpdate = true; }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(refreshFloor);
+  const edge = new T.MeshStandardMaterial({color: 0xd6d0c5, roughness: .9});
+  const topM = new T.MeshStandardMaterial({map: tex, roughness: .85, metalness: 0});
+  const slab = new T.Mesh(new T.BoxGeometry(B.w, 0.3, B.d), [edge, edge, topM, edge, edge, edge]);
+  slab.position.set(B.cx, -0.15, B.cz); slab.receiveShadow = true; scene.add(slab);
+
+  const unit = new T.BoxGeometry(1, 1, 1);
+  const tape = new T.MeshBasicMaterial({color: 0x14233a, transparent: true, opacity: .4});
+  function silkRect(x0, x1, z0, z1) {   // a thin ink "tape line" rectangle on the floor, for grouping areas
+    const t = 0.05;
+    [[x0, x1, z0, z0], [x0, x1, z1, z1], [x0, x0, z0, z1], [x1, x1, z0, z1]].forEach(([a, b, c, d]) => {
+      const m = new T.Mesh(unit, tape); m.scale.set(Math.abs(b - a) + t, 0.01, Math.abs(d - c) + t);
+      m.position.set((a + b) / 2, 0.008, (c + d) / 2); scene.add(m);
+    });
+  }
+  function busMat(color, o) {   // a wayfinding line material that can glow (lab.glowBus) in its color
+    o = o || {};
+    const m = new T.MeshStandardMaterial({color: new T.Color(o.base || color), emissive: new T.Color(color), emissiveIntensity: o.rest != null ? o.rest : 0.15, roughness: .5, metalness: 0});
+    m.userData.rest = m.emissiveIntensity; return m;
+  }
+  const nrm = (a, b) => { const dx = b.x - a.x, dz = b.z - a.z, L = Math.hypot(dx, dz) || 1; return {x: -dz / L, z: dx / L}; };
+  function offsetLine(p, o) {
+    return p.map((q, i) => {
+      const nIn = i > 0 ? nrm(p[i - 1], q) : null, nOut = i < p.length - 1 ? nrm(q, p[i + 1]) : null;
+      let n = nIn || nOut;
+      if (nIn && nOut) { const k = 1 / (1 + nIn.x * nOut.x + nIn.z * nOut.z); n = {x: (nIn.x + nOut.x) * k, z: (nIn.z + nOut.z) * k}; }
+      return {x: q.x + n.x * o, z: q.z + n.z * o};
+    });
+  }
+  function trace(points, lines, mat) {   // painted floor lines along a corridor path (one line per lane)
+    const gap = 0.12, w = 0.06;
+    for (let li = 0; li < lines; li++) {
+      const pts = offsetLine(points, (li - (lines - 1) / 2) * gap);
+      for (let i = 0; i < pts.length - 1; i++) {
+        const a = pts[i], b = pts[i + 1], dx = b.x - a.x, dz = b.z - a.z, L = Math.hypot(dx, dz);
+        const m = new T.Mesh(unit, mat); m.scale.set(L + w, 0.02, w); m.position.set((a.x + b.x) / 2, 0.012, (a.z + b.z) / 2); m.rotation.y = -Math.atan2(dz, dx);
+        scene.add(m);
+      }
+      [pts[0], pts[pts.length - 1]].forEach(p => { const pad = new T.Mesh(new T.CylinderGeometry(0.1, 0.1, 0.022, 14), mat); pad.position.set(p.x, 0.012, p.z); scene.add(pad); });
+    }
+  }
+  function glowBus(m) {
+    if (!m) return;
+    gsap.killTweensOf(m);
+    gsap.timeline().to(m, {emissiveIntensity: 1.2, duration: 0.2}).to(m, {emissiveIntensity: m.userData.rest, duration: 1.4});
+  }
+  function label(html, cls, x, y, z, parent) {
+    const el = document.createElement('div'); el.className = cls; el.innerHTML = html;
+    const o = new T.CSS2DObject(el); o.position.set(x, y, z); (parent || scene).add(o); el._obj = o; return el;
+  }
+  function zone(text, x, z, color) { const el = label(text, 'zone', x, 0.05, z); if (color) el.style.setProperty('--c', color); return el; }
+
+  const recs = {}, pickables = [];
+  const wallMat = new T.MeshStandardMaterial({color: 0xeeeae2, roughness: .92, metalness: 0});
+  const bedMat = new T.MeshStandardMaterial({color: 0xffffff, roughness: .8});
+  const blanketMat = new T.MeshStandardMaterial({color: 0xcfe6e8, roughness: .9});
+  const counterMat = new T.MeshStandardMaterial({color: 0xe9e4f6, roughness: .8});
+  const WH = 0.55, WT = 0.1;
+  function wall(g, x, z, len, along, mat) {   // along: 'x' or 'z'
+    const m = new T.Mesh(unit, mat || wallMat);
+    if (along === 'x') m.scale.set(len, WH, WT); else m.scale.set(WT, WH, len);
+    m.position.set(x, WH / 2, z); m.castShadow = true; m.receiveShadow = true; g.add(m); return m;
+  }
+  function room(id, x, z, w, d, lbl, o) {
+    o = o || {};
+    const kind = o.kind || 'patient', k = KIND[kind] || KIND.patient;
+    let door = o.door;
+    if (!door) {   // auto: the door faces the nearest corridor
+      let best = null;
+      B.corridors.forEach(c => {
+        const dist = c.z != null ? Math.abs(z - c.z) : Math.abs(x - c.x);
+        if (!best || dist < best.dist) best = {dist: dist, side: c.z != null ? (z < c.z ? 's' : 'n') : (x < c.x ? 'e' : 'w')};
+      });
+      door = best ? best.side : 's';
+    }
+    const g = new T.Group(); g.position.set(x, 0, z);
+    const hw = w / 2, hd = d / 2, dw = Math.min(1.1, w * 0.5, d * 0.5);
+    // four walls, with a door gap in the wall that faces the corridor
+    const side = (name, len, place) => {
+      if (door !== name) { place(len, 0); return; }
+      const seg = (len - dw) / 2; place(seg, -(len / 2 - seg / 2)); place(seg, (len / 2 - seg / 2));
+    };
+    side('n', w, (len, off) => wall(g, off, -hd, len, 'x'));
+    side('s', w, (len, off) => wall(g, off, hd, len, 'x'));
+    side('w', d, (len, off) => wall(g, -hw, off, len, 'z'));
+    side('e', d, (len, off) => wall(g, hw, off, len, 'z'));
+    // the highlight plate: invisible until lab.hi tints it; it is also the click target
+    const mat = new T.MeshStandardMaterial({color: new T.Color(k.accent), transparent: true, opacity: 0, roughness: 1, depthWrite: false});
+    const plate = new T.Mesh(unit, mat); plate.scale.set(w - WT, 0.02, d - WT); plate.position.y = 0.025; g.add(plate);
+    plate.userData.key = id; pickables.push(plate);
+    if (kind === 'patient' && o.bed !== false) {   // a low-poly bed: frame, blanket, pillow
+      const bed = new T.Group(); const along = d >= w ? 'z' : 'x';
+      const bw = along === 'z' ? 0.9 : 1.9, bd = along === 'z' ? 1.9 : 0.9;
+      const f = new T.Mesh(unit, bedMat); f.scale.set(bw, 0.3, bd); f.position.y = 0.15; f.castShadow = true; f.receiveShadow = true; bed.add(f);
+      const bl = new T.Mesh(unit, blanketMat); bl.scale.set(bw - 0.08, 0.1, along === 'z' ? bd * 0.6 : bd - 0.08); if (along === 'x') bl.scale.set(bw * 0.6, 0.1, bd - 0.08);
+      bl.position.set(along === 'x' ? -bw * 0.2 : 0, 0.35, along === 'z' ? bd * 0.2 : 0); bed.add(bl);
+      const pw = new T.Mesh(unit, bedMat); pw.scale.set(along === 'z' ? bw - 0.3 : 0.3, 0.12, along === 'z' ? 0.3 : bd - 0.3); pw.position.set(along === 'x' ? bw / 2 - 0.3 : 0, 0.36, along === 'z' ? -bd / 2 + 0.3 : 0); bed.add(pw);
+      bed.position.set(along === 'z' ? -hw + bw / 2 + 0.35 : 0, 0, along === 'z' ? 0 : -hd + bd / 2 + 0.35); g.add(bed);
+    }
+    if (kind === 'station') {   // a counter in the middle of the station
+      const c = new T.Mesh(unit, counterMat); c.scale.set(Math.max(1, w * 0.55), 0.42, Math.max(0.6, d * 0.3)); c.position.y = 0.21; c.castShadow = true; c.receiveShadow = true; g.add(c);
+    }
+    scene.add(g);
+    const el = label('<span class="nm">' + (lbl || id) + '</span><span class="vl"></span><span class="sb"></span>', 'tag room', 0, WH + 0.25, 0, g);
+    const rec = {key: id, kind: 'room', roomKind: kind, accent: k.accent, g: g, mat: mat, el: el, val: el.querySelector('.vl'), sub: el.querySelector('.sb'), h: WH, x: x, z: z, w: w, d: d, door: door};
+    recs[id] = rec;
+    roomsDrawn.push({x: x, z: z, w: w, d: d, kind: kind, door: door, num: o.num != null ? String(o.num) : String(id)});
+    refreshFloor();
+    return rec;
+  }
+  function chip(key, o) { return room(key, o.x, o.z, o.w || 1.4, o.d || 1.2, o.nm || key, o); }
+  const headMat = new T.MeshStandardMaterial({color: 0xf3e7d3, roughness: .7});
+  const bodyGeo = T.CapsuleGeometry ? new T.CapsuleGeometry(0.2, 0.42, 4, 12) : new T.CylinderGeometry(0.2, 0.2, 0.82, 12);
+  const headGeo = new T.SphereGeometry(0.17, 16, 12);
+  const ringGeo = new T.RingGeometry(0.26, 0.34, 24);
+  function person(id, x, z, role, color, o) {
+    o = o || {};
+    const col = color || ROLE[(role || '').toLowerCase()] || C.slate;
+    const g = new T.Group(); g.position.set(x, 0, z);
+    const mat = new T.MeshStandardMaterial({color: new T.Color(col), roughness: .55, metalness: 0, emissive: new T.Color(0xffffff), emissiveIntensity: 0});
+    const body = new T.Mesh(bodyGeo, mat); body.position.y = 0.43; body.castShadow = true; g.add(body);
+    body.userData.key = id; pickables.push(body);
+    const head = new T.Mesh(headGeo, headMat); head.position.y = 1.0; head.castShadow = true; g.add(head);
+    const ring = new T.Mesh(ringGeo, new T.MeshBasicMaterial({color: new T.Color(col), transparent: true, opacity: .55, side: T.DoubleSide})); ring.rotation.x = -Math.PI / 2; ring.position.y = 0.03; g.add(ring);
+    scene.add(g);
+    const el = label('<span class="nm">' + (role || '') + '</span><span class="vl">' + (o.nm || id) + '</span><span class="sb"></span>', 'tag person', 0, 1.42, 0, g);
+    el.style.setProperty('--c', col);
+    const rec = {key: id, kind: 'person', role: role, color: col, g: g, mat: mat, el: el, name: el.querySelector('.vl'), val: el.querySelector('.sb'), sub: el.querySelector('.sb'), h: 1.2, x: x, z: z};
+    recs[id] = rec; return rec;
+  }
+  function walk(rec, path, o) {   // move a person token along corridor points; returns a GSAP timeline
+    o = o || {};
+    const tl = gsap.timeline();
+    let prev = {x: rec.g.position.x, z: rec.g.position.z}, L = 0;
+    path.forEach(p => { L += Math.hypot(p.x - prev.x, p.z - prev.z); prev = p; });
+    const total = o.dur || Math.max(0.4, Math.min(3, L / 3));
+    prev = {x: rec.g.position.x, z: rec.g.position.z};
+    path.forEach(p => {
+      const seg = Math.hypot(p.x - prev.x, p.z - prev.z);
+      tl.to(rec.g.position, {x: p.x, z: p.z, duration: L ? total * seg / L : 0.1, ease: 'none', onUpdate: () => { rec.x = rec.g.position.x; rec.z = rec.g.position.z; }});
+      prev = p;
+    });
+    if (!RM) tl.to(rec.g.position, {y: 0.08, duration: 0.18, yoyo: true, repeat: Math.max(1, Math.round(total / 0.18) - 1), ease: 'sine.inOut'}, 0).set(rec.g.position, {y: 0});
+    return tl;
+  }
+  function set(rec, value, sub, bump) {
+    if (!rec) return;
+    if (value != null) rec.val.textContent = value;
+    if (sub != null) rec.sub.textContent = sub;
+    if (bump) pop(rec);
+  }
+  function finishPins() {}
+
+  // packets: a small sphere with a soft halo and a pill label (a message, a task, a patient handoff)
+  const haloCv = document.createElement('canvas'); haloCv.width = haloCv.height = 64;
+  const hg = haloCv.getContext('2d'), rg = hg.createRadialGradient(32, 32, 0, 32, 32, 32);
+  rg.addColorStop(0, 'rgba(255,255,255,1)'); rg.addColorStop(.35, 'rgba(255,255,255,.4)'); rg.addColorStop(1, 'rgba(255,255,255,0)');
+  hg.fillStyle = rg; hg.fillRect(0, 0, 64, 64);
+  const haloTex = new T.CanvasTexture(haloCv);
+  const pktGeo = new T.SphereGeometry(0.15, 20, 14);
+  const live = new Set();
+  function removePacket(p) {
+    scene.remove(p.mesh); if (p.el.parentNode) p.el.parentNode.removeChild(p.el);
+    p.mesh.material.dispose(); p.halo.material.dispose(); live.delete(p);
+  }
+  function fly(path, text, color, o) {
+    o = o || {};
+    const y = o.y != null ? o.y : 0.9;
+    const v = path.map(p => new T.Vector3(p.x, y, p.z));
+    const mesh = new T.Mesh(pktGeo, new T.MeshStandardMaterial({color: new T.Color(color), emissive: new T.Color(color), emissiveIntensity: .35, roughness: .4}));
+    mesh.castShadow = true;
+    const halo = new T.Sprite(new T.SpriteMaterial({map: haloTex, color: new T.Color(color), depthWrite: false, transparent: true, opacity: .55}));
+    halo.scale.set(1.0, 1.0, 1.0); mesh.add(halo);
+    const el = document.createElement('div'); el.className = 'pkt'; el.style.setProperty('--c', color); el.textContent = text;
+    const lab = new T.CSS2DObject(el); lab.position.set(0, 0.45, 0); mesh.add(lab);
+    mesh.position.copy(v[0]); mesh.scale.setScalar(0.01); mesh.visible = false; scene.add(mesh);
+    const p = {mesh: mesh, halo: halo, el: el}; live.add(p);
+    let L = 0; for (let i = 1; i < v.length; i++) L += v[i].distanceTo(v[i - 1]);
+    const total = o.dur || Math.max(0.5, Math.min(2.4, L / 6));
+    const tl = gsap.timeline({onComplete: () => removePacket(p)});
+    tl.call(() => { mesh.visible = true; });
+    tl.to(mesh.scale, {x: 1, y: 1, z: 1, duration: 0.18, ease: 'back.out(2)'});
+    for (let i = 1; i < v.length; i++) { const seg = v[i].distanceTo(v[i - 1]); tl.to(mesh.position, {x: v[i].x, y: v[i].y, z: v[i].z, duration: L ? total * seg / L : 0.1, ease: 'none'}); }
+    tl.to(mesh.scale, {x: 0.01, y: 0.01, z: 0.01, duration: 0.18, ease: 'power2.in'});
+    return tl;
+  }
+  function clearPackets() { Array.from(live).forEach(removePacket); }
+
+  const active = new Set();
+  function hi(rec, color) {
+    if (!rec) return;
+    const col = color || rec.accent || rec.color || C.teal;
+    if (rec.kind === 'room') { rec.mat.color.set(col); gsap.to(rec.mat, {opacity: 0.38, duration: 0.3, overwrite: 'auto'}); }
+    else { rec.mat.emissive.set(col); gsap.to(rec.mat, {emissiveIntensity: 0.45, duration: 0.3, overwrite: 'auto'}); }
+    rec.el.classList.add('on'); rec.el.style.setProperty('--c', col); active.add(rec);
+  }
+  function clear() {
+    active.forEach(r => {
+      if (r.kind === 'room') gsap.to(r.mat, {opacity: 0, duration: 0.5, overwrite: 'auto'});
+      else gsap.to(r.mat, {emissiveIntensity: 0, duration: 0.5, overwrite: 'auto'});
+      r.el.classList.remove('on');
+    });
+    active.clear();
+  }
+  function pop(rec, big) {
+    if (!rec || RM) return;
+    if (rec.kind === 'room') gsap.fromTo(rec.g.scale, {x: big ? 1.08 : 1.04, y: 1.3, z: big ? 1.08 : 1.04}, {x: 1, y: 1, z: 1, duration: 0.65, ease: 'elastic.out(1,0.5)', overwrite: 'auto'});
+    else gsap.fromTo(rec.g.position, {y: big ? 0.6 : 0.35}, {y: 0, duration: 0.6, ease: 'bounce.out', overwrite: 'auto'});
+  }
+
+  // camera views keep the whole unit in frame on narrow screens
+  const views = opts.views || {overview: {pos: [0, 19, 15], tgt: [0, 0, 0.5], want: 1.55}};
+  function viewFor(name) {
+    const b = views[name] || views.overview;
+    const tgt = new T.Vector3(...b.tgt), pos = new T.Vector3(...b.pos);
+    const want = b.want || 1.25;
+    let f = camera.aspect < want ? Math.min(2.4, want / camera.aspect) : 1;
+    if (name === 'overview' || !views[name]) {
+      // the overview (and FIT) must show the whole floor width, also on narrow phone screens,
+      // leaving room for the zoom buttons at the right edge
+      const tanH = Math.tan(T.MathUtils.degToRad(camera.fov / 2)) * camera.aspect;
+      const need = (B.w / 2 + 0.5) / (tanH * 0.92) + B.d * 0.25;
+      f = Math.max(f, need / pos.distanceTo(tgt));
+      controls.maxDistance = Math.max(controls.maxDistance, need * 1.3);
+      if (scene.fog) { scene.fog.near = Math.max(scene.fog.near, need * 1.1); scene.fog.far = Math.max(scene.fog.far, need * 2.6); }
+    }
+    pos.sub(tgt).multiplyScalar(f).add(tgt);
+    return {pos: pos, tgt: tgt};
+  }
+  function setView(name, instant) {
+    const v = viewFor(name), d = (RM || instant) ? 0 : 1.2;
+    const k = 1 / (gsap.globalTimeline.timeScale() || 1);
+    gsap.to(camera.position, {x: v.pos.x, y: v.pos.y, z: v.pos.z, duration: d, ease: 'power2.inOut', overwrite: 'auto'}).timeScale(k);
+    gsap.to(controls.target, {x: v.tgt.x, y: v.tgt.y, z: v.tgt.z, duration: d, ease: 'power2.inOut', overwrite: 'auto'}).timeScale(k);
+  }
+  function focusOn(x, z, dist) {
+    const d = (dist || 7) * (camera.aspect < 1.2 ? Math.min(2.2, 1.25 / camera.aspect) : 1);
+    const k = 1 / (gsap.globalTimeline.timeScale() || 1);
+    gsap.to(camera.position, {x: x * 0.8, y: d * 1.15, z: z + d, duration: RM ? 0 : 1.0, ease: 'power2.inOut', overwrite: 'auto'}).timeScale(k);
+    gsap.to(controls.target, {x: x, y: 0, z: z, duration: RM ? 0 : 1.0, ease: 'power2.inOut', overwrite: 'auto'}).timeScale(k);
+  }
+
+  function resize() {
+    const w = stage.clientWidth, h = stage.clientHeight; if (!w || !h) return;
+    renderer.setSize(w, h, false); renderer.domElement.style.width = w + 'px'; renderer.domElement.style.height = h + 'px';
+    labelR.setSize(w, h);
+    camera.aspect = w / h; camera.updateProjectionMatrix();
+    stage.style.setProperty('--lab', Math.max(7, Math.min(12, w / 92)) + 'px');
+  }
+  // zoom buttons (+, -, Fit) and keys (+, -, 0): the mouse wheel and pinch still work, but buttons always do
+  function zoom(f) {
+    const t = controls.target, off = camera.position.clone().sub(t);
+    off.setLength(Math.max(controls.minDistance, Math.min(controls.maxDistance, off.length() * f)));
+    const p = t.clone().add(off), k = 1 / (gsap.globalTimeline.timeScale() || 1);
+    gsap.to(camera.position, {x: p.x, y: p.y, z: p.z, duration: RM ? 0 : 0.45, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
+  }
+  if (opts.zoomUI !== false) {
+    if (!document.getElementById('lab3d-zoom-css')) {
+      const st = document.createElement('style'); st.id = 'lab3d-zoom-css';
+      st.textContent = '.zoomctl{position:absolute;z-index:4;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:2px;padding:4px;background:rgba(255,255,255,.9);border:1px solid #D9D3C8;border-radius:10px;backdrop-filter:blur(6px);box-shadow:0 1px 2px rgba(20,35,58,.08)}' +
+        '.zoomctl button{width:38px;height:34px;border:0;border-radius:7px;background:transparent;color:#14233A;font:700 18px/1 "JetBrains Mono",ui-monospace,monospace;cursor:pointer;padding:0}' +
+        '.zoomctl button.fit{font-size:10px;letter-spacing:.06em;height:28px}.zoomctl button:hover{background:rgba(14,124,134,.12);color:#0E7C86}' +
+        '.zoomctl button:focus-visible{outline:2px solid #0E7C86;outline-offset:1px}@media(max-width:520px){.zoomctl{right:10px}.zoomctl button{width:34px;height:32px}}';
+      document.head.appendChild(st);
+    }
+    const box = document.createElement('div'); box.className = 'zoomctl'; box.setAttribute('role', 'group'); box.setAttribute('aria-label', 'Zoom');
+    box.innerHTML = '<button type="button" data-z="in" aria-label="Zoom in" title="Zoom in (+)">+</button>' +
+      '<button type="button" data-z="out" aria-label="Zoom out" title="Zoom out (-)">&minus;</button>' +
+      '<button type="button" class="fit" data-z="fit" aria-label="Show the whole unit" title="Show the whole unit (0)">FIT</button>';
+    stage.appendChild(box);
+    ['pointerdown', 'pointerup', 'wheel', 'click'].forEach(ev => box.addEventListener(ev, e => e.stopPropagation()));
+    box.addEventListener('click', e => {
+      const b = e.target.closest('button'); if (!b) return;
+      if (b.dataset.z === 'in') zoom(0.75); else if (b.dataset.z === 'out') zoom(1.33); else setView(opts.fitView || 'overview');
+    });
+    document.addEventListener('keydown', e => {
+      const t = e.target, tag = t && t.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) return;
+      if (e.key === '+' || e.key === '=') zoom(0.75);
+      else if (e.key === '-' || e.key === '_') zoom(1.33);
+      else if (e.key === '0') setView(opts.fitView || 'overview');
+    });
+  }
+  new ResizeObserver(resize).observe(stage); resize();
+  const frames = [];
+  (function loop(t) { requestAnimationFrame(loop); frames.forEach(f => f(t)); controls.update(); renderer.render(scene, camera); labelR.render(scene, camera); })(0);
+
+  // picking: click (not drag) on a room floor or a person
+  const ray = new T.Raycaster(), mouse = new T.Vector2(); let down = null, pickCb = null;
+  labelR.domElement.addEventListener('pointerdown', e => { down = [e.clientX, e.clientY]; });
+  labelR.domElement.addEventListener('pointerup', e => {
+    if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 5 || !pickCb) return;
+    const r = labelR.domElement.getBoundingClientRect();
+    mouse.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+    ray.setFromCamera(mouse, camera);
+    const hit = ray.intersectObjects(pickables, false)[0];
+    if (hit) pickCb(hit.object.userData.key);
+  });
+
+  function intro() {
+    const v = viewFor('overview'); camera.position.copy(v.pos); controls.target.copy(v.tgt);
+    if (RM) return;
+    gsap.from(camera.position, {x: v.pos.x - 4, y: v.pos.y + 12, z: v.pos.z + 10, duration: 1.8, ease: 'power3.out'});
+    const rooms = Object.values(recs).filter(r => r.kind === 'room').map(r => r.g.position);
+    const people = Object.values(recs).filter(r => r.kind === 'person').map(r => r.g.position);
+    if (rooms.length) gsap.from(rooms, {y: 2.2, duration: 0.7, ease: 'back.out(1.6)', stagger: 0.03, delay: 0.2});
+    if (people.length) gsap.from(people, {y: 3, duration: 0.6, ease: 'bounce.out', stagger: 0.08, delay: 0.7});
+  }
+
+  const labApi = {T: T, scene: scene, camera: camera, controls: controls, renderer: renderer, recs: recs, colors: C, kinds: KIND, roles: ROLE,
+    room: room, person: person, walk: walk, set: set, chip: chip, finishPins: finishPins, silkRect: silkRect, zone: zone, label: label, busMat: busMat, trace: trace, glowBus: glowBus,
+    fly: fly, clearPackets: clearPackets, hi: hi, clear: clear, pop: pop, setView: setView, focusOn: focusOn, intro: intro, zoom: zoom, refreshFloor: refreshFloor,
+    onPick: cb => { pickCb = cb; }, onFrame: f => frames.push(f), unit: unit};
+  (window.__labs = window.__labs || []).push(labApi);   // lets tests reach the camera
+  return labApi;
+}
+// LAB3D END
+
+// FLOOR START: the shared 4 West floor used by the Week 1 and Week 2 pages (3D through Unit3D, or the flat SVG plan with the same verbs).
+// Rooms 401 to 408 line the north side of the main corridor, 409 to 416 the south side, the nurse station sits at the corner where the
+// corridor turns, and 417 to 419 start the east wing. World units: x left to right, z top to bottom, the floor centered at 0,0.
+const RX = i => -11.75 + i * 2.55;
+const FLOOR = {
+  w: 26, d: 14, title: '4 WEST · MED-SURG · 32 BEDS', corridors: [{z: -3, w: 2.6}, {x: 9, w: 2.6}],
+  rooms: [].concat(
+    [0, 1, 2, 3, 4, 5, 6, 7].map(i => ({id: String(401 + i), x: RX(i), z: -5.7, w: 2.3, d: 2.3, kind: 'patient', door: 's', label: 'Room ' + (401 + i)})),
+    [0, 1, 2, 3, 4, 5, 6, 7].map(i => ({id: String(409 + i), x: RX(i), z: -0.3, w: 2.3, d: 2.3, kind: 'patient', door: 'n', label: 'Room ' + (409 + i)})),
+    [{id: 'med', x: 9, z: -5.7, w: 2.4, d: 2.3, kind: 'med', door: 's', label: 'Med room', num: 'MED'},
+     {id: 'station', x: 11.75, z: -3.0, w: 2.4, d: 2.6, kind: 'station', door: 'w', label: 'Nurse station', num: 'NS'},
+     {id: '417', x: 11.75, z: 0.0, w: 2.4, d: 2.3, kind: 'patient', door: 'w', label: 'Room 417'},
+     {id: '418', x: 11.75, z: 2.5, w: 2.4, d: 2.3, kind: 'patient', door: 'w', label: 'Room 418'},
+     {id: '419', x: 11.75, z: 5.0, w: 2.4, d: 2.3, kind: 'patient', door: 'w', label: 'Room 419'},
+     {id: 'break', x: 6.3, z: 2.1, w: 2.6, d: 2.2, kind: 'break', door: 'e', label: 'Break room', num: 'BRK'},
+     {id: 'supply', x: 6.3, z: 4.7, w: 2.6, d: 2.2, kind: 'supply', door: 'e', label: 'Supply', num: 'SUP'}]),
+  zones: [{text: 'family alcove', x: 2.4, z: 3.2, color: '#C27A08'}, {text: 'to rooms 420 to 432', x: 11.75, z: 6.7, color: '#5B6B82'}, {text: 'main corridor', x: -4, z: -3, color: '#5B6B82'}]
+};
+const KINDFILL = {patient: '#CFE6E8', station: '#DCD3F4', med: '#F6DFB4', supply: '#D3DBE4', break: '#CDE8D7', risk: '#F5CECB'};
+const KINDACC = {patient: '#0E7C86', station: '#6A4FC8', med: '#C27A08', supply: '#5B6B82', break: '#1F8A4C', risk: '#D4453F'};
+// corridor waypoints: the main corridor runs along z = -3, the east wing along x = 9
+const CORR = {z: -2.4, x: 9};
+const atRoom = id => { const r = FLOOR.rooms.find(q => q.id === id); return r.door === 's' ? {x: r.x, z: r.z + r.d / 2 + 0.6} : r.door === 'n' ? {x: r.x, z: r.z - r.d / 2 - 0.6} : r.door === 'w' ? {x: r.x - r.w / 2 - 0.6, z: r.z} : {x: r.x + r.w / 2 + 0.6, z: r.z}; };
+// the n-th token sent to the same door stands 1.3 units to the side (along the corridor) so the tags do not overlap
+function spreadPoint(id, n) { const r = FLOOR.rooms.find(q => q.id === id), p = atRoom(id); if (!r || !n) return p; const k = (n % 2 ? 1 : -1) * Math.ceil(n / 2) * 1.3; return (r.door === 'w' || r.door === 'e') ? {x: p.x, z: p.z + k} : {x: p.x + k, z: p.z}; }
+// a corridor path from a point to a room door: along the main corridor, then down the east wing when needed
+function pathTo(from, id) {
+  const to = atRoom(id), p = [];
+  const east = q => q.x > 7.6 && q.z > -1.6;
+  if (east(from) && east(to)) { p.push({x: CORR.x, z: from.z}); p.push({x: CORR.x, z: to.z}); p.push(to); return p; }
+  if (east(from)) { p.push({x: CORR.x, z: from.z}); p.push({x: CORR.x, z: CORR.z}); }
+  else if (Math.abs(from.z - CORR.z) > 0.2) p.push({x: from.x, z: CORR.z});
+  if (east(to)) { p.push({x: CORR.x, z: CORR.z}); p.push({x: CORR.x, z: to.z}); p.push(to); }
+  else { p.push({x: to.x, z: CORR.z}); p.push(to); }
+  return p;
+}
+function Floor(stage, people, opts) {
+  opts = opts || {};
+  const hasG = typeof window.gsap !== 'undefined';
+  let lab = null;
+  try {
+    lab = (typeof Unit3D === 'function') ? Unit3D(stage, {
+      floor: {w: FLOOR.w, d: FLOOR.d, title: FLOOR.title, corridors: FLOOR.corridors},
+      views: Object.assign({overview: {pos: [0, 21, 16], tgt: [0, 0, 0.3], want: 1.5},
+        station: {pos: [6, 9, 6], tgt: [9.5, 0, -2], want: 1.5}, west: {pos: [-6, 11, 7], tgt: [-6, 0, -3], want: 1.5}, east: {pos: [6, 10, 10], tgt: [9.5, 0, 2.5], want: 1.5}}, opts.views || {})
+    }) : null;
+  } catch (e) { console.error(e); lab = null; }
+  if (lab) {
+    FLOOR.rooms.forEach(r => lab.room(r.id, r.x, r.z, r.w, r.d, r.label, {kind: r.kind, door: r.door, num: r.num || r.id}));
+    FLOOR.zones.forEach(z => lab.zone(z.text, z.x, z.z, z.color));
+    people.forEach(p => lab.person(p.id, p.x, p.z, p.role, p.color, {nm: p.nm}));
+    const G = {
+      kind: '3d', recs: lab.recs, colors: lab.colors,
+      hi: (id, c) => lab.hi(lab.recs[id], c), clear: () => lab.clear(), pop: id => lab.pop(lab.recs[id]),
+      set: (id, v, s, b) => lab.set(lab.recs[id], v, s, b),
+      place: (id, x, z) => { const r = lab.recs[id]; if (!r) return; gsap.killTweensOf(r.g.position); r.g.position.set(x, 0, z); r.x = x; r.z = z; },
+      walk: (id, path, o) => { const r = lab.recs[id]; if (!r) return null; if (o && o.instant) { const q = path[path.length - 1]; G.place(id, q.x, q.z); return null; } return lab.walk(r, path, o); },
+      fly: (path, text, c, o) => (o && o.instant) ? null : lab.fly(path, text, c, o),
+      pos: id => ({x: lab.recs[id].x, z: lab.recs[id].z}),
+      focusOn: (x, z, d) => lab.focusOn(x, z, d), setView: n => lab.setView(n), zoom: f => lab.zoom(f),
+      onPick: fn => lab.onPick(fn), clearPackets: () => lab.clearPackets(), intro: () => lab.intro(), lab: lab
+    };
+    return G;
+  }
+  // ---- flat plan: the same rooms, tokens and verbs as inline SVG ----
+  const NS = 'http://www.w3.org/2000/svg', S = 20, X = x => (x + FLOOR.w / 2) * S, Z = z => (z + FLOOR.d / 2) * S;
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('viewBox', '0 0 ' + (FLOOR.w * S) + ' ' + (FLOOR.d * S)); svg.setAttribute('class', 'flat'); svg.setAttribute('role', 'img');
+  svg.setAttribute('aria-label', 'Flat plan of 4 West with rooms 401 to 419, the nurse station, the med room, the break room and the supply room, and the staff tokens.');
+  const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); Object.keys(attrs || {}).forEach(k => e.setAttribute(k, attrs[k])); (parent || svg).appendChild(e); return e; };
+  el('rect', {x: 0, y: 0, width: FLOOR.w * S, height: FLOOR.d * S, fill: '#E8E3DA'});
+  FLOOR.corridors.forEach(c => c.z != null ? el('rect', {x: 0, y: Z(c.z - c.w / 2), width: FLOOR.w * S, height: c.w * S, fill: '#F7F4EE'}) : el('rect', {x: X(c.x - c.w / 2), y: 0, width: c.w * S, height: FLOOR.d * S, fill: '#F7F4EE'}));
+  for (let x = 0; x <= FLOOR.w; x++) el('line', {x1: x * S, y1: 0, x2: x * S, y2: FLOOR.d * S, stroke: 'rgba(20,35,58,.08)'});
+  for (let z = 0; z <= FLOOR.d; z++) el('line', {x1: 0, y1: z * S, x2: FLOOR.w * S, y2: z * S, stroke: 'rgba(20,35,58,.08)'});
+  const recs = {}, pickCb = {fn: null};
+  FLOOR.rooms.forEach(r => {
+    const g = el('g', {'data-key': r.id, style: 'cursor:pointer'});
+    el('rect', {x: X(r.x - r.w / 2), y: Z(r.z - r.d / 2), width: r.w * S, height: r.d * S, fill: KINDFILL[r.kind], stroke: 'rgba(20,35,58,.5)', 'stroke-width': 1.2}, g);
+    const hl = el('rect', {x: X(r.x - r.w / 2), y: Z(r.z - r.d / 2), width: r.w * S, height: r.d * S, fill: KINDACC[r.kind], opacity: 0}, g);
+    const dw = Math.min(1.1, r.w * 0.5) * S;
+    const dx = X(r.x), dz = Z(r.z), hw = r.w * S / 2, hd = r.d * S / 2;
+    const dl = r.door === 's' ? [dx - dw / 2, dz + hd, dx + dw / 2, dz + hd] : r.door === 'n' ? [dx - dw / 2, dz - hd, dx + dw / 2, dz - hd] : r.door === 'w' ? [dx - hw, dz - dw / 2, dx - hw, dz + dw / 2] : [dx + hw, dz - dw / 2, dx + hw, dz + dw / 2];
+    el('line', {x1: dl[0], y1: dl[1], x2: dl[2], y2: dl[3], stroke: KINDACC[r.kind], 'stroke-width': 3}, g);
+    if (r.kind === 'patient') el('rect', {x: X(r.x + r.w / 2) - 14, y: Z(r.z - r.d / 2) + 4, width: 10, height: 16, rx: 2, fill: '#fff', stroke: 'rgba(20,35,58,.35)'}, g);
+    const num = el('text', {x: X(r.x - r.w / 2) + 3, y: Z(r.z - r.d / 2) + 9, 'font-size': 7, 'font-weight': 700, fill: 'rgba(20,35,58,.7)', 'font-family': 'JetBrains Mono, monospace'}, g); num.textContent = r.num || r.id;
+    const val = el('text', {x: X(r.x - r.w / 2) + 3, y: Z(r.z + r.d / 2) - 11, 'font-size': 5.6, 'font-weight': 700, fill: '#14233A', 'text-anchor': 'start'}, g);
+    const sub = el('text', {x: X(r.x - r.w / 2) + 3, y: Z(r.z + r.d / 2) - 4, 'font-size': 4.6, fill: '#66728A', 'text-anchor': 'start'}, g);
+    g.addEventListener('click', () => pickCb.fn && pickCb.fn(r.id));
+    recs[r.id] = {key: r.id, kind: 'room', g: g, hl: hl, val: val, sub: sub, x: r.x, z: r.z, w: r.w, d: r.d, accent: KINDACC[r.kind]};
+  });
+  FLOOR.zones.forEach(z => { const t = el('text', {x: X(z.x), y: Z(z.z), 'font-size': 5.5, 'font-weight': 600, fill: z.color, 'text-anchor': 'middle', 'letter-spacing': '.8', 'font-family': 'JetBrains Mono, monospace'}); t.textContent = z.text.toUpperCase(); });
+  const pk = el('g', {}); // packets layer
+  people.forEach(p => {
+    const g = el('g', {'data-key': p.id, style: 'cursor:pointer', transform: 'translate(' + X(p.x) + ',' + Z(p.z) + ')'});
+    const ring = el('circle', {r: 7, fill: 'none', stroke: p.color, 'stroke-width': 2, opacity: 0}, g);
+    el('circle', {r: 4.6, fill: p.color, stroke: '#fff', 'stroke-width': 1}, g);
+    el('circle', {r: 2.2, cy: -5.2, fill: '#F3E7D3', stroke: 'rgba(20,35,58,.3)', 'stroke-width': .5}, g);
+    const nm = el('text', {y: 12.5, 'font-size': 5.6, 'font-weight': 700, fill: '#14233A', 'text-anchor': 'middle', stroke: '#fff', 'stroke-width': 1.6, 'paint-order': 'stroke'}, g); nm.textContent = p.nm;
+    const val = el('text', {y: 18.5, 'font-size': 4.8, fill: '#36465E', 'text-anchor': 'middle', stroke: '#fff', 'stroke-width': 1.4, 'paint-order': 'stroke'}, g);
+    g.addEventListener('click', () => pickCb.fn && pickCb.fn(p.id));
+    recs[p.id] = {key: p.id, kind: 'person', g: g, ring: ring, val: val, sub: val, x: p.x, z: p.z, color: p.color, pos: {x: p.x, z: p.z}};
+  });
+  stage.appendChild(svg);
+  const active = new Set();
+  function place(id, x, z) { const r = recs[id]; if (!r || r.kind !== 'person') return; if (hasG) gsap.killTweensOf(r.pos); r.pos.x = x; r.pos.z = z; r.x = x; r.z = z; r.g.setAttribute('transform', 'translate(' + X(x) + ',' + Z(z) + ')'); }
+  const G = {
+    kind: '2d', recs: recs, colors: {teal: '#0E7C86', coral: '#D4453F', amber: '#C27A08', green: '#1F8A4C', violet: '#6A4FC8', slate: '#5B6B82'},
+    hi(id, c) { const r = recs[id]; if (!r) return; c = c || r.accent || r.color; if (r.kind === 'room') { r.hl.setAttribute('fill', c); r.hl.setAttribute('opacity', .42); } else { r.ring.setAttribute('stroke', c); r.ring.setAttribute('opacity', 1); } active.add(r); },
+    clear() { active.forEach(r => { if (r.kind === 'room') r.hl.setAttribute('opacity', 0); else r.ring.setAttribute('opacity', 0); }); active.clear(); },
+    pop() {}, set(id, v, s) { const r = recs[id]; if (!r) return; if (v != null) r.val.textContent = v; if (s != null && r.kind === 'room') r.sub.textContent = s; },
+    place: place,
+    walk(id, path, o) {
+      const r = recs[id]; if (!r) return null; const q = path[path.length - 1];
+      if (!hasG || (o && o.instant)) { place(id, q.x, q.z); return null; }
+      const tl = gsap.timeline(); let prev = {x: r.pos.x, z: r.pos.z}, L = 0;
+      path.forEach(p => { L += Math.hypot(p.x - prev.x, p.z - prev.z); prev = p; });
+      const total = (o && o.dur) || Math.max(0.4, Math.min(3, L / 3)); prev = {x: r.pos.x, z: r.pos.z};
+      path.forEach(p => { const seg = Math.hypot(p.x - prev.x, p.z - prev.z); tl.to(r.pos, {x: p.x, z: p.z, duration: L ? total * seg / L : 0.1, ease: 'none', onUpdate: () => { r.x = r.pos.x; r.z = r.pos.z; r.g.setAttribute('transform', 'translate(' + X(r.pos.x) + ',' + Z(r.pos.z) + ')'); }}); prev = p; });
+      return tl;
+    },
+    fly(path, text, c, o) {
+      if (o && o.instant) return null;
+      const g = el('g', {}, pk); const q0 = path[0];
+      el('circle', {r: 4, fill: c, stroke: '#fff', 'stroke-width': 1.2}, g);
+      const t = el('text', {y: -7, 'font-size': 5.6, 'font-weight': 700, fill: c, 'text-anchor': 'middle', stroke: '#fff', 'stroke-width': 1.6, 'paint-order': 'stroke'}, g); t.textContent = text;
+      const pos = {x: q0.x, z: q0.z}; const put = () => g.setAttribute('transform', 'translate(' + X(pos.x) + ',' + Z(pos.z) + ')'); put();
+      if (!hasG) { const q = path[path.length - 1]; pos.x = q.x; pos.z = q.z; put(); setTimeout(() => g.remove(), 1500); return null; }
+      const tl = gsap.timeline({onComplete: () => g.remove()}); let prev = q0, L = 0;
+      path.forEach(p => { L += Math.hypot(p.x - prev.x, p.z - prev.z); prev = p; }); prev = q0;
+      const total = (o && o.dur) || Math.max(0.5, Math.min(2.4, L / 6));
+      path.slice(1).forEach(p => { const seg = Math.hypot(p.x - prev.x, p.z - prev.z); tl.to(pos, {x: p.x, z: p.z, duration: L ? total * seg / L : 0.1, ease: 'none', onUpdate: put}); prev = p; });
+      return tl;
+    },
+    pos: id => ({x: recs[id].x, z: recs[id].z}),
+    focusOn() {}, setView() {}, zoom() {}, onPick: fn => { pickCb.fn = fn; }, clearPackets: () => { while (pk.firstChild) pk.firstChild.remove(); }, intro() {}, lab: null
+  };
+  return G;
+}
+// FLOOR END
+
+const $ = s => document.querySelector(s), $$ = s => Array.from(document.querySelectorAll(s));
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const C = {violet: '#6A4FC8', teal: '#0E7C86', green: '#1F8A4C', amber: '#C27A08', coral: '#D4453F', slate: '#5B6B82'};
+
+// DATA START
+const PEOPLE = [
+  {id: 'mgr', x: 6.6, z: -2.4, role: 'MANAGER', color: C.violet, nm: 'You', who: 'You, the nurse manager. You hear about the dose on Monday morning, from the night RN\'s report first.'},
+  {id: 'daniel', x: RX(0) + 0.3, z: -2.4, role: 'DAY RN', color: C.teal, nm: 'Daniel C.', who: 'Daniel Cordeiro, day RN, 2.3 years on 4 West, evaluation 3.9. On his second overtime shift of the week, with seven patients after the 3 p.m. admission.'},
+  {id: 'camila', x: 3.0, z: -2.4, role: 'NIGHT RN', color: C.teal, nm: 'Camila F.', who: 'Camila Figueiredo, night RN, 2.6 years on the unit. Found the unscanned 2 p.m. dose at 7:05 p.m. during bedside handoff.'},
+  {id: 'marcus', x: 8.0, z: -2.0, role: 'CHARGE RN', color: C.teal, nm: 'Marcus R.', who: 'Marcus Reid, day charge nurse. Ran the rapid response in 414 at 2:08 p.m. and assigned the 3 p.m. admission to Daniel.'},
+  {id: 'dau', x: RX(0) - 0.6, z: -2.0, role: 'FAMILY', color: C.amber, nm: 'Daughter, 409', who: 'The daughter of the patient in room 409. She was in the room most of the afternoon and walked past the station at 2:50 p.m.'},
+  {id: 'thiago', x: 9.0, z: 1.4, role: 'CNA · NIGHT', color: C.green, nm: 'Thiago A.', who: 'Thiago Albuquerque, part-time night CNA since November 2025. The "always late" case in part 3.'}
+];
+const ROOMS_INFO = {'409': 'Room 409: the 2 p.m. IV antibiotic dose was delivered to the drawer at 1:50 p.m. and never scanned. Found at 7:05 p.m.', '414': 'Room 414: rapid response at 2:08 p.m.; Daniel was in the room with the team until 2:50 p.m.', '405': 'Room 405: admission from the emergency department at 3:00 p.m., assigned to Daniel (his seventh patient).', 'station': 'Nurse station: the rapid response debrief at 2:50 p.m., which the daughter saw as "nurses laughing".', 'med': 'Med room.', 'break': 'Break room.', 'supply': 'Supply room.'};
+const BIASES = {
+  fae: {nm: 'Fundamental attribution error', def: 'Explaining another person\'s behavior by their character ("careless") while underweighting the situation they were in (seven patients, a rapid response, an overtime shift).', here: 'Camila: "Daniel is careless."'},
+  self: {nm: 'Self-serving bias', def: 'Explaining our own successes by our qualities and our own failures by the situation. The situation is often part of the truth, which is what makes this bias hard to see from inside.', here: 'Daniel: "Pharmacy was late and the scanner was down; anyone would have missed it."'},
+  halo: {nm: 'Halo effect', def: 'Letting one positive impression (a good evaluation, a helpful colleague) color the judgment of a specific event. The reverse, one negative trait coloring everything, is the horn effect.', here: 'Marcus: "Daniel is one of the good ones; this must be a system issue."'},
+  stereo: {nm: 'Stereotyping', def: 'Judging a person or an event by the group we place them in ("nurses these days") instead of by what happened. One vivid moment becomes the story of the whole group.', here: 'The daughter: "The nurses on this floor are on their phones and do not care."'},
+  confirm: {nm: 'Confirmation bias', def: 'Noticing and weighting the evidence that fits the conclusion we already hold, and skipping the rest. The first report heard tends to become that conclusion.', here: 'The manager on Monday: "Counsel Daniel on medication timeliness," written before reading the record.'}
+};
+const CLOCK = ['the record', '7:05 p.m.', '2:08 p.m.', '2:50 p.m.', '2:50 p.m.', 'Monday 8 a.m.', 'the record'];
+// The seven steps. saw and assumed feed the live box; bias lights the pill; moves and hi work on the floor (F = facts, teal; assumptions, coral).
+const STEPS = [
+  {tag: 'The record', eye: 'record', t: 'Room 409. The 2 p.m. dose of the IV antibiotic was not given. Night RN Camila Figueiredo found it unscanned at 7:05 p.m. during bedside handoff and filed the report. Day RN: Daniel Cordeiro. That is everything the incident report says. Everything else is what people saw and what they assumed.', saw: 'The incident report: one missed dose, room 409, found at 7:05 p.m.', assumed: 'Nothing yet. The record has no opinion.', bias: null, hi: [['409', 'coral']], moves: [['camila', '409'], ['daniel', '409']], fly: [], focus: '409'},
+  {tag: 'Night RN · Camila', eye: 'camila', t: 'Camila opens the MAR at 7:05 p.m. and sees the 2 p.m. dose unscanned, five hours late. She was not here this afternoon. What she knows about Daniel is one earlier evening when his handoff ran long. "Daniel is careless; he always leaves things for nights." Fundamental attribution error: the behavior is explained by the person, and the afternoon he had is invisible to her.', saw: 'The MAR at 7:05 p.m.: one dose unscanned, five hours late. One earlier long handoff.', assumed: '"Daniel is careless; he always leaves things for nights."', bias: 'fae', hi: [['409', 'coral']], moves: [['camila', '409']], fly: [['409', 'station', 'unscanned, 5 h late', 'coral']], focus: '409'},
+  {tag: 'Day RN · Daniel', eye: 'daniel', t: '2:08 p.m. A rapid response is called in 414; Daniel is in the room with the team until 2:50. At 3 p.m. the admission to 405 makes seven patients. On Monday he tells you: "Pharmacy was late and the scanner in 409 was down; anyone would have missed it." Self-serving bias: his afternoon was real, and so is the part he leaves out. Pharmacy delivered at 1:50, on time; the scanner was down from 3:30 to 4:10, after the dose was already late.', saw: 'A 40-minute rapid response in 414, a seventh patient at 3 p.m., a scanner outage in 409 at 3:30.', assumed: '"Pharmacy was late and the scanner was down; anyone would have missed it."', bias: 'self', hi: [['414', 'coral'], ['405', 'amber'], ['409', 'teal']], moves: [['daniel', '414'], ['marcus', '414']], fly: [['414', 'station', 'rapid response', 'teal']], focus: '414'},
+  {tag: 'Charge RN · Marcus', eye: 'marcus', t: 'Marcus ran the rapid response and assigned the 3 p.m. admission to Daniel because Daniel had picked up the overtime shift to help. On Monday he says: "Daniel is one of the good ones, evaluation 3.9; this must be a pharmacy or system issue." Halo effect: a true general impression (a reliable colleague) stands in for looking at this specific afternoon, including his own assignment decision.', saw: 'Daniel\'s 3.9 evaluation, his willingness to pick up shifts, a smooth rapid response.', assumed: '"Daniel is one of the good ones; this must be a system issue."', bias: 'halo', hi: [['station', 'violet'], ['405', 'amber']], moves: [['marcus', 'station'], ['daniel', '405']], fly: [['station', '405', 'admission to Daniel', 'amber']], focus: 'station'},
+  {tag: 'The daughter · 409', eye: 'dau', t: 'The daughter sat with her mother most of the afternoon. At 2:50 she walked to the station to ask about the antibiotic and saw four nurses laughing: the rapid response debrief, relief after a close call. "The nurses on this floor are on their phones and do not care." Stereotyping: one vivid moment becomes the story of a whole group, and the group ("nurses today") replaces the people.', saw: 'An antibiotic that did not arrive at 2 p.m., and four nurses laughing at the station at 2:50.', assumed: '"The nurses on this floor are on their phones and do not care."', bias: 'stereo', hi: [['station', 'coral'], ['409', 'amber']], moves: [['dau', 'station'], ['marcus', 'station'], ['daniel', 'station'], ['camila', '409']], fly: [['409', 'station', 'they do not care', 'coral']], focus: 'station'},
+  {tag: 'The manager · Monday', eye: 'mgr', t: 'Monday, 8 a.m. You read Camila\'s report first, then the daughter\'s complaint, and write "counsel Daniel on medication timeliness" in your notebook before opening the schedule or the assignment sheet. Confirmation bias, with the first report as the anchor: two stories that agree feel like evidence, and the record has not been read yet.', saw: 'Two reports that agree: the night RN\'s and the daughter\'s.', assumed: '"Counsel Daniel on medication timeliness."', bias: 'confirm', hi: [['station', 'violet'], ['409', 'coral']], moves: [['mgr', 'station'], ['daniel', '409'], ['camila', '409'], ['dau', '409'], ['marcus', '405']], fly: [['station', '409', 'counsel Daniel', 'coral']], focus: 'station'},
+  {tag: 'The facts', eye: 'record', t: 'The record, read in order: pharmacy delivered at 1:50; rapid response in 414 from 2:08 to 2:50; the seventh patient at 3:00; the scanner outage at 3:30; Daniel on his second overtime shift of the week (schedule.csv); no "dose overdue" alert reaches anyone unless that patient\'s MAR is open; the 7 p.m. bedside handoff caught it. One nurse with that afternoon missed one dose, and 11 of the 18 medication errors on 4 West involved an RN on an overtime shift. The conclusion changes from a person to a system. Rebuild it yourself in part 2.', saw: 'Seven time-stamped facts from five records.', assumed: 'Nothing: the facts replace the assumptions.', bias: null, hi: [['409', 'teal'], ['414', 'teal'], ['405', 'teal'], ['station', 'teal']], moves: [['mgr', 'station'], ['daniel', '409'], ['camila', 'station'], ['marcus', 'station'], ['dau', '409']], fly: [['409', 'station', 'the facts', 'teal']], focus: 'overview'}
+];
+const EYES = [['camila', 'Camila', 'night RN', 1], ['daniel', 'Daniel', 'day RN', 2], ['marcus', 'Marcus', 'charge RN', 3], ['dau', 'Daughter', 'room 409', 4]];
+// Part 2: twelve statements. fact true = it is in a record.
+const CARDS = [
+  {tm: '1:50 p.m.', t: 'Pharmacy delivered the 2 p.m. dose to the drawer in 409 (pharmacy log).', fact: true},
+  {tm: '', t: 'Pharmacy was late with the dose.', fact: false},
+  {tm: '2:08 p.m.', t: 'A rapid response was called in 414; Daniel was in the room until 2:50 (rapid response record).', fact: true},
+  {tm: '', t: 'Daniel is careless and always leaves things for the night shift.', fact: false},
+  {tm: '3:00 p.m.', t: 'The admission to 405 was assigned to Daniel, his seventh patient (assignment sheet).', fact: true},
+  {tm: '', t: 'Daniel is one of the good ones, so this must be a system issue.', fact: false},
+  {tm: '3:30 p.m.', t: 'The scanner in 409 was out of service until 4:10 (equipment ticket).', fact: true},
+  {tm: '', t: 'The nurses at the station were on their phones and did not care.', fact: false},
+  {tm: 'schedule', t: 'Daniel was on his second overtime shift of the week (schedule.csv).', fact: true},
+  {tm: '', t: 'Daniel does this often.', fact: false},
+  {tm: 'MAR', t: 'No "dose overdue" alert reaches anyone unless that patient\'s MAR is open (pharmacy informatics).', fact: true},
+  {tm: '7:05 p.m.', t: 'Camila found the dose unscanned during bedside handoff (incident report).', fact: true}
+];
+// Part 3: Kelley's covariation model. high consistency + low distinctiveness + low consensus = internal; high + high + high = external; low consistency = a one-time situation.
+const CUES = [
+  {k: 'consistency', nm: 'Consistency', q: 'Is Thiago late on most of his shifts, or only this month?', hi: 'Late most shifts, for months', lo: 'Only this month'},
+  {k: 'distinctiveness', nm: 'Distinctiveness', q: 'Is he late only to the 7 p.m. start, or also to meetings, trainings, and his day-shift pickups?', hi: 'Only to the 7 p.m. start', lo: 'Late to everything'},
+  {k: 'consensus', nm: 'Consensus', q: 'Are the other night CNAs who start at 7 p.m. late too?', hi: 'Others are late too', lo: 'Only Thiago'}
+];
+function verdictFor(c) {
+  if (!c.consistency) return {k: 'external', t: 'A one-time situation', col: C.amber, p: 'Low consistency: this is new. Something changed this month (a bus route, a childcare pickup, a second job). The question to ask is "what happened this month?", not "why are you like this?".', ask: 'What changed this month?'};
+  if (c.distinctiveness && c.consensus) return {k: 'external', t: 'The situation, not the person', col: C.green, p: 'High consistency, high distinctiveness, high consensus: he is punctual everywhere else, and the other night CNAs are late too. The 7 p.m. start itself is the problem: the day-shift parking exit, the bus from Doral, the 6:45 handoff that keeps the day CNAs in the rooms. Look at the shift start, not at Thiago.', ask: 'What happens on this unit at 6:50 p.m.?'};
+  if (!c.distinctiveness && !c.consensus) return {k: 'internal', t: 'Thiago, most likely', col: C.coral, p: 'High consistency, low distinctiveness, low consensus: he is late to everything and the others are not. The covariation model points inside the person. A conversation about the expectation, the reason, and the plan, with the data in hand, is fair and overdue.', ask: 'What is getting in the way of 7 p.m. for you?'};
+  return {k: 'mixed', t: 'Not enough to conclude', col: C.slate, p: (c.distinctiveness ? 'He is late only to the 7 p.m. start but the others are on time' : 'He is late to everything, but the others are late to 7 p.m. too') + ': the cues disagree, and a manager who concludes now is guessing. Gather the missing cue (' + (c.distinctiveness ? 'look at what the 7 p.m. start asks of a part-timer' : 'check the other CNAs\' clock-ins') + ') before the conversation.', ask: c.distinctiveness ? 'What is different about his 7 p.m. shifts?' : 'Why are the other CNAs late too?'};
+}
+const QUIZ = [
+  {q: '"Camila took three days to file the report; night nurses are never in a hurry with paperwork."', a: 'stereo', why: 'A whole group ("night nurses") replaces the person and the situation: stereotyping.'},
+  {q: '"I missed the budget deadline because the finance system was down; Marcus missed his because he is disorganized."', a: 'self', why: 'Situation for my failure, character for his: the self-serving bias and the fundamental attribution error side by side.'},
+  {q: '"Daniel has 29.5 hours of overtime this month and 11 of 18 errors involved overtime shifts; before I conclude anything, I will read the assignment sheet and the schedule."', a: 'none', why: 'Data first, conclusion later, situation considered: no bias at work here.'},
+  {q: '"Gladys has been here 10 years and everyone loves her, so her late documentation cannot be a real problem."', a: 'halo', why: 'A positive general impression stands in for looking at the specific issue: the halo effect.'},
+  {q: '"I said last month the night shift had a handoff problem, and here is another handoff miss. Case closed."', a: 'confirm', why: 'One new case that fits the existing conclusion is treated as proof: confirmation bias (13 of 15 handoff misses happen at the shift changes on both shifts, which the manager did not check).'},
+  {q: '"Priscila froze during the rapid response because she is just not a strong nurse."', a: 'fae', why: 'A second-month graduate\'s behavior in her first emergency is explained by character, not by the situation: the fundamental attribution error.'}
+];
+const QOPTS = [['fae', 'Fundamental attribution error'], ['self', 'Self-serving bias'], ['halo', 'Halo effect'], ['stereo', 'Stereotyping'], ['confirm', 'Confirmation bias'], ['none', 'No bias']];
+// DATA END
+window.__mhs = {STEPS, CARDS, CUES, verdictFor, QUIZ};
+
+let speed = 1, follow = true, qDone = {}, cardState = {}, cue = {consistency: true, distinctiveness: false, consensus: false};
+const stage = $('#stage');
+let G = null;
+try { G = Floor(stage, PEOPLE, {views: {west: {pos: [-8, 9, 4], tgt: [-9.5, 0, -2.5], want: 1.5}}}); } catch (e) { console.error(e); G = null; }
+if (!G) G = Floor(stage, PEOPLE);
+if (G.kind === '2d') { $('#nogl').hidden = false; $$('.views button[data-view]').forEach(b => b.hidden = true); }
+if (stage.clientWidth < 700) { follow = false; $('#follow').classList.remove('on'); $('#follow').setAttribute('aria-pressed', 'false'); }
+G.set('409', '2 p.m. dose', 'missed'); G.set('414', 'rapid response', '2:08 p.m.'); G.set('405', 'admission', '3:00 p.m.'); G.set('station', 'debrief', '2:50 p.m.');
+G.onPick(id => { const p = PEOPLE.find(q => q.id === id); const t = p ? p.who : ROOMS_INFO[id]; if (t) $('#info').innerHTML = '<b>' + esc(p ? p.nm : (/^\d/.test(id) ? 'Room ' + id : id)) + '.</b> ' + esc(t); });
+if (G.intro) G.intro();
+const point = t => { const r = FLOOR.rooms.find(q => q.id === t); return r ? atRoom(t) : t; };
+function resetScene() { G.clear(); G.clearPackets(); PEOPLE.forEach(p => G.place(p.id, p.x, p.z)); }
+function applyStep(k, animate) {
+  resetScene();
+  const used = {};
+  for (let j = 0; j <= k; j++) {
+    const s = STEPS[j], last = j === k && animate;
+    if (j === k) Object.keys(used).forEach(x => delete used[x]);
+    (s.moves || []).forEach(([id, target]) => {
+      const n = used[target] || 0; used[target] = n + 1;
+      const to = spreadPoint(target, n);
+      const path = pathTo(G.pos(id), target).slice(0, -1).concat([to]);
+      const tl = G.walk(id, path, {instant: !last, dur: 1.3}); if (tl && hasGSAP) tl.timeScale(speed);
+    });
+    if (j === k) {
+      G.clear(); (s.hi || []).forEach(([id, c]) => G.hi(id, C[c] || c));
+      if (last) (s.fly || []).forEach(([a, b, text, c]) => { const tl = G.fly(pathTo(point(a), b), text, C[c] || c, {dur: 1.6}); if (tl && hasGSAP) tl.timeScale(speed); });
+    }
+  }
+  const foc = STEPS[k].focus;
+  if (follow && G.kind === '3d') { if (foc === 'overview') G.setView('overview'); else { const r = FLOOR.rooms.find(q => q.id === foc); if (r) G.focusOn(r.x, r.z, 8.5); } }
+  $('#hudClock').textContent = CLOCK[k];
+  $$('#phases li').forEach((li, i) => li.classList.toggle('on', i === k));
+  $('#sawS').textContent = STEPS[k].saw; $('#sawA').textContent = STEPS[k].assumed;
+  $$('#biasList .pill').forEach(p => p.classList.toggle('on', p.dataset.b === STEPS[k].bias));
+  const b = STEPS[k].bias ? BIASES[STEPS[k].bias] : null;
+  $('#bdef').innerHTML = b ? '<b>' + esc(b.nm) + '.</b> ' + esc(b.def) : (k === STEPS.length - 1 ? '<b>No bias.</b> The record has no opinion, which is why a manager reads it first.' : '<b>No bias yet.</b> The record is only what was written down.');
+  $$('#eyesBtns .btn').forEach(x => x.setAttribute('aria-pressed', x.dataset.step == k));
+}
+function makePlayer(root) {
+  let i = -1, timer = null, hist = [];
+  const tag = $('#ptag'), cap = $('#narration'), cnt = root.querySelector('[data-a=count]'), play = root.querySelector('[data-a=play]'), back = root.querySelector('[data-a=back]');
+  function go(k, push) {
+    const n = Math.max(0, Math.min(STEPS.length - 1, k));
+    if (push !== false && i >= 0 && n !== i) hist.push(i);
+    i = n; const s = STEPS[i];
+    tag.style.setProperty('--pc', s.bias ? C.coral : i === STEPS.length - 1 ? C.teal : C.slate); tag.textContent = s.tag;
+    cap.textContent = s.t; cnt.textContent = 'Step ' + (i + 1) + ' of ' + STEPS.length; back.disabled = !hist.length && i <= 0;
+    applyStep(i, true);
+  }
+  function stop() { if (timer) { hasGSAP ? timer.kill() : clearTimeout(timer); timer = null; } play.textContent = 'Run'; }
+  function tick() { if (i >= STEPS.length - 1) { stop(); return; } go(i + 1); if (i >= STEPS.length - 1) { timer = null; stop(); return; } timer = hasGSAP ? gsap.delayedCall(6 / speed, tick) : setTimeout(tick, 6000 / speed); }
+  play.onclick = () => { if (timer) { stop(); return; } if (i >= STEPS.length - 1) { i = -1; hist = []; } play.textContent = 'Pause'; tick(); };
+  root.querySelector('[data-a=next]').onclick = () => { stop(); go(i + 1); };
+  back.onclick = () => { stop(); if (hist.length) go(hist.pop(), false); else go(i - 1, false); };
+  root.querySelector('[data-a=reset]').onclick = () => { api.reset(); applyStep(0, false); if (G.kind === '3d') G.setView('overview'); };
+  const api = {go, stop, get index() { return i; }, back: () => back.click(), toggle: () => play.click(), step: () => { stop(); go(i + 1); },
+    reset() { stop(); i = -1; hist = []; tag.style.setProperty('--pc', 'var(--muted)'); tag.textContent = 'Ready'; cap.textContent = 'Press Run to replay the incident, or Step to go one viewpoint at a time. The first step is the incident report itself.'; cnt.textContent = 'Step 0 of ' + STEPS.length; back.disabled = true; }};
+  api.reset(); return api;
+}
+const player = makePlayer($('#player'));
+$('#phases').innerHTML = STEPS.map((s, i) => '<li style="--c:' + (s.bias ? C.coral : C.teal) + '" title="' + esc(s.tag) + '">' + (i === 0 ? 'Record' : i === 6 ? 'Facts' : i === 5 ? 'Manager' : EYES[i - 1][1]) + '</li>').join('');
+$('#eyesBtns').innerHTML = EYES.map(e => '<button class="btn" type="button" data-step="' + e[3] + '" aria-pressed="false"><span>' + e[1] + '</span><small>' + e[2] + '</small></button>').join('');
+$$('#eyesBtns .btn').forEach(b => b.onclick = () => { player.stop(); player.go(+b.dataset.step); });
+$('#biasList').innerHTML = Object.keys(BIASES).map(k => '<span class="pill coral" data-b="' + k + '">' + esc(BIASES[k].nm) + '</span>').join('');
+$('#biasTable').innerHTML = Object.keys(BIASES).map(k => '<tr><td>' + esc(BIASES[k].nm) + '</td><td>' + esc(BIASES[k].def) + '</td><td>' + esc(BIASES[k].here) + '</td></tr>').join('');
+// part 2
+function renderCards() {
+  const box = $('#cards');
+  if (!box.children.length) box.innerHTML = CARDS.map((c, i) => '<div class="cardq" data-i="' + i + '"><span>' + (c.tm ? '<span class="tm">' + esc(c.tm) + '</span>' : '') + esc(c.t) + '</span><span class="ch"><button class="btn" type="button" data-v="fact">Fact</button><button class="btn" type="button" data-v="assume">Assumption</button></span></div>').join('');
+  CARDS.forEach((c, i) => {
+    const el = box.querySelector('[data-i="' + i + '"]'), st = cardState[i];
+    el.classList.toggle('fact', st === 'fact'); el.classList.toggle('assume', st === 'assume');
+    el.querySelectorAll('.btn').forEach(b => { b.setAttribute('aria-pressed', st === b.dataset.v); b.onclick = () => { cardState[i] = b.dataset.v; renderCards(); }; });
+  });
+  const done = Object.keys(cardState).length, right = CARDS.filter((c, i) => cardState[i] === (c.fact ? 'fact' : 'assume')).length, wrong = done - right;
+  const factsKept = CARDS.filter((c, i) => cardState[i] === 'fact');
+  $('#tlProg').textContent = done + ' of 12 sorted' + (done ? ', ' + right + ' placed as the record has them' + (wrong ? ', ' + wrong + ' to look at again (an assumption kept as a fact, or a fact thrown out)' : '') : '') + '.';
+  const con = $('#conclusion');
+  if (done < 12) con.innerHTML = '<h3>The manager\'s conclusion (so far)</h3><p>' + (factsKept.length ? 'Built on ' + factsKept.length + ' statement' + (factsKept.length > 1 ? 's' : '') + ' kept as facts. ' : '') + 'Sort all twelve to see the conclusion rebuilt from the record.</p>';
+  else if (right === 12) con.innerHTML = '<h3>The manager\'s conclusion, facts only</h3><p>A nurse with seven patients, a 40-minute rapid response, a fresh admission, and an overtime shift missed one dose that no alert flagged; the bedside handoff caught it five hours later. <b>Consistency:</b> first missed dose for Daniel in six months of incident reports. <b>Distinctiveness:</b> nothing else was missed that afternoon. <b>Consensus:</b> 11 of the 18 medication errors on 4 West involved an RN on an overtime shift. The cause sits in the system: the assignment load during a rapid response, the overtime pattern, and a MAR that only warns when it is open.</p><p>The action changes too: a "doses overdue" check at the 3 p.m. huddle, the overtime rule from Week 1, and a conversation with Daniel that starts with "walk me through the afternoon", not with "counsel".</p>';
+  else con.innerHTML = '<h3>The conclusion drifted</h3><p>' + (CARDS.some((c, i) => !c.fact && cardState[i] === 'fact') ? 'At least one assumption is still counted as a fact ("' + esc(CARDS.find((c, i) => !c.fact && cardState[i] === 'fact').t) + '"), so the conclusion keeps a person-shaped cause. ' : '') + (CARDS.some((c, i) => c.fact && cardState[i] === 'assume') ? 'At least one record was thrown out ("' + esc(CARDS.find((c, i) => c.fact && cardState[i] === 'assume').t) + '"), so the system cause is missing a piece. ' : '') + 'Fix the cards marked in the wrong color and the conclusion rebuilds.</p>';
+}
+renderCards();
+// part 3
+function renderCues() {
+  $('#cues').innerHTML = CUES.map(c => '<div class="cue"><span class="q"><b>' + c.nm + '</b>' + esc(c.q) + '</span><span class="ch"><button class="btn" type="button" data-k="' + c.k + '" data-v="1" aria-pressed="' + cue[c.k] + '">' + esc(c.hi) + '</button><button class="btn" type="button" data-k="' + c.k + '" data-v="0" aria-pressed="' + !cue[c.k] + '">' + esc(c.lo) + '</button></span></div>').join('');
+  $$('#cues .btn').forEach(b => b.onclick = () => { cue[b.dataset.k] = b.dataset.v === '1'; renderCues(); });
+  const v = verdictFor(cue);
+  $('#verdict').style.setProperty('--vc', v.col);
+  $('#verdict').innerHTML = '<div class="t">' + esc(v.t) + ' · attribution: ' + v.k + '</div><p>' + esc(v.p) + '</p><p><b>The question to ask first:</b> "' + esc(v.ask) + '"</p>';
+  if (G.recs.station) { G.set('station', cue.consistency ? 'late 3 of 3' : 'late 3 this month', 'Thiago, 7:12 p.m.'); }
+}
+renderCues();
+// part 4
+function renderQuiz() {
+  const box = $('#quiz'); box.innerHTML = '';
+  QUIZ.forEach((item, qi) => {
+    const d = document.createElement('div'); d.className = 'quiz-q'; d.innerHTML = '<p>' + (qi + 1) + '. ' + esc(item.q) + '</p>';
+    const o = document.createElement('div'); o.className = 'opts';
+    QOPTS.forEach(([k, nm]) => { const b = document.createElement('button'); b.className = 'btn'; b.type = 'button'; b.textContent = nm; if (qDone[qi] !== undefined) { b.disabled = true; if (k === item.a) b.classList.add('right'); else if (k === qDone[qi]) b.classList.add('wrong'); } b.onclick = () => { qDone[qi] = k; renderQuiz(); }; o.appendChild(b); });
+    d.appendChild(o);
+    if (qDone[qi] !== undefined) { const f = document.createElement('div'); f.className = 'feedback ' + (qDone[qi] === item.a ? 'ok' : 'bad'); f.style.marginTop = '8px'; f.textContent = (qDone[qi] === item.a ? 'Correct. ' : 'Not quite: the answer is ' + QOPTS.find(o => o[0] === item.a)[1] + '. ') + item.why; d.appendChild(f); }
+    box.appendChild(d);
+  });
+  const n = Object.keys(qDone).length, right = Object.entries(qDone).filter(([qi, k]) => QUIZ[qi].a === k).length;
+  $('#qbar').innerHTML = QUIZ.map((q, qi) => '<i class="' + (qDone[qi] === undefined ? '' : qDone[qi] === q.a ? 'ok' : 'bad') + '"></i>').join('');
+  $('#qscore').innerHTML = n ? '<span>Score</span><span class="big">' + right + ' / ' + QUIZ.length + '</span>' + (n === QUIZ.length ? '<button class="btn" id="qreset" type="button">Try again</button>' : '<span>' + n + ' of ' + QUIZ.length + ' answered</span>') : '';
+  const r = document.getElementById('qreset'); if (r) r.onclick = () => { qDone = {}; renderQuiz(); };
+}
+renderQuiz();
+$$('.views button[data-view]').forEach(b => b.addEventListener('click', () => { $$('.views button[data-view]').forEach(x => x.classList.toggle('on', x === b)); G.setView(b.dataset.view); }));
+$('#follow').addEventListener('click', () => { follow = !follow; $('#follow').classList.toggle('on', follow); $('#follow').setAttribute('aria-pressed', follow); });
+const sp = $('#speed'); sp.addEventListener('input', () => { speed = parseFloat(sp.value); $('#speedOut').textContent = speed + '×'; });
+document.addEventListener('keydown', e => { const t = e.target, tg = t && t.tagName; if (tg === 'INPUT' || tg === 'SELECT' || tg === 'TEXTAREA' || tg === 'BUTTON' || tg === 'SUMMARY') return; if (e.key === ' ') { e.preventDefault(); player.step(); } else if (e.key === 'r' || e.key === 'R') player.toggle(); else if (e.key === 'b' || e.key === 'B') player.back(); });
+applyStep(0, false);
+if (!hasGSAP) $('#narration').textContent += ' (Animations are off because the animation library did not load; every step still works.)';
+window.__page = {player, applyStep, get G() { return G; },
+  autoSort: () => { CARDS.forEach((c, i) => { cardState[i] = c.fact ? 'fact' : 'assume'; }); renderCards(); return $('#tlProg').textContent; },
+  cueTest: () => { const out = {}; [[1, 0, 0], [1, 1, 1], [0, 0, 0], [1, 1, 0], [1, 0, 1]].forEach(v => { cue = {consistency: !!v[0], distinctiveness: !!v[1], consensus: !!v[2]}; renderCues(); out[v.join('')] = verdictFor(cue).k; }); return out; },
+  autoQuiz: () => { QUIZ.forEach((q, i) => { qDone[i] = q.a; }); renderQuiz(); return $('#qscore .big').textContent; }};
+})();
+</script>
+</body>
+</html>

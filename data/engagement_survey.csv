@@ -1,0 +1,42 @@
+response_id,role,shift,tenure_band,generation,q01_recognized,q02_manager_support,q03_workload_manageable,q04_teamwork,q05_voice,q06_growth,q07_safe_to_speak,q08_handoffs,q09_intent_to_stay,q10_burnout,engagement_index
+R001,RN,Day,4 to 9 years,Generation X,4,3,3,3,3,3,4,4,4,3,3.4
+R002,CNA,Day,10 or more years,Millennial,4,4,4,3,1,2,4,3,5,3,3.3
+R003,RN,Day,4 to 9 years,Generation X,3,4,3,5,4,4,4,4,4,4,3.7
+R004,RN,Day,10 or more years,Generation X,4,4,4,4,4,4,4,4,5,4,3.9
+R005,Unit secretary,Day,10 or more years,Millennial,3,4,4,3,4,3,4,3,4,2,3.6
+R006,RN,Night,Under 1 year,Millennial,3,3,2,5,3,4,3,3,3,3,3.2
+R007,RN,Day,10 or more years,Millennial,4,4,3,3,3,3,3,3,5,4,3.3
+R008,RN,Night,1 to 3 years,Generation Z,2,3,3,4,4,3,3,3,3,4,3.0
+R009,RN,Night,4 to 9 years,Millennial,4,2,3,5,4,3,2,3,4,3,3.3
+R010,CNA,Night,4 to 9 years,Millennial,3,2,2,4,2,2,3,2,3,2,2.7
+R011,RN,Day,1 to 3 years,Millennial,2,4,2,4,2,3,3,3,3,4,2.8
+R012,CNA,Night,Under 1 year,Millennial,3,3,3,4,2,3,3,3,2,2,3.0
+R013,CNA,Night,1 to 3 years,Generation Z,1,3,2,4,2,2,2,3,3,3,2.5
+R014,RN,Day,10 or more years,Millennial,3,3,3,4,2,4,3,2,4,5,2.9
+R015,LPN,Day,4 to 9 years,Generation X,4,4,3,4,3,3,4,4,4,3,3.6
+R016,LPN,Day,10 or more years,Generation X,4,4,4,5,4,3,4,3,4,3,3.8
+R017,RN,Day,1 to 3 years,Baby Boomer,4,3,3,3,4,3,4,3,3,4,3.2
+R018,CNA,Day,4 to 9 years,Generation X,4,4,3,5,2,2,4,4,4,3,3.5
+R019,RN,Night,Under 1 year,Generation Z,2,3,3,5,4,3,2,2,1,3,2.8
+R020,CNA,Day,4 to 9 years,Generation X,4,4,3,3,2,2,4,3,4,4,3.1
+R021,RN,Night,Under 1 year,Generation Z,4,3,4,5,2,4,4,2,3,3,3.4
+R022,RN,Night,4 to 9 years,Generation X,2,2,2,4,4,3,3,3,2,4,2.7
+R023,RN,Night,1 to 3 years,Generation Z,1,3,2,3,4,2,1,3,3,4,2.4
+R024,RN,Day,Under 1 year,Baby Boomer,4,3,3,4,3,3,3,3,4,4,3.2
+R025,RN,Day,1 to 3 years,Generation X,4,3,3,4,4,3,5,3,4,4,3.5
+R026,RN,Day,4 to 9 years,Millennial,4,4,4,5,4,5,4,2,4,4,3.8
+R027,CNA,Day,4 to 9 years,Baby Boomer,3,3,3,5,3,2,3,3,3,4,3.0
+R028,Unit secretary,Day,10 or more years,Millennial,4,4,3,3,3,2,4,4,4,2,3.5
+R029,RN,Day,4 to 9 years,Baby Boomer,4,5,4,3,3,4,3,4,5,3,3.8
+R030,RN,Day,Under 1 year,Millennial,4,4,3,4,4,3,5,3,4,4,3.6
+R031,CNA,Day,4 to 9 years,Generation X,3,3,2,4,2,2,4,3,3,3,2.9
+R032,RN,Night,1 to 3 years,Millennial,3,3,3,3,4,3,3,3,3,3,3.1
+R033,CNA,Day,10 or more years,Millennial,3,4,4,4,2,2,4,4,4,3,3.4
+R034,RN,Day,1 to 3 years,Generation Z,4,5,3,5,4,3,4,4,5,4,3.9
+R035,CNA,Night,1 to 3 years,Generation Z,2,2,3,4,3,1,2,2,2,3,2.4
+R036,RN,Night,1 to 3 years,Millennial,2,3,3,3,3,4,3,2,2,3,2.8
+R037,RN,Night,Under 1 year,Millennial,3,2,4,3,3,3,3,3,2,2,3.0
+R038,RN,Night,1 to 3 years,Generation Z,3,3,2,3,3,4,2,3,3,4,2.8
+R039,RN,Day,1 to 3 years,Millennial,4,4,3,4,3,3,4,3,5,4,3.5
+R040,RN,Day,4 to 9 years,Millennial,4,3,4,4,4,3,4,4,3,4,3.5
+R041,LPN,Night,1 to 3 years,Generation Z,4,2,4,5,4,4,3,2,3,3,3.4

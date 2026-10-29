@@ -1,0 +1,598 @@
+date,day_of_week,shift,staff_id,name,role,hours,overtime_hours,source
+2026-09-03,Thursday,Day,S001,Dalia Fernández,Charge RN,12.0,0.0,Regular
+2026-09-03,Thursday,Day,AGENCY,Agency RN (contract),RN,12.0,0.0,Agency
+2026-09-03,Thursday,Day,S015,Daniel Cordeiro,RN,12.0,0.0,Regular
+2026-09-03,Thursday,Day,S014,Farah Désir,RN,13.0,1.0,Regular
+2026-09-03,Thursday,Day,S011,Gregory Hale,RN,12,12.0,Overtime
+2026-09-03,Thursday,Day,S016,Kristen Albright,RN,13.0,1.0,Regular
+2026-09-03,Thursday,Day,S008,Michelle Dorsey,RN,13.5,1.5,Regular
+2026-09-03,Thursday,Day,S005,Nadège Toussaint,RN,12.0,0.0,Regular
+2026-09-03,Thursday,Day,S033,Marie-Ange Célestin,LPN,12.0,0.0,Regular
+2026-09-03,Thursday,Day,AGENCY,Agency CNA (contract),CNA,12.0,0.0,Agency
+2026-09-03,Thursday,Day,S038,Mayra Lezcano,CNA,12,12.0,Overtime
+2026-09-03,Thursday,Day,S036,Rose-Marie Augustin,CNA,12.0,0.0,Regular
+2026-09-03,Thursday,Day,S037,Terrell Bishop,CNA,12.0,0.0,Regular
+2026-09-03,Thursday,Day,S047,Barbara Keller,Unit secretary,12,12.0,Overtime
+2026-09-03,Thursday,Night,S019,Yesenia Castro,Charge RN,12.0,0.0,Regular
+2026-09-03,Thursday,Night,AGENCY,Agency RN (contract),RN,12.0,0.0,Agency
+2026-09-03,Thursday,Night,S027,Ashley Beaumont,RN,12.0,0.0,Regular
+2026-09-03,Thursday,Night,S023,Brandon Mackey,RN,12.0,0.0,Regular
+2026-09-03,Thursday,Night,S025,Jasmine Thermidor,RN,12.0,0.0,Regular
+2026-09-03,Thursday,Night,S030,Priscila Nascimento,RN,12.0,0.0,Regular
+2026-09-03,Thursday,Night,S022,Widline Pierre-Louis,RN,12.0,0.0,Regular
+2026-09-03,Thursday,Night,S042,Evens Dorcélus,CNA,12.0,0.0,Regular
+2026-09-03,Thursday,Night,S044,Shanice Brown,CNA,12.0,0.0,Regular
+2026-09-03,Thursday,Night,S045,Thiago Albuquerque,CNA,12.0,0.0,Regular
+2026-09-04,Friday,Day,S002,Marcus Reid,Charge RN,12.0,0.0,Regular
+2026-09-04,Friday,Day,S003,Carmen Alvarado,RN,13.0,1.0,Regular
+2026-09-04,Friday,Day,S010,Ivette Sanabria,RN,12.0,0.0,Regular
+2026-09-04,Friday,Day,S009,Jean-Claude Baptiste,RN,12.0,0.0,Regular
+2026-09-04,Friday,Day,S006,Roberto Villanueva,RN,12.0,0.0,Regular
+2026-09-04,Friday,Day,S013,Tamika Fergus,RN,13.0,1.0,Regular
+2026-09-04,Friday,Day,S033,Marie-Ange Célestin,LPN,12.0,0.0,Regular
+2026-09-04,Friday,Day,S040,Jerome Saintil,CNA,12.0,0.0,Regular
+2026-09-04,Friday,Day,S038,Mayra Lezcano,CNA,12.0,0.0,Regular
+2026-09-04,Friday,Day,S037,Terrell Bishop,CNA,12.0,0.0,Regular
+2026-09-04,Friday,Day,S048,Ricardo Peña,Unit secretary,12.0,0.0,Regular
+2026-09-04,Friday,Night,S020,Kwame Boateng,Charge RN,12.0,0.0,Regular
+2026-09-04,Friday,Night,S024,Camila Figueiredo,RN,13.0,1.0,Regular
+2026-09-04,Friday,Night,S011,Gregory Hale,RN,12,12.0,Overtime
+2026-09-04,Friday,Night,S025,Jasmine Thermidor,RN,12.0,0.0,Regular
+2026-09-04,Friday,Night,S030,Priscila Nascimento,RN,12.0,0.0,Regular
+2026-09-04,Friday,Night,S042,Evens Dorcélus,CNA,12,12.0,Overtime
+2026-09-04,Friday,Night,S044,Shanice Brown,CNA,12.0,0.0,Regular
+2026-09-05,Saturday,Day,S002,Marcus Reid,Charge RN,12.0,0.0,Regular
+2026-09-05,Saturday,Day,S009,Jean-Claude Baptiste,RN,12.0,0.0,Regular
+2026-09-05,Saturday,Day,S012,Lourdes Benítez,RN,13.0,1.0,Regular
+2026-09-05,Saturday,Day,S005,Nadège Toussaint,RN,12.0,0.0,Regular
+2026-09-05,Saturday,Day,S007,Sandra Pinheiro,RN,12.5,0.5,Regular
+2026-09-05,Saturday,Day,S018,Stephanie Dubois,RN,12.0,0.0,Regular
+2026-09-05,Saturday,Day,S013,Tamika Fergus,RN,14.5,2.5,Regular
+2026-09-05,Saturday,Day,S032,Denise Carrington,LPN,12.0,0.0,Regular
+2026-09-05,Saturday,Day,S035,Gladys Peñaranda,CNA,12.0,0.0,Regular
+2026-09-05,Saturday,Day,S040,Jerome Saintil,CNA,12.0,0.0,Regular
+2026-09-05,Saturday,Day,S036,Rose-Marie Augustin,CNA,12.0,0.0,Regular
+2026-09-05,Saturday,Day,S048,Ricardo Peña,Unit secretary,12.0,0.0,Regular
+2026-09-05,Saturday,Night,S020,Kwame Boateng,Charge RN,12.0,0.0,Regular
+2026-09-05,Saturday,Night,AGENCY,Agency RN (contract),RN,12.0,0.0,Agency
+2026-09-05,Saturday,Night,S021,Ana Lucía Guerrero,RN,12.0,0.0,Regular
+2026-09-05,Saturday,Night,S015,Daniel Cordeiro,RN,12,12.0,Overtime
+2026-09-05,Saturday,Night,S029,Diego Salcedo,RN,12.0,0.0,Regular
+2026-09-05,Saturday,Night,S008,Michelle Dorsey,RN,12,12.0,Overtime
+2026-09-05,Saturday,Night,S046,Mélissa Joseph,CNA,12.0,0.0,Regular
+2026-09-05,Saturday,Night,S043,Valeria Montoya,CNA,12,12.0,Overtime
+2026-09-06,Sunday,Day,S002,Marcus Reid,Charge RN,12.0,0.0,Regular
+2026-09-06,Sunday,Day,S003,Carmen Alvarado,RN,14.5,2.5,Regular
+2026-09-06,Sunday,Day,S017,Joel Quiñones,RN,12.5,0.5,Regular
+2026-09-06,Sunday,Day,S012,Lourdes Benítez,RN,12.0,0.0,Regular
+2026-09-06,Sunday,Day,S005,Nadège Toussaint,RN,15.0,3.0,Regular
+2026-09-06,Sunday,Day,S006,Roberto Villanueva,RN,13.0,1.0,Regular
+2026-09-06,Sunday,Day,S007,Sandra Pinheiro,RN,12.0,0.0,Regular
+2026-09-06,Sunday,Day,S031,Yolanda Mercado,LPN,12.0,0.0,Regular
+2026-09-06,Sunday,Day,S039,Fabiana Duarte,CNA,12.0,0.0,Regular
+2026-09-06,Sunday,Day,S036,Rose-Marie Augustin,CNA,12.0,0.0,Regular
+2026-09-06,Sunday,Day,S037,Terrell Bishop,CNA,12.0,0.0,Regular
+2026-09-06,Sunday,Day,S047,Barbara Keller,Unit secretary,12.0,0.0,Regular
+2026-09-06,Sunday,Night,S020,Kwame Boateng,Charge RN,12.0,0.0,Regular
+2026-09-06,Sunday,Night,FLOAT,Float RN from 4 East,RN,12.0,0.0,Float in
+2026-09-06,Sunday,Night,S028,Naomi Jean-Baptiste,RN,12.0,0.0,Regular
+2026-09-06,Sunday,Night,S022,Widline Pierre-Louis,RN,12.0,0.0,Regular
+2026-09-06,Sunday,Night,AGENCY,Agency CNA (contract),CNA,12.0,0.0,Agency
+2026-09-06,Sunday,Night,S043,Valeria Montoya,CNA,12.0,0.0,Regular
+2026-09-07,Monday,Day,S001,Dalia Fernández,Charge RN,12.0,0.0,Regular
+2026-09-07,Monday,Day,S011,Gregory Hale,RN,12.0,0.0,Regular
+2026-09-07,Monday,Day,S010,Ivette Sanabria,RN,12.0,0.0,Regular
+2026-09-07,Monday,Day,S017,Joel Quiñones,RN,13.0,1.0,Regular
+2026-09-07,Monday,Day,S008,Michelle Dorsey,RN,12.0,0.0,Regular
+2026-09-07,Monday,Day,S004,Patricia Whitfield,RN,15.0,3.0,Regular
+2026-09-07,Monday,Day,S018,Stephanie Dubois,RN,12.0,0.0,Regular
+2026-09-07,Monday,Day,S033,Marie-Ange Célestin,LPN,12.0,0.0,Regular
+2026-09-07,Monday,Day,S039,Fabiana Duarte,CNA,12.0,0.0,Regular
+2026-09-07,Monday,Day,S035,Gladys Peñaranda,CNA,12.0,0.0,Regular
+2026-09-07,Monday,Day,S038,Mayra Lezcano,CNA,12.0,0.0,Regular
+2026-09-07,Monday,Day,S047,Barbara Keller,Unit secretary,12.0,0.0,Regular
+2026-09-07,Monday,Night,S019,Yesenia Castro,Charge RN,12.0,0.0,Regular
+2026-09-07,Monday,Night,S021,Ana Lucía Guerrero,RN,12.0,0.0,Regular
+2026-09-07,Monday,Night,S027,Ashley Beaumont,RN,12.0,0.0,Regular
+2026-09-07,Monday,Night,S023,Brandon Mackey,RN,13.5,1.5,Regular
+2026-09-07,Monday,Night,S025,Jasmine Thermidor,RN,12.0,0.0,Regular
+2026-09-07,Monday,Night,S022,Widline Pierre-Louis,RN,12.0,0.0,Regular
+2026-09-07,Monday,Night,S034,Kevin Sánchez,LPN,12.0,0.0,Regular
+2026-09-07,Monday,Night,S042,Evens Dorcélus,CNA,12.0,0.0,Regular
+2026-09-07,Monday,Night,S046,Mélissa Joseph,CNA,12.0,0.0,Regular
+2026-09-07,Monday,Night,S045,Thiago Albuquerque,CNA,12.0,0.0,Regular
+2026-09-08,Tuesday,Day,S001,Dalia Fernández,Charge RN,12.0,0.0,Regular
+2026-09-08,Tuesday,Day,S011,Gregory Hale,RN,12.0,0.0,Regular
+2026-09-08,Tuesday,Day,S009,Jean-Claude Baptiste,RN,12.0,0.0,Regular
+2026-09-08,Tuesday,Day,S017,Joel Quiñones,RN,12.5,0.5,Regular
+2026-09-08,Tuesday,Day,S007,Sandra Pinheiro,RN,12.0,0.0,Regular
+2026-09-08,Tuesday,Day,S018,Stephanie Dubois,RN,12.0,0.0,Regular
+2026-09-08,Tuesday,Day,S013,Tamika Fergus,RN,13.5,1.5,Regular
+2026-09-08,Tuesday,Day,S032,Denise Carrington,LPN,12.0,0.0,Regular
+2026-09-08,Tuesday,Day,S031,Yolanda Mercado,LPN,12.0,0.0,Regular
+2026-09-08,Tuesday,Day,AGENCY,Agency CNA (contract),CNA,12.0,0.0,Agency
+2026-09-08,Tuesday,Day,S039,Fabiana Duarte,CNA,12.0,0.0,Regular
+2026-09-08,Tuesday,Day,S041,Kayla Ferreira,CNA,12.0,0.0,Regular
+2026-09-08,Tuesday,Day,S047,Barbara Keller,Unit secretary,12.0,0.0,Regular
+2026-09-08,Tuesday,Night,S019,Yesenia Castro,Charge RN,12.0,0.0,Regular
+2026-09-08,Tuesday,Night,S021,Ana Lucía Guerrero,RN,12.0,0.0,Regular
+2026-09-08,Tuesday,Night,S027,Ashley Beaumont,RN,12.0,0.0,Regular
+2026-09-08,Tuesday,Night,S024,Camila Figueiredo,RN,12.0,0.0,Regular
+2026-09-08,Tuesday,Night,S029,Diego Salcedo,RN,12.0,0.0,Regular
+2026-09-08,Tuesday,Night,S028,Naomi Jean-Baptiste,RN,12.0,0.0,Regular
+2026-09-08,Tuesday,Night,S034,Kevin Sánchez,LPN,12.0,0.0,Regular
+2026-09-08,Tuesday,Night,S044,Shanice Brown,CNA,12.0,0.0,Regular
+2026-09-08,Tuesday,Night,S043,Valeria Montoya,CNA,12.0,0.0,Regular
+2026-09-09,Wednesday,Day,S001,Dalia Fernández,Charge RN,12.0,0.0,Regular
+2026-09-09,Wednesday,Day,S003,Carmen Alvarado,RN,12.0,0.0,Regular
+2026-09-09,Wednesday,Day,S015,Daniel Cordeiro,RN,12.0,0.0,Regular
+2026-09-09,Wednesday,Day,S011,Gregory Hale,RN,12.5,0.5,Regular
+2026-09-09,Wednesday,Day,S012,Lourdes Benítez,RN,14.0,2.0,Regular
+2026-09-09,Wednesday,Day,S008,Michelle Dorsey,RN,12.0,0.0,Regular
+2026-09-09,Wednesday,Day,S004,Patricia Whitfield,RN,15.0,3.0,Regular
+2026-09-09,Wednesday,Day,S006,Roberto Villanueva,RN,12.0,0.0,Regular
+2026-09-09,Wednesday,Day,S032,Denise Carrington,LPN,12.0,0.0,Regular
+2026-09-09,Wednesday,Day,AGENCY,Agency CNA (contract),CNA,12.0,0.0,Agency
+2026-09-09,Wednesday,Day,S035,Gladys Peñaranda,CNA,12.0,0.0,Regular
+2026-09-09,Wednesday,Day,S040,Jerome Saintil,CNA,12.0,0.0,Regular
+2026-09-09,Wednesday,Day,S038,Mayra Lezcano,CNA,12,12.0,Overtime
+2026-09-09,Wednesday,Day,S048,Ricardo Peña,Unit secretary,12.0,0.0,Regular
+2026-09-09,Wednesday,Night,S019,Yesenia Castro,Charge RN,12.0,0.0,Regular
+2026-09-09,Wednesday,Night,S024,Camila Figueiredo,RN,12.0,0.0,Regular
+2026-09-09,Wednesday,Night,S029,Diego Salcedo,RN,12.0,0.0,Regular
+2026-09-09,Wednesday,Night,S026,Esteban Ocampo,RN,12.0,0.0,Regular
+2026-09-09,Wednesday,Night,S028,Naomi Jean-Baptiste,RN,12.0,0.0,Regular
+2026-09-09,Wednesday,Night,S030,Priscila Nascimento,RN,15.0,3.0,Regular
+2026-09-09,Wednesday,Night,S022,Widline Pierre-Louis,RN,12,12.0,Overtime
+2026-09-09,Wednesday,Night,S034,Kevin Sánchez,LPN,12.0,0.0,Regular
+2026-09-09,Wednesday,Night,S046,Mélissa Joseph,CNA,12.0,0.0,Regular
+2026-09-09,Wednesday,Night,S043,Valeria Montoya,CNA,12.0,0.0,Regular
+2026-09-10,Thursday,Day,S002,Marcus Reid,Charge RN,12.0,0.0,Regular
+2026-09-10,Thursday,Day,S003,Carmen Alvarado,RN,12.0,0.0,Regular
+2026-09-10,Thursday,Day,S011,Gregory Hale,RN,13.5,1.5,Regular
+2026-09-10,Thursday,Day,S010,Ivette Sanabria,RN,12.0,0.0,Regular
+2026-09-10,Thursday,Day,S009,Jean-Claude Baptiste,RN,12.0,0.0,Regular
+2026-09-10,Thursday,Day,S008,Michelle Dorsey,RN,12.0,0.0,Regular
+2026-09-10,Thursday,Day,S018,Stephanie Dubois,RN,12.0,0.0,Regular
+2026-09-10,Thursday,Day,S032,Denise Carrington,LPN,12.0,0.0,Regular
+2026-09-10,Thursday,Day,S033,Marie-Ange Célestin,LPN,12.0,0.0,Regular
+2026-09-10,Thursday,Day,AGENCY,Agency CNA (contract),CNA,12.0,0.0,Agency
+2026-09-10,Thursday,Day,S039,Fabiana Duarte,CNA,12.0,0.0,Regular
+2026-09-10,Thursday,Day,S041,Kayla Ferreira,CNA,12.0,0.0,Regular
+2026-09-10,Thursday,Day,S048,Ricardo Peña,Unit secretary,12,12.0,Overtime
+2026-09-10,Thursday,Night,S020,Kwame Boateng,Charge RN,12.0,0.0,Regular
+2026-09-10,Thursday,Night,S023,Brandon Mackey,RN,12.0,0.0,Regular
+2026-09-10,Thursday,Night,S024,Camila Figueiredo,RN,12.0,0.0,Regular
+2026-09-10,Thursday,Night,S029,Diego Salcedo,RN,12.0,0.0,Regular
+2026-09-10,Thursday,Night,S025,Jasmine Thermidor,RN,15.0,3.0,Regular
+2026-09-10,Thursday,Night,S022,Widline Pierre-Louis,RN,12.0,0.0,Regular
+2026-09-10,Thursday,Night,AGENCY,Agency CNA (contract),CNA,12.0,0.0,Agency
+2026-09-10,Thursday,Night,S044,Shanice Brown,CNA,12.0,0.0,Regular
+2026-09-10,Thursday,Night,S045,Thiago Albuquerque,CNA,12.0,0.0,Regular
+2026-09-11,Friday,Day,S001,Dalia Fernández,Charge RN,12.0,0.0,Regular
+2026-09-11,Friday,Day,S003,Carmen Alvarado,RN,12.0,0.0,Regular
+2026-09-11,Friday,Day,S017,Joel Quiñones,RN,12.0,0.0,Regular
+2026-09-11,Friday,Day,S012,Lourdes Benítez,RN,12.0,0.0,Regular
+2026-09-11,Friday,Day,S005,Nadège Toussaint,RN,15.0,3.0,Regular
+2026-09-11,Friday,Day,S013,Tamika Fergus,RN,13.0,1.0,Regular
+2026-09-11,Friday,Day,S033,Marie-Ange Célestin,LPN,12.0,0.0,Regular
+2026-09-11,Friday,Day,S039,Fabiana Duarte,CNA,12.0,0.0,Regular
+2026-09-11,Friday,Day,S038,Mayra Lezcano,CNA,12.0,0.0,Regular
+2026-09-11,Friday,Day,S036,Rose-Marie Augustin,CNA,12.0,0.0,Regular
+2026-09-11,Friday,Day,S047,Barbara Keller,Unit secretary,12.0,0.0,Regular
+2026-09-11,Friday,Night,S019,Yesenia Castro,Charge RN,12.0,0.0,Regular
+2026-09-11,Friday,Night,AGENCY,Agency RN (contract),RN,12.0,0.0,Agency
+2026-09-11,Friday,Night,S027,Ashley Beaumont,RN,12.0,0.0,Regular
+2026-09-11,Friday,Night,S029,Diego Salcedo,RN,12.5,0.5,Regular
+2026-09-11,Friday,Night,S025,Jasmine Thermidor,RN,13.0,1.0,Regular
+2026-09-11,Friday,Night,S008,Michelle Dorsey,RN,12,12.0,Overtime
+2026-09-11,Friday,Night,AGENCY,Agency CNA (contract),CNA,12.0,0.0,Agency
+2026-09-11,Friday,Night,S042,Evens Dorcélus,CNA,12.0,0.0,Regular
+2026-09-11,Friday,Night,S045,Thiago Albuquerque,CNA,12,12.0,Overtime
+2026-09-12,Saturday,Day,S001,Dalia Fernández,Charge RN,12.0,0.0,Regular
+2026-09-12,Saturday,Day,S003,Carmen Alvarado,RN,14.5,2.5,Regular
+2026-09-12,Saturday,Day,S009,Jean-Claude Baptiste,RN,12.0,0.0,Regular
+2026-09-12,Saturday,Day,S017,Joel Quiñones,RN,12.0,0.0,Regular
+2026-09-12,Saturday,Day,S006,Roberto Villanueva,RN,12.0,0.0,Regular
+2026-09-12,Saturday,Day,S007,Sandra Pinheiro,RN,12.0,0.0,Regular
+2026-09-12,Saturday,Day,S013,Tamika Fergus,RN,12.0,0.0,Regular
+2026-09-12,Saturday,Day,S031,Yolanda Mercado,LPN,12.0,0.0,Regular
+2026-09-12,Saturday,Day,S035,Gladys Peñaranda,CNA,12.0,0.0,Regular
+2026-09-12,Saturday,Day,S040,Jerome Saintil,CNA,12.0,0.0,Regular
+2026-09-12,Saturday,Day,S037,Terrell Bishop,CNA,12.0,0.0,Regular
+2026-09-12,Saturday,Day,S048,Ricardo Peña,Unit secretary,12.0,0.0,Regular
+2026-09-12,Saturday,Night,S019,Yesenia Castro,Charge RN,12.0,0.0,Regular
+2026-09-12,Saturday,Night,AGENCY,Agency RN (contract),RN,12.0,0.0,Agency
+2026-09-12,Saturday,Night,S021,Ana Lucía Guerrero,RN,12.0,0.0,Regular
+2026-09-12,Saturday,Night,S011,Gregory Hale,RN,12,12.0,Overtime
+2026-09-12,Saturday,Night,S028,Naomi Jean-Baptiste,RN,12.0,0.0,Regular
+2026-09-12,Saturday,Night,AGENCY,Agency CNA (contract),CNA,12.0,0.0,Agency
+2026-09-12,Saturday,Night,S044,Shanice Brown,CNA,12.0,0.0,Regular
+2026-09-13,Sunday,Day,S001,Dalia Fernández,Charge RN,12.0,0.0,Regular
+2026-09-13,Sunday,Day,S009,Jean-Claude Baptiste,RN,12.0,0.0,Regular
+2026-09-13,Sunday,Day,S012,Lourdes Benítez,RN,12.0,0.0,Regular
+2026-09-13,Sunday,Day,S005,Nadège Toussaint,RN,12.0,0.0,Regular
+2026-09-13,Sunday,Day,S004,Patricia Whitfield,RN,13.0,1.0,Regular
+2026-09-13,Sunday,Day,S007,Sandra Pinheiro,RN,15.0,3.0,Regular
+2026-09-13,Sunday,Day,S018,Stephanie Dubois,RN,12.0,0.0,Regular
+2026-09-13,Sunday,Day,S032,Denise Carrington,LPN,12.0,0.0,Regular
+2026-09-13,Sunday,Day,S039,Fabiana Duarte,CNA,12.0,0.0,Regular
+2026-09-13,Sunday,Day,S036,Rose-Marie Augustin,CNA,12.0,0.0,Regular
+2026-09-13,Sunday,Day,S037,Terrell Bishop,CNA,12.0,0.0,Regular
+2026-09-13,Sunday,Day,S047,Barbara Keller,Unit secretary,12.0,0.0,Regular
+2026-09-13,Sunday,Night,S019,Yesenia Castro,Charge RN,12.0,0.0,Regular
+2026-09-13,Sunday,Night,FLOAT,Float RN from 4 East,RN,12.0,0.0,Float in
+2026-09-13,Sunday,Night,S030,Priscila Nascimento,RN,12.0,0.0,Regular
+2026-09-13,Sunday,Night,S022,Widline Pierre-Louis,RN,12.0,0.0,Regular
+2026-09-13,Sunday,Night,S046,Mélissa Joseph,CNA,12.0,0.0,Regular
+2026-09-13,Sunday,Night,S045,Thiago Albuquerque,CNA,12,12.0,Overtime
+2026-09-13,Sunday,Night,S043,Valeria Montoya,CNA,12,12.0,Overtime
+2026-09-14,Monday,Day,S002,Marcus Reid,Charge RN,12.0,0.0,Regular
+2026-09-14,Monday,Day,S015,Daniel Cordeiro,RN,15.0,3.0,Regular
+2026-09-14,Monday,Day,S011,Gregory Hale,RN,12.0,0.0,Regular
+2026-09-14,Monday,Day,S010,Ivette Sanabria,RN,12.0,0.0,Regular
+2026-09-14,Monday,Day,S016,Kristen Albright,RN,12.0,0.0,Regular
+2026-09-14,Monday,Day,S005,Nadège Toussaint,RN,12.5,0.5,Regular
+2026-09-14,Monday,Day,S006,Roberto Villanueva,RN,13.0,1.0,Regular
+2026-09-14,Monday,Day,S033,Marie-Ange Célestin,LPN,12.0,0.0,Regular
+2026-09-14,Monday,Day,S035,Gladys Peñaranda,CNA,12.0,0.0,Regular
+2026-09-14,Monday,Day,S038,Mayra Lezcano,CNA,12.0,0.0,Regular
+2026-09-14,Monday,Day,S036,Rose-Marie Augustin,CNA,12.0,0.0,Regular
+2026-09-14,Monday,Day,S048,Ricardo Peña,Unit secretary,12.0,0.0,Regular
+2026-09-14,Monday,Night,S020,Kwame Boateng,Charge RN,12.0,0.0,Regular
+2026-09-14,Monday,Night,S021,Ana Lucía Guerrero,RN,13.0,1.0,Regular
+2026-09-14,Monday,Night,S027,Ashley Beaumont,RN,12.0,0.0,Regular
+2026-09-14,Monday,Night,S024,Camila Figueiredo,RN,12.0,0.0,Regular
+2026-09-14,Monday,Night,S026,Esteban Ocampo,RN,13.5,1.5,Regular
+2026-09-14,Monday,Night,S030,Priscila Nascimento,RN,12.0,0.0,Regular
+2026-09-14,Monday,Night,S034,Kevin Sánchez,LPN,12.0,0.0,Regular
+2026-09-14,Monday,Night,S046,Mélissa Joseph,CNA,12.0,0.0,Regular
+2026-09-14,Monday,Night,S044,Shanice Brown,CNA,12.0,0.0,Regular
+2026-09-14,Monday,Night,S043,Valeria Montoya,CNA,12.0,0.0,Regular
+2026-09-15,Tuesday,Day,S002,Marcus Reid,Charge RN,12.0,0.0,Regular
+2026-09-15,Tuesday,Day,S014,Farah Désir,RN,12.0,0.0,Regular
+2026-09-15,Tuesday,Day,S012,Lourdes Benítez,RN,12.0,0.0,Regular
+2026-09-15,Tuesday,Day,S008,Michelle Dorsey,RN,12.0,0.0,Regular
+2026-09-15,Tuesday,Day,S006,Roberto Villanueva,RN,12.0,0.0,Regular
+2026-09-15,Tuesday,Day,S018,Stephanie Dubois,RN,15.0,3.0,Regular
+2026-09-15,Tuesday,Day,S013,Tamika Fergus,RN,12.0,0.0,Regular
+2026-09-15,Tuesday,Day,S032,Denise Carrington,LPN,12.0,0.0,Regular
+2026-09-15,Tuesday,Day,AGENCY,Agency CNA (contract),CNA,12.0,0.0,Agency
+2026-09-15,Tuesday,Day,S040,Jerome Saintil,CNA,12.0,0.0,Regular
+2026-09-15,Tuesday,Day,S037,Terrell Bishop,CNA,12.0,0.0,Regular
+2026-09-15,Tuesday,Day,S048,Ricardo Peña,Unit secretary,12.0,0.0,Regular
+2026-09-15,Tuesday,Night,S020,Kwame Boateng,Charge RN,12.0,0.0,Regular
+2026-09-15,Tuesday,Night,S021,Ana Lucía Guerrero,RN,12.0,0.0,Regular
+2026-09-15,Tuesday,Night,S024,Camila Figueiredo,RN,12.0,0.0,Regular
+2026-09-15,Tuesday,Night,S025,Jasmine Thermidor,RN,12.0,0.0,Regular
+2026-09-15,Tuesday,Night,S028,Naomi Jean-Baptiste,RN,12.0,0.0,Regular
+2026-09-15,Tuesday,Night,S030,Priscila Nascimento,RN,12.0,0.0,Regular
+2026-09-15,Tuesday,Night,S034,Kevin Sánchez,LPN,12.0,0.0,Regular
+2026-09-15,Tuesday,Night,S042,Evens Dorcélus,CNA,12.0,0.0,Regular
+2026-09-15,Tuesday,Night,S046,Mélissa Joseph,CNA,12.0,0.0,Regular
+2026-09-15,Tuesday,Night,S043,Valeria Montoya,CNA,12.0,0.0,Regular
+2026-09-16,Wednesday,Day,S002,Marcus Reid,Charge RN,12.0,0.0,Regular
+2026-09-16,Wednesday,Day,S015,Daniel Cordeiro,RN,12.0,0.0,Regular
+2026-09-16,Wednesday,Day,S011,Gregory Hale,RN,12.0,0.0,Regular
+2026-09-16,Wednesday,Day,S017,Joel Quiñones,RN,12.5,0.5,Regular
+2026-09-16,Wednesday,Day,S008,Michelle Dorsey,RN,14.0,2.0,Regular
+2026-09-16,Wednesday,Day,S004,Patricia Whitfield,RN,12.0,0.0,Regular
+2026-09-16,Wednesday,Day,S007,Sandra Pinheiro,RN,12.0,0.0,Regular
+2026-09-16,Wednesday,Day,S031,Yolanda Mercado,LPN,12.0,0.0,Regular
+2026-09-16,Wednesday,Day,S035,Gladys Peñaranda,CNA,12.0,0.0,Regular
+2026-09-16,Wednesday,Day,S040,Jerome Saintil,CNA,12.0,0.0,Regular
+2026-09-16,Wednesday,Day,S041,Kayla Ferreira,CNA,12,12.0,Overtime
+2026-09-16,Wednesday,Day,S047,Barbara Keller,Unit secretary,12.0,0.0,Regular
+2026-09-16,Wednesday,Night,S020,Kwame Boateng,Charge RN,12.0,0.0,Regular
+2026-09-16,Wednesday,Night,S027,Ashley Beaumont,RN,12.0,0.0,Regular
+2026-09-16,Wednesday,Night,S023,Brandon Mackey,RN,15.0,3.0,Regular
+2026-09-16,Wednesday,Night,S029,Diego Salcedo,RN,15.0,3.0,Regular
+2026-09-16,Wednesday,Night,S028,Naomi Jean-Baptiste,RN,12.0,0.0,Regular
+2026-09-16,Wednesday,Night,S022,Widline Pierre-Louis,RN,12.0,0.0,Regular
+2026-09-16,Wednesday,Night,S034,Kevin Sánchez,LPN,12.0,0.0,Regular
+2026-09-16,Wednesday,Night,S042,Evens Dorcélus,CNA,12.0,0.0,Regular
+2026-09-16,Wednesday,Night,S045,Thiago Albuquerque,CNA,12.0,0.0,Regular
+2026-09-16,Wednesday,Night,S043,Valeria Montoya,CNA,12.0,0.0,Regular
+2026-09-17,Thursday,Day,S001,Dalia Fernández,Charge RN,12.0,0.0,Regular
+2026-09-17,Thursday,Day,S015,Daniel Cordeiro,RN,13.5,1.5,Regular
+2026-09-17,Thursday,Day,S011,Gregory Hale,RN,12.5,0.5,Regular
+2026-09-17,Thursday,Day,S009,Jean-Claude Baptiste,RN,12.0,0.0,Regular
+2026-09-17,Thursday,Day,S008,Michelle Dorsey,RN,12.0,0.0,Regular
+2026-09-17,Thursday,Day,S005,Nadège Toussaint,RN,12.0,0.0,Regular
+2026-09-17,Thursday,Day,S006,Roberto Villanueva,RN,12.0,0.0,Regular
+2026-09-17,Thursday,Day,S007,Sandra Pinheiro,RN,14.5,2.5,Regular
+2026-09-17,Thursday,Day,S032,Denise Carrington,LPN,12.0,0.0,Regular
+2026-09-17,Thursday,Day,S039,Fabiana Duarte,CNA,12.0,0.0,Regular
+2026-09-17,Thursday,Day,S040,Jerome Saintil,CNA,12.0,0.0,Regular
+2026-09-17,Thursday,Day,S038,Mayra Lezcano,CNA,12,12.0,Overtime
+2026-09-17,Thursday,Day,S037,Terrell Bishop,CNA,12,12.0,Overtime
+2026-09-17,Thursday,Day,S048,Ricardo Peña,Unit secretary,12,12.0,Overtime
+2026-09-17,Thursday,Night,S019,Yesenia Castro,Charge RN,12.0,0.0,Regular
+2026-09-17,Thursday,Night,S021,Ana Lucía Guerrero,RN,12.0,0.0,Regular
+2026-09-17,Thursday,Night,S027,Ashley Beaumont,RN,14.5,2.5,Regular
+2026-09-17,Thursday,Night,S023,Brandon Mackey,RN,12.0,0.0,Regular
+2026-09-17,Thursday,Night,S024,Camila Figueiredo,RN,12.0,0.0,Regular
+2026-09-17,Thursday,Night,S026,Esteban Ocampo,RN,12.0,0.0,Regular
+2026-09-17,Thursday,Night,AGENCY,Agency CNA (contract),CNA,12.0,0.0,Agency
+2026-09-17,Thursday,Night,S046,Mélissa Joseph,CNA,12.0,0.0,Regular
+2026-09-17,Thursday,Night,S045,Thiago Albuquerque,CNA,12.0,0.0,Regular
+2026-09-18,Friday,Day,S002,Marcus Reid,Charge RN,12.0,0.0,Regular
+2026-09-18,Friday,Day,S003,Carmen Alvarado,RN,12.0,0.0,Regular
+2026-09-18,Friday,Day,S017,Joel Quiñones,RN,12.0,0.0,Regular
+2026-09-18,Friday,Day,S012,Lourdes Benítez,RN,12.0,0.0,Regular
+2026-09-18,Friday,Day,S004,Patricia Whitfield,RN,12.0,0.0,Regular
+2026-09-18,Friday,Day,S007,Sandra Pinheiro,RN,12.0,0.0,Regular
+2026-09-18,Friday,Day,S018,Stephanie Dubois,RN,12.0,0.0,Regular
+2026-09-18,Friday,Day,S032,Denise Carrington,LPN,12.0,0.0,Regular
+2026-09-18,Friday,Day,S039,Fabiana Duarte,CNA,12.0,0.0,Regular
+2026-09-18,Friday,Day,S035,Gladys Peñaranda,CNA,12.0,0.0,Regular
+2026-09-18,Friday,Day,S038,Mayra Lezcano,CNA,12.0,0.0,Regular
+2026-09-18,Friday,Day,S048,Ricardo Peña,Unit secretary,12.0,0.0,Regular
+2026-09-18,Friday,Night,S020,Kwame Boateng,Charge RN,12.0,0.0,Regular
+2026-09-18,Friday,Night,S029,Diego Salcedo,RN,12.0,0.0,Regular
+2026-09-18,Friday,Night,FLOAT,Float RN from 4 East,RN,12.0,0.0,Float in
+2026-09-18,Friday,Night,S025,Jasmine Thermidor,RN,12.0,0.0,Regular
+2026-09-18,Friday,Night,S022,Widline Pierre-Louis,RN,15.0,3.0,Regular
+2026-09-18,Friday,Night,AGENCY,Agency CNA (contract),CNA,12.0,0.0,Agency
+2026-09-18,Friday,Night,S044,Shanice Brown,CNA,12.0,0.0,Regular
+2026-09-19,Saturday,Day,S002,Marcus Reid,Charge RN,12.0,0.0,Regular
+2026-09-19,Saturday,Day,S003,Carmen Alvarado,RN,12.0,0.0,Regular
+2026-09-19,Saturday,Day,S009,Jean-Claude Baptiste,RN,13.0,1.0,Regular
+2026-09-19,Saturday,Day,S012,Lourdes Benítez,RN,12.5,0.5,Regular
+2026-09-19,Saturday,Day,S006,Roberto Villanueva,RN,12.0,0.0,Regular
+2026-09-19,Saturday,Day,S018,Stephanie Dubois,RN,12.0,0.0,Regular
+2026-09-19,Saturday,Day,S013,Tamika Fergus,RN,12.0,0.0,Regular
+2026-09-19,Saturday,Day,S033,Marie-Ange Célestin,LPN,12.0,0.0,Regular
+2026-09-19,Saturday,Day,S040,Jerome Saintil,CNA,12.0,0.0,Regular
+2026-09-19,Saturday,Day,S036,Rose-Marie Augustin,CNA,12.0,0.0,Regular
+2026-09-19,Saturday,Day,S037,Terrell Bishop,CNA,12.0,0.0,Regular
+2026-09-19,Saturday,Day,S048,Ricardo Peña,Unit secretary,12.0,0.0,Regular
+2026-09-19,Saturday,Night,S020,Kwame Boateng,Charge RN,12.0,0.0,Regular
+2026-09-19,Saturday,Night,AGENCY,Agency RN (contract),RN,12.0,0.0,Agency
+2026-09-19,Saturday,Night,AGENCY,Agency RN (contract),RN,12.0,0.0,Agency
+2026-09-19,Saturday,Night,S028,Naomi Jean-Baptiste,RN,12.0,0.0,Regular
+2026-09-19,Saturday,Night,S030,Priscila Nascimento,RN,13.0,1.0,Regular
+2026-09-19,Saturday,Night,S042,Evens Dorcélus,CNA,12.0,0.0,Regular
+2026-09-19,Saturday,Night,S045,Thiago Albuquerque,CNA,12,12.0,Overtime
+2026-09-20,Sunday,Day,S002,Marcus Reid,Charge RN,12.0,0.0,Regular
+2026-09-20,Sunday,Day,S009,Jean-Claude Baptiste,RN,12.0,0.0,Regular
+2026-09-20,Sunday,Day,S017,Joel Quiñones,RN,12.0,0.0,Regular
+2026-09-20,Sunday,Day,S005,Nadège Toussaint,RN,12.0,0.0,Regular
+2026-09-20,Sunday,Day,S006,Roberto Villanueva,RN,12.5,0.5,Regular
+2026-09-20,Sunday,Day,S007,Sandra Pinheiro,RN,13.0,1.0,Regular
+2026-09-20,Sunday,Day,S013,Tamika Fergus,RN,12.0,0.0,Regular
+2026-09-20,Sunday,Day,S031,Yolanda Mercado,LPN,12.0,0.0,Regular
+2026-09-20,Sunday,Day,S039,Fabiana Duarte,CNA,12.0,0.0,Regular
+2026-09-20,Sunday,Day,S035,Gladys Peñaranda,CNA,12.0,0.0,Regular
+2026-09-20,Sunday,Day,S037,Terrell Bishop,CNA,12.0,0.0,Regular
+2026-09-20,Sunday,Day,S047,Barbara Keller,Unit secretary,12.0,0.0,Regular
+2026-09-20,Sunday,Night,S020,Kwame Boateng,Charge RN,12.0,0.0,Regular
+2026-09-20,Sunday,Night,AGENCY,Agency RN (contract),RN,12.0,0.0,Agency
+2026-09-20,Sunday,Night,S027,Ashley Beaumont,RN,12.0,0.0,Regular
+2026-09-20,Sunday,Night,S024,Camila Figueiredo,RN,12.0,0.0,Regular
+2026-09-20,Sunday,Night,S008,Michelle Dorsey,RN,12,12.0,Overtime
+2026-09-20,Sunday,Night,S042,Evens Dorcélus,CNA,12,12.0,Overtime
+2026-09-20,Sunday,Night,S046,Mélissa Joseph,CNA,12.0,0.0,Regular
+2026-09-21,Monday,Day,S001,Dalia Fernández,Charge RN,12.0,0.0,Regular
+2026-09-21,Monday,Day,S011,Gregory Hale,RN,12.0,0.0,Regular
+2026-09-21,Monday,Day,S010,Ivette Sanabria,RN,12.0,0.0,Regular
+2026-09-21,Monday,Day,S012,Lourdes Benítez,RN,12.0,0.0,Regular
+2026-09-21,Monday,Day,S018,Stephanie Dubois,RN,12.0,0.0,Regular
+2026-09-21,Monday,Day,S013,Tamika Fergus,RN,12.0,0.0,Regular
+2026-09-21,Monday,Day,S031,Yolanda Mercado,LPN,12.0,0.0,Regular
+2026-09-21,Monday,Day,S035,Gladys Peñaranda,CNA,12.0,0.0,Regular
+2026-09-21,Monday,Day,S041,Kayla Ferreira,CNA,12.0,0.0,Regular
+2026-09-21,Monday,Day,S036,Rose-Marie Augustin,CNA,12.0,0.0,Regular
+2026-09-21,Monday,Day,S047,Barbara Keller,Unit secretary,12.0,0.0,Regular
+2026-09-21,Monday,Night,S019,Yesenia Castro,Charge RN,12.0,0.0,Regular
+2026-09-21,Monday,Night,S021,Ana Lucía Guerrero,RN,12.0,0.0,Regular
+2026-09-21,Monday,Night,S025,Jasmine Thermidor,RN,12.0,0.0,Regular
+2026-09-21,Monday,Night,S028,Naomi Jean-Baptiste,RN,12.0,0.0,Regular
+2026-09-21,Monday,Night,S030,Priscila Nascimento,RN,13.0,1.0,Regular
+2026-09-21,Monday,Night,S022,Widline Pierre-Louis,RN,12.0,0.0,Regular
+2026-09-21,Monday,Night,S034,Kevin Sánchez,LPN,12.0,0.0,Regular
+2026-09-21,Monday,Night,S046,Mélissa Joseph,CNA,12.0,0.0,Regular
+2026-09-21,Monday,Night,S045,Thiago Albuquerque,CNA,12.0,0.0,Regular
+2026-09-21,Monday,Night,S043,Valeria Montoya,CNA,12.0,0.0,Regular
+2026-09-22,Tuesday,Day,S001,Dalia Fernández,Charge RN,12.0,0.0,Regular
+2026-09-22,Tuesday,Day,S015,Daniel Cordeiro,RN,12.0,0.0,Regular
+2026-09-22,Tuesday,Day,S011,Gregory Hale,RN,12,12.0,Overtime
+2026-09-22,Tuesday,Day,S010,Ivette Sanabria,RN,12.0,0.0,Regular
+2026-09-22,Tuesday,Day,S017,Joel Quiñones,RN,12.0,0.0,Regular
+2026-09-22,Tuesday,Day,S016,Kristen Albright,RN,12.0,0.0,Regular
+2026-09-22,Tuesday,Day,S008,Michelle Dorsey,RN,12.0,0.0,Regular
+2026-09-22,Tuesday,Day,S004,Patricia Whitfield,RN,15.0,3.0,Regular
+2026-09-22,Tuesday,Day,S033,Marie-Ange Célestin,LPN,12.0,0.0,Regular
+2026-09-22,Tuesday,Day,S031,Yolanda Mercado,LPN,12.0,0.0,Regular
+2026-09-22,Tuesday,Day,AGENCY,Agency CNA (contract),CNA,12.0,0.0,Agency
+2026-09-22,Tuesday,Day,AGENCY,Agency CNA (contract),CNA,12.0,0.0,Agency
+2026-09-22,Tuesday,Day,S040,Jerome Saintil,CNA,12.0,0.0,Regular
+2026-09-22,Tuesday,Day,S037,Terrell Bishop,CNA,12.0,0.0,Regular
+2026-09-22,Tuesday,Day,S047,Barbara Keller,Unit secretary,12.0,0.0,Regular
+2026-09-22,Tuesday,Night,S019,Yesenia Castro,Charge RN,12.0,0.0,Regular
+2026-09-22,Tuesday,Night,AGENCY,Agency RN (contract),RN,12.0,0.0,Agency
+2026-09-22,Tuesday,Night,S021,Ana Lucía Guerrero,RN,12.0,0.0,Regular
+2026-09-22,Tuesday,Night,S023,Brandon Mackey,RN,12.0,0.0,Regular
+2026-09-22,Tuesday,Night,S029,Diego Salcedo,RN,12.5,0.5,Regular
+2026-09-22,Tuesday,Night,S025,Jasmine Thermidor,RN,13.5,1.5,Regular
+2026-09-22,Tuesday,Night,S030,Priscila Nascimento,RN,14.0,2.0,Regular
+2026-09-22,Tuesday,Night,S022,Widline Pierre-Louis,RN,12,12.0,Overtime
+2026-09-22,Tuesday,Night,S034,Kevin Sánchez,LPN,12.0,0.0,Regular
+2026-09-22,Tuesday,Night,S042,Evens Dorcélus,CNA,12.0,0.0,Regular
+2026-09-22,Tuesday,Night,S044,Shanice Brown,CNA,12.0,0.0,Regular
+2026-09-22,Tuesday,Night,S043,Valeria Montoya,CNA,12.0,0.0,Regular
+2026-09-23,Wednesday,Day,S001,Dalia Fernández,Charge RN,12.0,0.0,Regular
+2026-09-23,Wednesday,Day,S003,Carmen Alvarado,RN,12.0,0.0,Regular
+2026-09-23,Wednesday,Day,S015,Daniel Cordeiro,RN,12.0,0.0,Regular
+2026-09-23,Wednesday,Day,S014,Farah Désir,RN,12.0,0.0,Regular
+2026-09-23,Wednesday,Day,S011,Gregory Hale,RN,12.5,0.5,Regular
+2026-09-23,Wednesday,Day,S008,Michelle Dorsey,RN,12.0,0.0,Regular
+2026-09-23,Wednesday,Day,S005,Nadège Toussaint,RN,12.0,0.0,Regular
+2026-09-23,Wednesday,Day,S032,Denise Carrington,LPN,12.0,0.0,Regular
+2026-09-23,Wednesday,Day,S033,Marie-Ange Célestin,LPN,12.0,0.0,Regular
+2026-09-23,Wednesday,Day,S035,Gladys Peñaranda,CNA,12,12.0,Overtime
+2026-09-23,Wednesday,Day,S038,Mayra Lezcano,CNA,12.0,0.0,Regular
+2026-09-23,Wednesday,Day,S036,Rose-Marie Augustin,CNA,12.0,0.0,Regular
+2026-09-23,Wednesday,Day,S048,Ricardo Peña,Unit secretary,12.0,0.0,Regular
+2026-09-23,Wednesday,Night,S019,Yesenia Castro,Charge RN,12.0,0.0,Regular
+2026-09-23,Wednesday,Night,S027,Ashley Beaumont,RN,14.0,2.0,Regular
+2026-09-23,Wednesday,Night,S024,Camila Figueiredo,RN,12.0,0.0,Regular
+2026-09-23,Wednesday,Night,S029,Diego Salcedo,RN,12.0,0.0,Regular
+2026-09-23,Wednesday,Night,S028,Naomi Jean-Baptiste,RN,12.0,0.0,Regular
+2026-09-23,Wednesday,Night,S022,Widline Pierre-Louis,RN,12.0,0.0,Regular
+2026-09-23,Wednesday,Night,S034,Kevin Sánchez,LPN,12.0,0.0,Regular
+2026-09-23,Wednesday,Night,S042,Evens Dorcélus,CNA,12.0,0.0,Regular
+2026-09-23,Wednesday,Night,S044,Shanice Brown,CNA,12.0,0.0,Regular
+2026-09-23,Wednesday,Night,S043,Valeria Montoya,CNA,12.0,0.0,Regular
+2026-09-24,Thursday,Day,S002,Marcus Reid,Charge RN,12.0,0.0,Regular
+2026-09-24,Thursday,Day,S015,Daniel Cordeiro,RN,12.0,0.0,Regular
+2026-09-24,Thursday,Day,S014,Farah Désir,RN,12.5,0.5,Regular
+2026-09-24,Thursday,Day,S011,Gregory Hale,RN,12.0,0.0,Regular
+2026-09-24,Thursday,Day,S008,Michelle Dorsey,RN,13.5,1.5,Regular
+2026-09-24,Thursday,Day,S005,Nadège Toussaint,RN,15.0,3.0,Regular
+2026-09-24,Thursday,Day,S004,Patricia Whitfield,RN,12.0,0.0,Regular
+2026-09-24,Thursday,Day,S031,Yolanda Mercado,LPN,12.0,0.0,Regular
+2026-09-24,Thursday,Day,AGENCY,Agency CNA (contract),CNA,12.0,0.0,Agency
+2026-09-24,Thursday,Day,S035,Gladys Peñaranda,CNA,12.0,0.0,Regular
+2026-09-24,Thursday,Day,S037,Terrell Bishop,CNA,12.0,0.0,Regular
+2026-09-24,Thursday,Day,S047,Barbara Keller,Unit secretary,12,12.0,Overtime
+2026-09-24,Thursday,Night,S020,Kwame Boateng,Charge RN,12.0,0.0,Regular
+2026-09-24,Thursday,Night,AGENCY,Agency RN (contract),RN,12.0,0.0,Agency
+2026-09-24,Thursday,Night,S027,Ashley Beaumont,RN,12.0,0.0,Regular
+2026-09-24,Thursday,Night,S029,Diego Salcedo,RN,12.0,0.0,Regular
+2026-09-24,Thursday,Night,S025,Jasmine Thermidor,RN,14.0,2.0,Regular
+2026-09-24,Thursday,Night,S022,Widline Pierre-Louis,RN,12.5,0.5,Regular
+2026-09-24,Thursday,Night,S042,Evens Dorcélus,CNA,12.0,0.0,Regular
+2026-09-24,Thursday,Night,S044,Shanice Brown,CNA,12.0,0.0,Regular
+2026-09-24,Thursday,Night,S043,Valeria Montoya,CNA,12.0,0.0,Regular
+2026-09-25,Friday,Day,S001,Dalia Fernández,Charge RN,12.0,0.0,Regular
+2026-09-25,Friday,Day,S010,Ivette Sanabria,RN,12.0,0.0,Regular
+2026-09-25,Friday,Day,S017,Joel Quiñones,RN,12.0,0.0,Regular
+2026-09-25,Friday,Day,S012,Lourdes Benítez,RN,13.0,1.0,Regular
+2026-09-25,Friday,Day,S005,Nadège Toussaint,RN,12.0,0.0,Regular
+2026-09-25,Friday,Day,S007,Sandra Pinheiro,RN,12.0,0.0,Regular
+2026-09-25,Friday,Day,S018,Stephanie Dubois,RN,12.0,0.0,Regular
+2026-09-25,Friday,Day,S033,Marie-Ange Célestin,LPN,12.0,0.0,Regular
+2026-09-25,Friday,Day,S040,Jerome Saintil,CNA,12.0,0.0,Regular
+2026-09-25,Friday,Day,S038,Mayra Lezcano,CNA,12.0,0.0,Regular
+2026-09-25,Friday,Day,S036,Rose-Marie Augustin,CNA,12.0,0.0,Regular
+2026-09-25,Friday,Day,S047,Barbara Keller,Unit secretary,12.0,0.0,Regular
+2026-09-25,Friday,Night,S019,Yesenia Castro,Charge RN,12.0,0.0,Regular
+2026-09-25,Friday,Night,S024,Camila Figueiredo,RN,12.0,0.0,Regular
+2026-09-25,Friday,Night,S029,Diego Salcedo,RN,12.5,0.5,Regular
+2026-09-25,Friday,Night,S011,Gregory Hale,RN,12,12.0,Overtime
+2026-09-25,Friday,Night,S028,Naomi Jean-Baptiste,RN,12.0,0.0,Regular
+2026-09-25,Friday,Night,S022,Widline Pierre-Louis,RN,15.0,3.0,Regular
+2026-09-25,Friday,Night,AGENCY,Agency CNA (contract),CNA,12.0,0.0,Agency
+2026-09-25,Friday,Night,AGENCY,Agency CNA (contract),CNA,12.0,0.0,Agency
+2026-09-25,Friday,Night,S046,Mélissa Joseph,CNA,12.0,0.0,Regular
+2026-09-26,Saturday,Day,S001,Dalia Fernández,Charge RN,12.0,0.0,Regular
+2026-09-26,Saturday,Day,S009,Jean-Claude Baptiste,RN,12.0,0.0,Regular
+2026-09-26,Saturday,Day,S012,Lourdes Benítez,RN,12.0,0.0,Regular
+2026-09-26,Saturday,Day,S005,Nadège Toussaint,RN,12.0,0.0,Regular
+2026-09-26,Saturday,Day,S006,Roberto Villanueva,RN,15.0,3.0,Regular
+2026-09-26,Saturday,Day,S007,Sandra Pinheiro,RN,12.0,0.0,Regular
+2026-09-26,Saturday,Day,S013,Tamika Fergus,RN,12.0,0.0,Regular
+2026-09-26,Saturday,Day,S031,Yolanda Mercado,LPN,12.0,0.0,Regular
+2026-09-26,Saturday,Day,S039,Fabiana Duarte,CNA,12.0,0.0,Regular
+2026-09-26,Saturday,Day,S036,Rose-Marie Augustin,CNA,12.0,0.0,Regular
+2026-09-26,Saturday,Day,S037,Terrell Bishop,CNA,12.0,0.0,Regular
+2026-09-26,Saturday,Day,S047,Barbara Keller,Unit secretary,12.0,0.0,Regular
+2026-09-26,Saturday,Night,S019,Yesenia Castro,Charge RN,12.0,0.0,Regular
+2026-09-26,Saturday,Night,S027,Ashley Beaumont,RN,12.0,0.0,Regular
+2026-09-26,Saturday,Night,FLOAT,Float RN from 4 East,RN,12.0,0.0,Float in
+2026-09-26,Saturday,Night,S008,Michelle Dorsey,RN,12,12.0,Overtime
+2026-09-26,Saturday,Night,S030,Priscila Nascimento,RN,12.0,0.0,Regular
+2026-09-26,Saturday,Night,AGENCY,Agency CNA (contract),CNA,12.0,0.0,Agency
+2026-09-26,Saturday,Night,S043,Valeria Montoya,CNA,12.0,0.0,Regular
+2026-09-27,Sunday,Day,S001,Dalia Fernández,Charge RN,12.0,0.0,Regular
+2026-09-27,Sunday,Day,S003,Carmen Alvarado,RN,12.0,0.0,Regular
+2026-09-27,Sunday,Day,S009,Jean-Claude Baptiste,RN,12.0,0.0,Regular
+2026-09-27,Sunday,Day,S017,Joel Quiñones,RN,12.0,0.0,Regular
+2026-09-27,Sunday,Day,S006,Roberto Villanueva,RN,12.0,0.0,Regular
+2026-09-27,Sunday,Day,S018,Stephanie Dubois,RN,12.0,0.0,Regular
+2026-09-27,Sunday,Day,S013,Tamika Fergus,RN,12.0,0.0,Regular
+2026-09-27,Sunday,Day,S032,Denise Carrington,LPN,12.0,0.0,Regular
+2026-09-27,Sunday,Day,S035,Gladys Peñaranda,CNA,12.0,0.0,Regular
+2026-09-27,Sunday,Day,S040,Jerome Saintil,CNA,12.0,0.0,Regular
+2026-09-27,Sunday,Day,S037,Terrell Bishop,CNA,12.0,0.0,Regular
+2026-09-27,Sunday,Day,S048,Ricardo Peña,Unit secretary,12.0,0.0,Regular
+2026-09-27,Sunday,Night,S019,Yesenia Castro,Charge RN,12.0,0.0,Regular
+2026-09-27,Sunday,Night,S021,Ana Lucía Guerrero,RN,12.0,0.0,Regular
+2026-09-27,Sunday,Night,S015,Daniel Cordeiro,RN,12,12.0,Overtime
+2026-09-27,Sunday,Night,FLOAT,Float RN from 4 East,RN,12.0,0.0,Float in
+2026-09-27,Sunday,Night,FLOAT,Float RN from 4 East,RN,12.0,0.0,Float in
+2026-09-27,Sunday,Night,S025,Jasmine Thermidor,RN,12.0,0.0,Regular
+2026-09-27,Sunday,Night,S044,Shanice Brown,CNA,12.0,0.0,Regular
+2026-09-27,Sunday,Night,S045,Thiago Albuquerque,CNA,12,12.0,Overtime
+2026-09-28,Monday,Day,S002,Marcus Reid,Charge RN,12.0,0.0,Regular
+2026-09-28,Monday,Day,S003,Carmen Alvarado,RN,12.0,0.0,Regular
+2026-09-28,Monday,Day,S011,Gregory Hale,RN,12.0,0.0,Regular
+2026-09-28,Monday,Day,S010,Ivette Sanabria,RN,12.5,0.5,Regular
+2026-09-28,Monday,Day,S009,Jean-Claude Baptiste,RN,15.0,3.0,Regular
+2026-09-28,Monday,Day,S017,Joel Quiñones,RN,12.0,0.0,Regular
+2026-09-28,Monday,Day,S008,Michelle Dorsey,RN,12.0,0.0,Regular
+2026-09-28,Monday,Day,S031,Yolanda Mercado,LPN,12.0,0.0,Regular
+2026-09-28,Monday,Day,S035,Gladys Peñaranda,CNA,12.0,0.0,Regular
+2026-09-28,Monday,Day,S040,Jerome Saintil,CNA,12.0,0.0,Regular
+2026-09-28,Monday,Day,S041,Kayla Ferreira,CNA,12.0,0.0,Regular
+2026-09-28,Monday,Day,S048,Ricardo Peña,Unit secretary,12.0,0.0,Regular
+2026-09-28,Monday,Night,S020,Kwame Boateng,Charge RN,12.0,0.0,Regular
+2026-09-28,Monday,Night,S021,Ana Lucía Guerrero,RN,14.0,2.0,Regular
+2026-09-28,Monday,Night,S027,Ashley Beaumont,RN,13.0,1.0,Regular
+2026-09-28,Monday,Night,S023,Brandon Mackey,RN,13.0,1.0,Regular
+2026-09-28,Monday,Night,S029,Diego Salcedo,RN,12.0,0.0,Regular
+2026-09-28,Monday,Night,S030,Priscila Nascimento,RN,14.5,2.5,Regular
+2026-09-28,Monday,Night,S034,Kevin Sánchez,LPN,12.0,0.0,Regular
+2026-09-28,Monday,Night,S042,Evens Dorcélus,CNA,12.0,0.0,Regular
+2026-09-28,Monday,Night,S046,Mélissa Joseph,CNA,12.0,0.0,Regular
+2026-09-28,Monday,Night,S043,Valeria Montoya,CNA,12.0,0.0,Regular
+2026-09-29,Tuesday,Day,S002,Marcus Reid,Charge RN,12.0,0.0,Regular
+2026-09-29,Tuesday,Day,S003,Carmen Alvarado,RN,12.0,0.0,Regular
+2026-09-29,Tuesday,Day,S015,Daniel Cordeiro,RN,12.0,0.0,Regular
+2026-09-29,Tuesday,Day,FLOAT,Float RN from 4 East,RN,12.0,0.0,Float in
+2026-09-29,Tuesday,Day,S016,Kristen Albright,RN,15.0,3.0,Regular
+2026-09-29,Tuesday,Day,S006,Roberto Villanueva,RN,12.0,0.0,Regular
+2026-09-29,Tuesday,Day,S007,Sandra Pinheiro,RN,12.0,0.0,Regular
+2026-09-29,Tuesday,Day,S018,Stephanie Dubois,RN,12.0,0.0,Regular
+2026-09-29,Tuesday,Day,S032,Denise Carrington,LPN,12.0,0.0,Regular
+2026-09-29,Tuesday,Day,S039,Fabiana Duarte,CNA,12.0,0.0,Regular
+2026-09-29,Tuesday,Day,S038,Mayra Lezcano,CNA,12,12.0,Overtime
+2026-09-29,Tuesday,Day,S036,Rose-Marie Augustin,CNA,12.0,0.0,Regular
+2026-09-29,Tuesday,Day,S037,Terrell Bishop,CNA,12,12.0,Overtime
+2026-09-29,Tuesday,Day,S047,Barbara Keller,Unit secretary,12.0,0.0,Regular
+2026-09-29,Tuesday,Night,S020,Kwame Boateng,Charge RN,12.0,0.0,Regular
+2026-09-29,Tuesday,Night,AGENCY,Agency RN (contract),RN,12.0,0.0,Agency
+2026-09-29,Tuesday,Night,S021,Ana Lucía Guerrero,RN,12.0,0.0,Regular
+2026-09-29,Tuesday,Night,S024,Camila Figueiredo,RN,12.0,0.0,Regular
+2026-09-29,Tuesday,Night,S026,Esteban Ocampo,RN,12.0,0.0,Regular
+2026-09-29,Tuesday,Night,S025,Jasmine Thermidor,RN,12.0,0.0,Regular
+2026-09-29,Tuesday,Night,S028,Naomi Jean-Baptiste,RN,12.0,0.0,Regular
+2026-09-29,Tuesday,Night,S022,Widline Pierre-Louis,RN,12,12.0,Overtime
+2026-09-29,Tuesday,Night,S034,Kevin Sánchez,LPN,12.0,0.0,Regular
+2026-09-29,Tuesday,Night,S046,Mélissa Joseph,CNA,12.0,0.0,Regular
+2026-09-29,Tuesday,Night,S044,Shanice Brown,CNA,12.0,0.0,Regular
+2026-09-29,Tuesday,Night,S045,Thiago Albuquerque,CNA,12.0,0.0,Regular
+2026-09-30,Wednesday,Day,S002,Marcus Reid,Charge RN,12.0,0.0,Regular
+2026-09-30,Wednesday,Day,AGENCY,Agency RN (contract),RN,12.0,0.0,Agency
+2026-09-30,Wednesday,Day,S015,Daniel Cordeiro,RN,13.0,1.0,Regular
+2026-09-30,Wednesday,Day,S011,Gregory Hale,RN,12.0,0.0,Regular
+2026-09-30,Wednesday,Day,S012,Lourdes Benítez,RN,12.0,0.0,Regular
+2026-09-30,Wednesday,Day,S008,Michelle Dorsey,RN,12.0,0.0,Regular
+2026-09-30,Wednesday,Day,S004,Patricia Whitfield,RN,13.0,1.0,Regular
+2026-09-30,Wednesday,Day,S013,Tamika Fergus,RN,13.5,1.5,Regular
+2026-09-30,Wednesday,Day,S033,Marie-Ange Célestin,LPN,12.0,0.0,Regular
+2026-09-30,Wednesday,Day,AGENCY,Agency CNA (contract),CNA,12.0,0.0,Agency
+2026-09-30,Wednesday,Day,S039,Fabiana Duarte,CNA,12.0,0.0,Regular
+2026-09-30,Wednesday,Day,S038,Mayra Lezcano,CNA,12.0,0.0,Regular
+2026-09-30,Wednesday,Day,S036,Rose-Marie Augustin,CNA,12,12.0,Overtime
+2026-09-30,Wednesday,Day,S048,Ricardo Peña,Unit secretary,12.0,0.0,Regular
+2026-09-30,Wednesday,Night,S020,Kwame Boateng,Charge RN,12.0,0.0,Regular
+2026-09-30,Wednesday,Night,S023,Brandon Mackey,RN,13.5,1.5,Regular
+2026-09-30,Wednesday,Night,S024,Camila Figueiredo,RN,12.0,0.0,Regular
+2026-09-30,Wednesday,Night,S028,Naomi Jean-Baptiste,RN,12.0,0.0,Regular
+2026-09-30,Wednesday,Night,S030,Priscila Nascimento,RN,12.0,0.0,Regular
+2026-09-30,Wednesday,Night,S022,Widline Pierre-Louis,RN,12.0,0.0,Regular
+2026-09-30,Wednesday,Night,S034,Kevin Sánchez,LPN,12.0,0.0,Regular
+2026-09-30,Wednesday,Night,S042,Evens Dorcélus,CNA,12.0,0.0,Regular
+2026-09-30,Wednesday,Night,S045,Thiago Albuquerque,CNA,12.0,0.0,Regular

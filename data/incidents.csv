@@ -1,0 +1,97 @@
+incident_id,date,shift,time_of_day,type,severity,room,contributing_factor,description
+INC-001,2026-04-02,Night,01:29,Incivility report,No harm,405,Communication,A night RN in her first year reported that the charge nurse took a patient from her assignment without a word and told the team she 'could not handle it'.
+INC-002,2026-04-03,Day,18:04,Patient complaint,No harm,430,Communication,Daughter of the patient in room 430 said she received three different answers about the discharge time.
+INC-003,2026-04-05,Night,04:18,Fall,No harm,422,Staffing,Patient in room 422 found on the floor beside the bed after trying to reach the bathroom alone; the call light had been on for 15 minutes.
+INC-004,2026-04-09,Day,11:40,Staff injury,Minor harm,408,Equipment,CNA strained her back repositioning the patient in room 408 without a second person; the lift was in use on 4 East.
+INC-005,2026-04-13,Day,15:05,Medication error,Near miss,405,Process,Potassium replacement for room 405 ran without the ordered rate check; no harm found.
+INC-006,2026-04-14,Day,07:27,Handoff miss,No harm,423,Communication,Morning report for room 423 was given in the hallway while the day RN was already receiving an admission; the pending potassium result was never handed off.
+INC-007,2026-04-18,Day,17:26,Medication error,No harm,432,Fatigue,RN on an overtime shift (the fourth consecutive 12-hour shift) gave the 10 a.m. dose in room 432 at 1:10 p.m.
+INC-008,2026-04-24,Day,16:18,Pressure injury,Minor harm,424,Process,Stage 2 pressure injury found on the sacrum of the patient in room 424 during the day skin check; turning not documented for nine hours overnight.
+INC-009,2026-04-24,Night,00:42,Fall,Minor harm,428,Staffing,"Patient in room 428 fell in the bathroom; fall-risk socks and door sign were in place, but no assist was available when the light went on."
+INC-010,2026-04-26,Night,20:42,Fall,No harm,404,Equipment,Patient in room 404 slid from the bedside chair while waiting for help back to bed; the assigned RN had 7 patients that night.
+INC-011,2026-04-27,Day,17:50,Pressure injury,Minor harm,419,Equipment,Device-related pressure injury under the oxygen tubing on the patient in room 419; ears not checked at the night assessment.
+INC-012,2026-04-29,Day,07:16,Handoff miss,No harm,431,Process,At the 7 a.m. handoff the night RN did not mention the new fall-risk order for room 431; the day CNA found it at 10 a.m.
+INC-013,2026-04-29,Night,06:57,Fall,Minor harm,413,Process,Confused patient in room 413 climbed over a lowered side rail; one CNA was covering 14 patients at the time.
+INC-014,2026-05-03,Day,15:56,Incivility report,No harm,431,Communication,A day RN reported that a physical therapist dismissed her concern about room 431 with 'that is not a nursing decision'.
+INC-015,2026-05-03,Night,05:19,Fall,Moderate harm,408,Staffing,Bed alarm in room 408 was silenced during a turn and not reset; the patient was found sitting on the floor.
+INC-016,2026-05-05,Night,19:30,Handoff miss,No harm,432,Process,During the 7 p.m. report the day RN omitted that room 432 had a critical lab call pending; the result was addressed at 10 p.m.
+INC-017,2026-05-05,Night,22:52,Patient complaint,No harm,401,Communication,Daughter of the patient in room 401 said she received three different answers about the discharge time.
+INC-018,2026-05-12,Day,16:10,Staff injury,No harm,403,Process,RN sustained a needlestick in room 403 while recapping during a rushed draw at 6:50 a.m.
+INC-019,2026-05-12,Night,03:31,Incivility report,No harm,409,Communication,A night RN in her first year reported that the charge nurse refused to look at her when she presented a change in condition for room 409.
+INC-020,2026-05-17,Night,03:41,Fall,Minor harm,401,Staffing,Patient in room 401 slid from the bedside chair while waiting for help back to bed; the assigned RN had 9 patients that night.
+INC-021,2026-05-19,Night,06:46,Fall,No harm,401,Equipment,Patient in room 401 slid from the bedside chair while waiting for help back to bed; the assigned RN had 9 patients that night.
+INC-022,2026-05-22,Night,20:51,Medication error,Minor harm,415,Fatigue,RN on an overtime shift (the third consecutive 12-hour shift) gave the 10 a.m. dose in room 415 at 1:55 p.m.
+INC-023,2026-05-24,Night,05:04,Fall,Moderate harm,430,Staffing,Patient in room 430 slid from the bedside chair while waiting for help back to bed; the assigned RN had 8 patients that night.
+INC-024,2026-05-27,Day,17:05,Medication error,Near miss,427,Fatigue,RN on an overtime shift programmed the pump in room 427 at twice the ordered rate; corrected within 20 minutes.
+INC-025,2026-05-27,Day,18:45,Handoff miss,Near miss,410,Communication,The 6:40 p.m. report for room 410 was interrupted twice by call lights; the night RN did not learn about the family meeting set for 8 p.m.
+INC-026,2026-05-29,Day,12:45,Medication error,Near miss,429,Training,Potassium replacement for room 429 ran without the ordered rate check; no harm found.
+INC-027,2026-05-30,Night,04:50,Pressure injury,Minor harm,431,Process,Stage 2 pressure injury on the coccyx of the patient in room 431; two-hour turns missed on a short-staffed Saturday night.
+INC-028,2026-06-05,Night,21:18,Fall,No harm,403,Staffing,Patient in room 403 fell reaching for a water pitcher left out of reach after the 2 a.m. rounds were skipped.
+INC-029,2026-06-09,Day,13:12,Pressure injury,Moderate harm,411,Equipment,Device-related pressure injury under the oxygen tubing on the patient in room 411; ears not checked at the night assessment.
+INC-030,2026-06-11,Day,18:48,Handoff miss,No harm,424,Communication,The evening handoff for room 424 was given from memory without the printed sheet; the insulin sliding scale was described wrong.
+INC-031,2026-06-14,Day,09:29,Pressure injury,Minor harm,404,Staffing,Stage 2 pressure injury found on the sacrum of the patient in room 404 during the day skin check; turning not documented for nine hours overnight.
+INC-032,2026-06-16,Night,02:06,Medication error,Minor harm,425,Fatigue,RN picking up an extra shift missed the hold parameter for the blood pressure medication in room 425.
+INC-033,2026-06-20,Night,23:28,Incivility report,No harm,407,Communication,A night RN in her first year reported that the charge nurse corrected her loudly at the nurse station in front of two CNAs.
+INC-034,2026-06-21,Night,22:04,Fall,Moderate harm,405,Staffing,Confused patient in room 405 climbed over a lowered side rail; one CNA was covering 10 patients at the time.
+INC-035,2026-06-23,Day,12:34,Fall,Minor harm,404,Process,Post-operative patient in room 404 stood without the walker while the CNA answered a neighboring call light.
+INC-036,2026-06-25,Night,23:35,Incivility report,No harm,406,Communication,A new graduate RN on nights reported being told 'figure it out' when she asked for help with a chest tube in room 406.
+INC-037,2026-06-27,Day,15:50,Medication error,Near miss,423,Process,Scanner in room 423 was down and the RN bypassed the scan; a duplicate dose resulted.
+INC-038,2026-06-27,Day,18:49,Handoff miss,No harm,408,Communication,At the 7 p.m. handoff the day RN described room 408 as 'stable'; the oxygen requirement had doubled since noon.
+INC-039,2026-06-27,Night,04:35,Fall,No harm,402,Staffing,Bed alarm in room 402 was silenced during a turn and not reset; the patient was found sitting on the floor.
+INC-040,2026-06-28,Night,00:43,Medication error,No harm,416,Fatigue,RN picking up an extra shift missed the hold parameter for the blood pressure medication in room 416.
+INC-041,2026-06-28,Night,04:54,Patient complaint,No harm,413,Staffing,Patient in room 413 complained that nobody explained why the morning pills changed.
+INC-042,2026-06-30,Day,12:15,Handoff miss,No harm,430,Communication,Transfer report from the emergency department for room 430 did not mention the patient's hearing loss or the fall at home.
+INC-043,2026-07-03,Night,00:35,Fall,Minor harm,422,Staffing,Confused patient in room 422 climbed over a lowered side rail; one CNA was covering 11 patients at the time.
+INC-044,2026-07-03,Night,19:13,Fall,Minor harm,419,Staffing,Bed alarm in room 419 was silenced during a turn and not reset; the patient was found sitting on the floor.
+INC-045,2026-07-04,Night,03:52,Incivility report,No harm,419,Communication,A new night RN reported being excluded from the team meal and told she 'had not earned it yet'.
+INC-046,2026-07-05,Day,18:04,Pressure injury,Minor harm,426,Process,Device-related pressure injury under the oxygen tubing on the patient in room 426; ears not checked at the night assessment.
+INC-047,2026-07-07,Night,02:46,Staff injury,Minor harm,401,Process,RN sustained a needlestick in room 401 while recapping during a rushed draw at 6:50 a.m.
+INC-048,2026-07-08,Night,03:32,Fall,Minor harm,401,Staffing,Patient in room 401 fell reaching for a water pitcher left out of reach after the 2 a.m. rounds were skipped.
+INC-049,2026-07-10,Day,12:28,Fall,No harm,405,Equipment,Patient in room 405 lost balance stepping onto the scale during the morning weight; assisted to the floor.
+INC-050,2026-07-11,Day,10:40,Pressure injury,Minor harm,412,Staffing,Heel pressure injury found in room 412 on day four; heel offloading boots were ordered but not in stock on the unit.
+INC-051,2026-07-18,Day,07:38,Patient complaint,No harm,401,Communication,Family in room 401 reported that staff spoke about another patient in the hallway loudly enough to hear names.
+INC-052,2026-07-18,Night,04:19,Patient complaint,No harm,422,Communication,Patient in room 422 reported that nurses did not introduce themselves or explain the medications at the bedside.
+INC-053,2026-07-18,Night,05:45,Medication error,No harm,418,Fatigue,RN on an overtime shift programmed the pump in room 418 at twice the ordered rate; corrected within 20 minutes.
+INC-054,2026-07-18,Night,19:18,Fall,No harm,405,Staffing,Patient in room 405 fell reaching for a water pitcher left out of reach after the 2 a.m. rounds were skipped.
+INC-055,2026-07-22,Day,17:17,Medication error,Near miss,420,Fatigue,RN on an overtime shift (the fourth consecutive 12-hour shift) gave the 10 a.m. dose in room 420 at 1:25 p.m.
+INC-056,2026-07-23,Night,23:48,Medication error,No harm,428,Process,Pharmacy order for room 428 was transcribed with the wrong frequency; two doses given before the discrepancy was found.
+INC-057,2026-07-25,Day,07:20,Handoff miss,Near miss,402,Process,Morning report for room 402 was given in the hallway while the day RN was already receiving an admission; the pending potassium result was never handed off.
+INC-058,2026-07-29,Day,18:45,Handoff miss,No harm,430,Process,During the 7 p.m. report the day RN omitted that room 430 had a critical lab call pending; the result was addressed at 10 p.m.
+INC-059,2026-07-31,Day,14:49,Incivility report,No harm,408,Communication,A hospitalist raised his voice at a day RN over a delayed page about room 408 and left before she could respond.
+INC-060,2026-08-02,Day,17:22,Staff injury,Minor harm,418,Staffing,RN sustained a needlestick in room 418 while recapping during a rushed draw at 6:50 a.m.
+INC-061,2026-08-07,Day,11:48,Medication error,No harm,408,Communication,Pharmacy order for room 408 was transcribed with the wrong frequency; two doses given before the discrepancy was found.
+INC-062,2026-08-08,Night,02:59,Fall,No harm,414,Staffing,Patient in room 414 slid from the bedside chair while waiting for help back to bed; the assigned RN had 6 patients that night.
+INC-063,2026-08-08,Night,04:30,Fall,No harm,423,Staffing,Patient in room 423 fell reaching for a water pitcher left out of reach after the 2 a.m. rounds were skipped.
+INC-064,2026-08-09,Night,06:57,Pressure injury,Moderate harm,422,Equipment,Device-related pressure injury under the oxygen tubing on the patient in room 422; ears not checked at the night assessment.
+INC-065,2026-08-10,Night,19:20,Handoff miss,No harm,409,Communication,Evening handoff for room 409 did not include the new PICC line restrictions; blood was drawn from that arm.
+INC-066,2026-08-11,Night,22:55,Pressure injury,Minor harm,415,Training,Stage 2 pressure injury found on the sacrum of the patient in room 415 during the day skin check; turning not documented for nine hours overnight.
+INC-067,2026-08-12,Night,04:03,Incivility report,No harm,404,Communication,An orientee reported eye-rolling and sighing from the charge nurse when she asked for a second check on an insulin dose.
+INC-068,2026-08-13,Day,18:56,Pressure injury,Minor harm,424,Staffing,Device-related pressure injury under the oxygen tubing on the patient in room 424; ears not checked at the night assessment.
+INC-069,2026-08-15,Day,12:02,Medication error,Near miss,431,Fatigue,RN on an overtime shift programmed the pump in room 431 at twice the ordered rate; corrected within 20 minutes.
+INC-070,2026-08-15,Night,00:22,Fall,Minor harm,419,Equipment,Patient in room 419 fell reaching for a water pitcher left out of reach after the 2 a.m. rounds were skipped.
+INC-071,2026-08-19,Night,06:58,Handoff miss,Near miss,408,Process,The 6:45 a.m. handoff for room 408 skipped the overnight chest pain episode; the hospitalist learned of it from the family.
+INC-072,2026-08-22,Night,21:19,Incivility report,No harm,425,Communication,Two night RNs argued over an admission assignment within earshot of the family in room 425.
+INC-073,2026-08-23,Night,05:12,Fall,No harm,401,Staffing,Patient in room 401 slid from the bedside chair while waiting for help back to bed; the assigned RN had 8 patients that night.
+INC-074,2026-08-25,Night,23:11,Patient complaint,No harm,414,Staffing,Family in room 414 reported that staff spoke about another patient in the hallway loudly enough to hear names.
+INC-075,2026-08-27,Night,05:51,Medication error,Near miss,408,Equipment,Patient in room 408 received an anticoagulant that had been held in the morning note the RN did not see.
+INC-076,2026-08-28,Day,18:54,Handoff miss,No harm,421,Communication,At the 7 p.m. handoff the day RN described room 421 as 'stable'; the oxygen requirement had doubled since noon.
+INC-077,2026-08-29,Day,16:01,Fall,No harm,423,Staffing,Patient in room 423 lost balance stepping onto the scale during the morning weight; assisted to the floor.
+INC-078,2026-09-02,Day,18:43,Staff injury,Minor harm,409,Staffing,RN slipped on a wet floor near the med room; no wet floor sign had been placed after the spill.
+INC-079,2026-09-05,Night,21:57,Medication error,Minor harm,402,Fatigue,RN working overtime pulled the wrong strength from the dispensing cabinet for room 402; caught at the bedside scan.
+INC-080,2026-09-06,Night,19:27,Fall,Moderate harm,413,Staffing,Patient in room 413 fell reaching for a water pitcher left out of reach after the 2 a.m. rounds were skipped.
+INC-081,2026-09-07,Night,19:01,Handoff miss,No harm,430,Process,The 6:40 p.m. report for room 430 was interrupted twice by call lights; the night RN did not learn about the family meeting set for 8 p.m.
+INC-082,2026-09-09,Night,01:45,Incivility report,No harm,408,Communication,A new night RN reported that her question about a pump was answered with 'did they teach you anything in school?'
+INC-083,2026-09-12,Night,21:43,Medication error,Near miss,407,Fatigue,Overtime RN gave the evening dose in room 407 to the patient in the next bed with a similar name.
+INC-084,2026-09-14,Night,01:22,Patient complaint,No harm,429,Communication,Patient in room 429 complained that nobody explained why the morning pills changed.
+INC-085,2026-09-15,Day,18:45,Handoff miss,Near miss,423,Communication,The 6:40 p.m. report for room 423 was interrupted twice by call lights; the night RN did not learn about the family meeting set for 8 p.m.
+INC-086,2026-09-15,Night,20:39,Pressure injury,Minor harm,432,Equipment,Stage 2 pressure injury on the coccyx of the patient in room 432; two-hour turns missed on a short-staffed Saturday night.
+INC-087,2026-09-20,Night,06:04,Fall,Moderate harm,416,Staffing,Patient in room 416 fell reaching for a water pitcher left out of reach after the 2 a.m. rounds were skipped.
+INC-088,2026-09-20,Night,20:54,Fall,No harm,429,Staffing,"Patient in room 429 fell in the bathroom; fall-risk socks and door sign were in place, but no assist was available when the light went on."
+INC-089,2026-09-21,Day,16:48,Medication error,No harm,415,Process,Oral medication for room 415 was crushed despite the extended-release label.
+INC-090,2026-09-21,Night,01:28,Patient complaint,No harm,416,Staffing,Patient in room 416 said the night nurse seemed rushed and did not answer questions about pain medication timing.
+INC-091,2026-09-21,Night,21:40,Handoff miss,Minor harm,425,Communication,Transfer report from the emergency department for room 425 did not mention the patient's hearing loss or the fall at home.
+INC-092,2026-09-22,Day,15:52,Pressure injury,Minor harm,402,Training,Device-related pressure injury under the oxygen tubing on the patient in room 402; ears not checked at the night assessment.
+INC-093,2026-09-27,Night,05:08,Fall,Minor harm,420,Staffing,Patient in room 420 found on the floor beside the bed after trying to reach the bathroom alone; the call light had been on for 12 minutes.
+INC-094,2026-09-27,Night,23:33,Medication error,Near miss,424,Fatigue,RN picking up an extra shift missed the hold parameter for the blood pressure medication in room 424.
+INC-095,2026-09-29,Day,12:11,Fall,Minor harm,418,Staffing,Patient in room 418 lost balance stepping onto the scale during the morning weight; assisted to the floor.
+INC-096,2026-09-29,Night,01:26,Incivility report,No harm,412,Communication,A night RN with four months on the unit reported that her assignment was called 'the easy one for the new girl' in front of the team.

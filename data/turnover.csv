@@ -1,0 +1,27 @@
+staff_id,name,role,shift,hire_date,exit_date,tenure_months,exit_reason,would_return,exit_comment
+X001,Jonathan Pressley,RN,Day,2018-04-07,2025-04-08,84,Career advancement,Yes,I accepted a charge nurse position on a step-down unit; there was no path to it here.
+X002,Rafael Antunes,Unit secretary,Day,2022-04-11,2025-04-13,36,Career advancement,Yes,I moved to the patient access department with a promotion.
+X003,Adrián Bustamante,CNA,Night,2024-09-03,2025-05-10,8,Pay elsewhere,No,A warehouse job paid more than caring for twelve patients a night.
+X004,Melissa Arroyo,RN,Night,2023-01-31,2025-06-11,28,Burnout,Maybe,"I loved the patients, but four nurses for twenty-eight of them every weekend wore me down."
+X005,Carla Menezes,LPN,Day,2021-03-09,2025-07-10,52,Pay elsewhere,Maybe,A clinic offered four dollars more an hour and no weekends.
+X006,Rodney Charles,RN,Day,1999-10-05,2025-08-10,310,Retirement,No,Twenty-six years on this floor; I am leaving on good terms and on my own schedule.
+X007,Mireille Fontaine,CNA,Day,2023-02-11,2025-09-16,31,Career advancement,Yes,I started nursing school full time and hope to come back as an RN.
+X008,Samuel Grant,CNA,Night,2025-04-11,2025-10-19,6,Schedule,No,I was hired for three nights a week and was pressured to work five.
+X009,Stéphanie Lafortune,RN,Night,2024-12-04,2025-11-04,11,Schedule,Maybe,I asked for one fixed weekend a month for my kids and the schedule never changed.
+X010,Dayana Restrepo,CNA,Night,2024-10-14,2025-12-21,14,Burnout,Maybe,Two-person assists with one person available every weekend; my back could not take it.
+X011,Keisha Rowe,RN,Night,2024-10-28,2026-01-07,14,Relationship with charge nurse,No,I was corrected in front of families more than I was taught; I stopped asking questions.
+X012,Clifford Mathurin,CNA,Day,2024-03-17,2026-01-27,22,Pay elsewhere,Maybe,The pay difference across the bay was two dollars an hour and free parking.
+X013,Pierre-Richard Dieudonné,LPN,Night,2025-04-09,2026-02-10,10,Schedule,Maybe,Every holiday landed on me and the requests were never explained.
+X014,Brittany Holt,CNA,Night,2025-10-16,2026-03-16,5,Relationship with charge nurse,No,I did not feel welcome on nights from the first week.
+X015,Luciana Barros,CNA,Day,2022-04-25,2026-04-03,47,Relocation,Yes,We moved to Orlando for my husband's job; I would come back in a minute.
+X016,Verónica Espinal,RN,Night,2025-07-17,2026-04-18,9,Relationship with charge nurse,No,"The night charge nurse made it clear that new nurses were a burden, so I found a unit that wanted me."
+X017,Marvin Estrada,CNA,Night,2025-08-11,2026-05-21,9,Schedule,Maybe,I could never get two weekends off in a row to see my daughter.
+X018,Andrea Lobo,RN,Day,2023-01-15,2026-05-22,40,Career advancement,Yes,I finished my MSN and the hospital across town had the educator role I wanted.
+X019,Jacqueline Noël,CNA,Day,2021-05-29,2026-06-05,60,Career advancement,Yes,I passed my LPN boards and there was no LPN opening on 4 West.
+X020,Natalie Grimes,RN,Night,2025-02-13,2026-06-25,16,Schedule,Yes,Rotating between nights and days with one day off in between was not something I could keep doing.
+X021,Isabel Camacho,RN,Night,2025-06-30,2026-07-07,12,Relationship with charge nurse,Maybe,The team was great; one person in charge decided whether the night was bearable.
+X022,Monique Delva,Unit secretary,Day,2025-01-10,2026-07-10,18,Relocation,Maybe,I moved to Broward and the commute to the bay was too long.
+X023,Héctor Villalba,CNA,Night,2025-08-28,2026-08-06,11,Pay elsewhere,No,A surgical center offered day hours and a sign-on bonus.
+X024,Sheila Pemberton,LPN,Day,2010-10-10,2026-08-20,190,Retirement,No,"It was time, and I wanted to leave while I still enjoyed the work."
+X025,Tyrone Walcott,RN,Night,2026-01-24,2026-08-25,7,Travel nursing,Yes,"A travel contract pays almost double for the same work, and I was already working the overtime anyway."
+X026,Gabriela Sotomayor,RN,Night,2025-06-12,2026-09-19,15,Schedule,Maybe,Self-scheduling was promised at my interview and never happened.

@@ -1,0 +1,1167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conflict rounds challenge</title>
+<meta name="description" content="MHS 510 Week 5 interactive: Ten conflicts from 4 West. For each one, choose the conflict mode, the first sentence the manager says, and the follow-up action. Scored out of 100.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Figtree:ital,wght@0,300..900;1,300..900&family=JetBrains+Mono:wght@100..800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/renderers/CSS2DRenderer.js"></script>
+<style>
+  /* ===== MHS 510 "4 West unit board" theme v1 (a nursing unit status whiteboard: linen page, navy ink, teal actions). Paste as the first block of every page's <style>. ===== */
+  :root{
+    --au-red:#E1141E; --au-red-dark:#A3282B;
+    /* base: linen page, soft panels, navy ink */
+    --paper:#F6F3EE; --paper-deep:#ECE7DF; --panel:#FFFFFF; --panel-2:#F4F1EB; --line:#D9D3C8; --line-2:#C4BCAE;
+    --ink:#14233A; --ink-2:#36465E; --muted:#66728A;
+    /* accents with fixed meanings (the same thing gets the same color on every page) */
+    --teal:#0E7C86;    /* primary actions and the student's own moves */
+    --coral:#D4453F;   /* conflict and risk */
+    --amber:#C27A08;   /* caution and in-progress */
+    --green:#1F8A4C;   /* stable, positive, correct */
+    --violet:#6A4FC8;  /* leadership moves and theory tags */
+    --slate:#5B6B82;   /* neutral data */
+    --teal-soft:rgba(14,124,134,.10); --coral-soft:rgba(212,69,63,.10); --amber-soft:rgba(194,122,8,.12); --green-soft:rgba(31,138,76,.10); --violet-soft:rgba(106,79,200,.10); --slate-soft:rgba(91,107,130,.10);
+    --ok:var(--green); --bad:var(--coral); --warn:var(--amber);
+    --ok-soft:var(--green-soft); --bad-soft:var(--coral-soft); --warn-soft:var(--amber-soft);
+    --font-display:"Bricolage Grotesque","Figtree","Helvetica Neue",sans-serif;
+    --font-body:"Figtree","Helvetica Neue",sans-serif;
+    --font-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+    --mono:var(--font-mono); --sans:var(--font-body); --display:var(--font-display);
+    --r:10px; --radius:10px; --lab:10px;
+    --shadow:0 1px 2px rgba(20,35,58,.06),0 8px 22px rgba(20,35,58,.07);
+    --shadow-sm:0 1px 2px rgba(20,35,58,.08);
+    /* legacy names used by older page code and shared markup, mapped to the light theme */
+    --board:#ECE7DF; --board-deep:#F6F3EE; --bg:#F6F3EE; --card:#FFFFFF; --edge:#D9D3C8; --edge-2:#C4BCAE; --dim:#66728A;
+    --silk:#14233A; --silk-2:#36465E; --silk-dim:#66728A; --copper:#0E7C86; --neon:#0E7C86;
+    --addr:#C27A08; --data:#0E7C86; --ctrl:#D4453F; --alu:#1F8A4C; --oper:#6A4FC8; --out:#1F8A4C; --led:#1F8A4C;
+    --code-bg:#EEF1F4; --code-ink:#14233A; --au-red-soft:rgba(225,20,30,.10);
+    --net-blue:#0E7C86; --net-green:#1F8A4C; --net-amber:#C27A08; --net-purple:#6A4FC8; --net-teal:#0E7C86;
+    color-scheme:light;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  html{background:var(--paper)}
+  [hidden]{display:none!important}
+  /* page: linen with a faint whiteboard grid and a soft teal wash at the top */
+  body{color:var(--ink);font-family:var(--font-body);font-size:15.5px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden;
+    background:
+      radial-gradient(900px 420px at 18% -8%,rgba(14,124,134,.10) 0%,transparent 65%),
+      radial-gradient(700px 360px at 92% 8%,rgba(106,79,200,.06) 0%,transparent 60%),
+      linear-gradient(rgba(20,35,58,.045) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(20,35,58,.045) 1px,transparent 1px),
+      var(--paper);
+    background-size:auto,auto,28px 28px,28px 28px,auto}
+  button,input,select,textarea{font:inherit;color:inherit}
+  a{color:var(--teal)}
+  :focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+  /* brand bar: white with the AU red rule (the logo PNG is cropped with a wrapper) */
+  .topbar{position:relative;z-index:5;background:#fff;border-bottom:3px solid var(--au-red);box-shadow:0 1px 0 rgba(20,35,58,.06)}
+  .topbar-inner{max-width:none;margin:0 auto;padding:8px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .au-logo{width:130px;height:36px;overflow:hidden;flex:none;display:block}
+  .au-logo img{width:145px;height:auto;margin:-28px 0 0 -8px;display:block}
+  .crumb{font-size:13px;color:#6B7280;letter-spacing:.02em;border-left:1px solid #E3E6EB;padding-left:16px}
+  .crumb b{color:#16181D;font-weight:600}
+  .crumb a{color:#A3282B;text-decoration:none}
+  /* page mode (challenges and pages with a scrolling layout) */
+  main,.wrap{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:26px 16px 36px}
+  .hero{margin:0 0 20px}
+  .eyebrow{display:block;margin:0;font:600 11px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--teal);background:none;padding:0}
+  h1{margin:6px 0 8px;font-family:var(--font-display);font-weight:700;font-size:clamp(26px,3.6vw,40px);line-height:1.1;letter-spacing:-.015em;text-wrap:balance;color:var(--ink);font-variation-settings:"opsz" 96}
+  h1 .num{color:var(--teal)}
+  h2{margin:0 0 10px;font-family:var(--font-display);font-weight:600;font-size:17px;letter-spacing:-.005em;color:var(--ink)}
+  h2 small,h3 small{color:var(--muted);font-weight:400;font-family:var(--font-body);font-size:.8em}
+  h3{margin:0 0 8px;font-family:var(--font-display);font-weight:600;font-size:14.5px;color:var(--ink)}
+  .lede{margin:0;color:var(--ink-2);font-size:16px;max-width:68ch}
+  .muted{color:var(--muted)}
+  .spec{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow-sm)}
+  .spec div{background:var(--panel);padding:10px 12px}
+  .spec b{display:block;font:700 17px var(--font-display);color:var(--ink)}
+  .spec span{font-size:12.5px;color:var(--muted)}
+  @media(min-width:960px){.hero.split{display:grid;grid-template-columns:1.35fr 1fr;gap:18px;align-items:end}}
+  /* cards: soft white panels with a faint ruled-line pattern, like a whiteboard with guide lines */
+  .card{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px;min-width:0;color:var(--ink);box-shadow:var(--shadow);
+    background-image:linear-gradient(180deg,rgba(255,255,255,.6),rgba(255,255,255,0) 60px),repeating-linear-gradient(180deg,transparent 0 27px,rgba(20,35,58,.035) 27px 28px)}
+  .card[data-ref]::after{content:attr(data-ref);position:absolute;top:10px;right:14px;font:600 9.5px var(--font-mono);letter-spacing:.12em;color:var(--slate);opacity:.7}
+  .grid{display:grid;gap:16px}
+  .grid>*{min-width:0}
+  @media(min-width:900px){.grid.two{grid-template-columns:minmax(0,1.45fr) minmax(0,1fr)}}
+  details,details.howto{border:1px solid var(--line);border-radius:var(--r);background:var(--panel);box-shadow:var(--shadow-sm)}
+  details.howto{margin:0 0 16px}
+  summary{cursor:pointer;padding:11px 14px;font:600 14px var(--font-display);color:var(--ink)}
+  details>*:not(summary){margin-left:14px;margin-right:14px}
+  details.howto ol,details.howto ul{margin:4px 14px 12px;padding-left:20px;color:var(--ink-2)}
+  details.howto li{margin-bottom:5px}
+  details.howto li::marker{color:var(--teal);font-weight:600}
+  .btn{border:1px solid var(--line-2);background:var(--panel);border-radius:8px;padding:9px 13px;font:600 13px var(--font-body);color:var(--ink);cursor:pointer;transition:border-color .2s,background .2s,box-shadow .2s;display:inline-flex;gap:6px;align-items:center;justify-content:center;box-shadow:var(--shadow-sm)}
+  .btn:hover:not(:disabled){border-color:var(--teal);background:var(--teal-soft)}
+  .btn.primary,.btn.go{background:var(--teal);border-color:var(--teal);color:#fff}
+  .btn.primary:hover:not(:disabled),.btn.go:hover:not(:disabled){background:#0B6A73;border-color:#0B6A73}
+  .btn[aria-pressed="true"],.btn.on{border-color:var(--teal);color:var(--teal);background:var(--teal-soft)}
+  .btn:disabled,.btn[disabled]{opacity:.45;cursor:not-allowed}
+  input[type=text],input[type=number],select,textarea{background:#fff;border:1px solid var(--line-2);border-radius:8px;padding:8px 10px;font:500 14px var(--font-body);color:var(--ink);min-width:0}
+  input[type=checkbox],input[type=radio],input[type=range]{accent-color:var(--teal)}
+  .mono,code,kbd{font-family:var(--font-mono);font-size:.9em}
+  code{background:rgba(20,35,58,.07);padding:1px 5px;border-radius:4px}
+  .cli{background:var(--code-bg);color:var(--code-ink);font:500 12.5px/1.6 var(--font-mono);border-radius:8px;padding:12px 14px;overflow:auto;white-space:pre;border:1px solid var(--line)}
+  .pill{display:inline-block;font:600 10.5px var(--font-mono);letter-spacing:.06em;padding:3px 8px;border-radius:999px;background:var(--panel-2);color:var(--ink-2);border:1px solid var(--line)}
+  .pill.teal{color:var(--teal);border-color:var(--teal);background:var(--teal-soft)}
+  .pill.violet{color:var(--violet);border-color:var(--violet);background:var(--violet-soft)}
+  .pill.coral{color:var(--coral);border-color:var(--coral);background:var(--coral-soft)}
+  .pill.amber{color:var(--amber);border-color:var(--amber);background:var(--amber-soft)}
+  .pill.green{color:var(--green);border-color:var(--green);background:var(--green-soft)}
+  .feedback{border-radius:8px;padding:11px 13px;margin-top:12px;font-size:14.5px;color:var(--ink)}
+  .feedback.ok{background:var(--green-soft);border:1px solid rgba(31,138,76,.5)}
+  .feedback.bad{background:var(--coral-soft);border:1px solid rgba(212,69,63,.5)}
+  .feedback.info{background:var(--teal-soft);border:1px solid rgba(14,124,134,.45)}
+  .score{display:flex;gap:12px;align-items:center;flex-wrap:wrap;font:600 12.5px var(--font-mono);color:var(--muted)}
+  .score .big{font:700 36px/1 var(--font-display);color:var(--ink);font-variant-numeric:tabular-nums}
+  table,table.data{border-collapse:collapse;width:100%;font:500 12.5px var(--font-mono);font-variant-numeric:tabular-nums}
+  th,table.data th{font-weight:600;color:var(--muted);text-align:left;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;padding:7px 8px;border-bottom:1px solid var(--line);background:var(--panel-2)}
+  td,table.data td{padding:5px 8px;border-bottom:1px solid rgba(20,35,58,.08)}
+  .scroll-x,.memwrap{overflow-x:auto}
+  .memwrap{border:1px solid var(--line);border-radius:8px;background:#fff}
+  svg text{font-family:var(--font-body)}
+  /* step-by-step explanation (page mode and app mode) */
+  .stepper{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:12px}
+  .caption,.narr{background:var(--panel-2);border:1px solid var(--line);border-radius:var(--r);padding:13px 15px;color:var(--ink)}
+  .caption{margin-top:12px;min-height:4.4em}
+  .caption .t{font:600 11px var(--font-mono);letter-spacing:.1em;color:var(--cap,var(--teal));margin-bottom:6px;text-transform:uppercase}
+  .caption p{margin:0}
+  .narr{display:flex;flex-direction:column;gap:8px}
+  .narr-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font:500 11px var(--font-mono);color:var(--muted)}
+  .ptag{display:inline-flex;align-items:center;gap:7px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink)}
+  .ptag::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--pc,var(--muted))}
+  .narr p{margin:0;font-size:15.5px;line-height:1.55;min-height:4.6em}
+  .controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .controls .btn{padding:10px 6px}
+  .speed{display:flex;align-items:center;gap:12px;font:500 12px var(--font-body);color:var(--muted)}
+  .speed input{flex:1;min-width:0}
+  .speed output{color:var(--ink);width:3.5em;text-align:right;font-variant-numeric:tabular-nums}
+  .hint{margin:0;font-size:12.5px;color:var(--muted)}
+  .rail{display:flex;gap:2px;margin:4px 0 12px;padding:4px;list-style:none;background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm)}
+  .rail>div,.rail>li{flex:1;text-align:center;font:600 11px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;padding:6px 8px;border-radius:7px;color:var(--muted);transition:background .25s,color .25s}
+  .rail>div small{display:block;font:400 10px var(--font-body);letter-spacing:.02em;text-transform:none;margin-top:2px;opacity:.85}
+  .rail>.on{background:var(--c,var(--teal));color:#fff}
+  .rail>.done{color:var(--c,var(--teal))}
+  /* live state (the unit board: a row of key figures) */
+  .regs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .reg{border:1px solid var(--line);border-radius:8px;padding:9px 11px;background:#fff;transition:border-color .3s,background .3s;min-width:0}
+  .reg.kv{display:grid;grid-template-columns:1fr auto;gap:1px 8px;align-items:baseline}
+  .reg.on,.reg.flash{border-color:var(--hc,var(--teal));background:var(--teal-soft)}
+  .reg .rn{font:600 12.5px var(--font-body);color:var(--ink-2)}
+  .reg .rv{font:700 18px var(--font-display);text-align:right;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .reg .rf{font-size:11.5px;color:var(--muted)}
+  .reg .rs{font:500 10.5px var(--font-mono);color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+  .reg.wide{grid-column:1/-1}
+  .reg .n{display:flex;justify-content:space-between;align-items:baseline;font:600 12.5px var(--font-body);color:var(--ink)}
+  .reg .n b{font:700 18px var(--font-display);font-variant-numeric:tabular-nums}
+  .bits{grid-column:1/-1;display:grid;grid-template-columns:repeat(var(--nb,8),1fr);gap:4px;margin-top:8px}
+  .bit{display:flex;flex-direction:column;align-items:center;gap:3px;font:500 9.5px var(--font-mono);color:var(--muted)}
+  .bit i{width:100%;height:16px;border-radius:3px;background:var(--panel-2);border:1px solid var(--line);transition:background .25s}
+  .bit.one i{background:var(--green);border-color:var(--green)}
+  .ledbits{display:flex;gap:4px;margin:6px 0 2px;flex-wrap:wrap}
+  .ledbits i{width:16px;height:16px;border-radius:3px;background:var(--panel-2);border:1px solid var(--line);font:600 9px/14px var(--font-mono);font-style:normal;color:var(--muted);text-align:center}
+  .ledbits i.on{background:var(--green);border-color:var(--green);color:#fff}
+  .tape{display:flex;flex-wrap:wrap;gap:4px;min-height:34px;align-content:flex-start}
+  .tape span{font:600 13px var(--font-mono);color:var(--green);background:var(--green-soft);border:1px solid rgba(31,138,76,.4);border-radius:5px;padding:3px 7px;font-variant-numeric:tabular-nums}
+  .tape em{font-style:normal;font-size:12px;color:var(--muted)}
+  .notice{margin:0;padding-left:18px;color:var(--ink-2);font-size:14px;display:flex;flex-direction:column;gap:6px}
+  .notice li::marker{color:var(--teal)}
+  .legend{display:flex;flex-wrap:wrap;gap:4px 14px;font:500 11px var(--font-mono);color:var(--ink-2);letter-spacing:.03em}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:16px;height:4px;border-radius:2px;background:var(--c)}
+  /* app mode: the 3D unit floor fills the left, a control rail sits on the right (stacks under the floor on phones) */
+  .app{display:grid;grid-template-columns:minmax(0,1fr) minmax(340px,410px);height:calc(100vh - 55px);min-height:560px}
+  .stage{position:relative;min-width:0;min-height:320px;overflow:hidden;touch-action:none;
+    background:radial-gradient(ellipse at 45% 35%,#FBFAF7 0%,#E6ECEF 70%,#DCE3E8 100%)}
+  .stage .gl{position:absolute;inset:0;display:block;z-index:1}
+  .stage .labels{position:absolute!important;top:0;left:0;z-index:2}
+  .stage .flat,.stage3d .flat{position:absolute;inset:0;width:100%;height:100%;z-index:1}
+  .nogl{position:absolute;left:0;right:0;top:0;padding:7px 12px;text-align:center;color:var(--ink-2);font-size:12.5px;z-index:4;background:rgba(255,255,255,.92);border-bottom:1px solid var(--line)}
+  .stage:has(.nogl:not([hidden])) .hud-top{top:48px}
+  .stage:has(.nogl:not([hidden])) .flat,.stage3d:has(.nogl:not([hidden])) .flat{top:36px;height:calc(100% - 36px)}
+  .hud{position:absolute;z-index:3;pointer-events:none;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .hud button,.hud a{pointer-events:auto}
+  .hud-top{top:14px;left:16px;right:16px}
+  .hud-bottom{bottom:14px;left:16px;right:16px;justify-content:space-between;align-items:flex-end}
+  .hud .phases,.hud .ticks,.hud .legend,.hud .views{background:rgba(255,255,255,.86);border:1px solid var(--line);border-radius:var(--r);backdrop-filter:blur(6px);box-shadow:var(--shadow-sm)}
+  .phases{list-style:none;margin:0;padding:4px;display:flex;gap:2px}
+  .phases li{font:600 11px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;padding:6px 10px;border-radius:7px;color:var(--muted);transition:background .25s,color .25s}
+  .phases li.on{background:var(--c,var(--teal));color:#fff}
+  .ticks{font:500 11.5px var(--font-mono);color:var(--muted);padding:9px 10px;font-variant-numeric:tabular-nums}
+  .ticks b{color:var(--ink);font-weight:700}
+  .hud .legend{padding:8px 12px}
+  .views{display:flex;gap:2px;padding:4px}
+  .views button{border:0;background:transparent;font:600 11.5px var(--font-body);padding:6px 10px;border-radius:7px;color:var(--muted);cursor:pointer}
+  .views button:hover{color:var(--ink)}
+  .views button.on{background:var(--teal);color:#fff}
+  .credit{flex-basis:100%;margin:2px 0 0 2px;font:700 14px var(--font-display);letter-spacing:.02em;color:var(--teal);text-shadow:0 0 3px #fff,0 0 8px #fff}
+  /* 3D tags: ink text with a white halo so they stay readable over the floor */
+  .tag,.stage3d .label3d{pointer-events:none;display:flex;flex-direction:column;align-items:center;font-family:var(--font-body);line-height:1.15;text-align:center;color:var(--ink);text-shadow:0 0 2px #fff,0 0 4px #fff,0 0 8px #fff}
+  .tag .nm{font-size:calc(var(--lab) * .9);font-weight:600;letter-spacing:.04em;color:var(--ink-2)}
+  .tag .vl{font-size:calc(var(--lab) * 1.3);font-weight:700;font-variant-numeric:tabular-nums;font-family:var(--font-display)}
+  .tag .sb{font-size:calc(var(--lab) * .78);color:var(--muted);letter-spacing:.02em}
+  .tag .sb:empty{display:none}
+  .tag.on .nm{color:var(--ink)}
+  .tag.on .vl{color:var(--teal)}
+  .tag.person .nm{font-family:var(--font-mono);font-size:calc(var(--lab) * .8);text-transform:uppercase;letter-spacing:.08em}
+  .cell .nm{font-size:calc(var(--lab) * .75)}
+  .cell .vl{font-size:calc(var(--lab) * 1.15)}
+  .zone{pointer-events:none;font-family:var(--font-mono);font-weight:600;font-size:calc(var(--lab) * .82);letter-spacing:.14em;text-transform:uppercase;color:var(--c,var(--slate));opacity:.9;white-space:nowrap;text-align:center;line-height:1.3;text-shadow:0 0 3px #fff,0 0 6px #fff}
+  .lcd{pointer-events:none;font-family:var(--font-display);font-weight:700;color:var(--teal);font-size:calc(var(--lab) * 2);font-variant-numeric:tabular-nums;text-shadow:0 0 3px #fff}
+  .pkt{pointer-events:none;font-family:var(--font-body);font-size:calc(var(--lab) * 1.1);font-weight:700;color:#fff;background:var(--c);padding:3px 8px;border-radius:999px;box-shadow:0 2px 8px rgba(20,35,58,.25);white-space:nowrap;border:1px solid rgba(255,255,255,.6)}
+  .panel{min-width:0;overflow-y:auto;background:var(--panel);border-left:1px solid var(--line);padding:20px 18px 28px;display:flex;flex-direction:column;gap:22px;
+    background-image:repeating-linear-gradient(180deg,transparent 0 27px,rgba(20,35,58,.035) 27px 28px)}
+  .panel h1{font-size:26px;margin:4px 0 6px}
+  /* the older make3D stage (page mode) */
+  .stage3d{position:relative;width:100%;aspect-ratio:16/10;min-height:280px;border-radius:var(--r);overflow:hidden;touch-action:none;border:1px solid var(--line);
+    background:radial-gradient(ellipse at 45% 35%,#FBFAF7 0%,#E6ECEF 70%,#DCE3E8 100%)}
+  @media(max-width:640px){.stage3d{aspect-ratio:4/3}}
+  .stage3d canvas,.stage3d .gl{position:absolute;inset:0;display:block;width:100%!important;height:100%!important}
+  .stage3d .labels{position:absolute!important;top:0;left:0;z-index:2}
+  .stage3d .fallback{position:absolute;left:0;right:0;bottom:0;padding:6px 10px;font-size:12px;color:var(--ink-2);background:rgba(255,255,255,.9);text-align:center}
+  .stage3d .label3d{position:absolute;transform:translate(-50%,-50%);white-space:nowrap;font-size:11px;font-weight:600}
+  .stage3d .label3d.pkt{color:#fff;text-shadow:none;background:var(--c,currentColor);padding:2px 7px;border-radius:999px}
+  footer.foot{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:16px;color:var(--muted);font-size:12.5px;border-top:1px solid var(--line)}
+  footer.foot .byline,.byline{margin-top:4px;font:700 14px var(--font-display)!important;letter-spacing:.02em;color:var(--teal)!important}
+  .reveal{animation:rise .7s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*80ms)}
+  @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  @media(max-width:860px){
+    .app .stage .zoomctl{top:56px;right:10px;transform:none;flex-direction:row}
+    .app{grid-template-columns:1fr;height:auto}
+    .app .stage{height:62vh;min-height:360px}
+    .panel{border-left:0;border-top:1px solid var(--line);overflow:visible}
+  }
+  @media(max-width:520px){
+    .hud .legend{font-size:10px;gap:3px 10px}
+    .phases li{padding:5px 7px;font-size:10px}
+    .controls{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .card{padding:14px}
+  }
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  .scroll-x{position:relative}
+  @media(max-width:640px){
+    :root{--lab:8px}
+    .tag .sb{display:none}
+    .scroll-x::before{content:"Swipe sideways to see the whole table";display:block;font:500 11px var(--font-mono);letter-spacing:.04em;color:var(--muted);margin:0 0 6px}
+  }
+  /* ===== end of theme ===== */
+
+  /* page-specific CSS below: light unit board, palette with meaning (see build/theme/THEME.md) */
+/*PAGE_CSS_START*/
+  .progress{display:flex;gap:3px;margin:0 0 12px}
+  .progress i{flex:1;height:7px;border-radius:999px;background:var(--panel-2);border:1px solid var(--line)}
+  .progress i.full{background:var(--green);border-color:var(--green)}
+  .progress i.part{background:var(--amber);border-color:var(--amber)}
+  .progress i.zero{background:var(--coral);border-color:var(--coral)}
+  .progress i.now{box-shadow:0 0 0 2px var(--violet)}
+  .case{border-left:4px solid var(--coral);background:var(--coral-soft);border-radius:8px;padding:12px 14px;margin:0 0 12px}
+  .case .t{font:600 11px var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--coral);margin-bottom:4px}
+  .case p{margin:0;font-size:15px}
+  .case .where{margin-top:6px;font:500 12px var(--font-mono);color:var(--muted)}
+  .q{margin:14px 0 6px;font:600 14px var(--font-display);color:var(--ink)}
+  .q small{color:var(--muted);font-family:var(--font-body);font-weight:400}
+  .opts{display:grid;gap:6px}
+  .opts.modes{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
+  .opt{text-align:left;border:1px solid var(--line-2);background:#fff;border-radius:8px;padding:9px 12px;font:500 13.5px var(--font-body);color:var(--ink);cursor:pointer;line-height:1.4;box-shadow:var(--shadow-sm);display:flex;gap:9px;align-items:flex-start}
+  .opt::before{content:"";flex:none;width:14px;height:14px;border-radius:50%;border:2px solid var(--line-2);margin-top:3px;background:#fff}
+  .opt:hover:not(:disabled){border-color:var(--teal)}
+  .opt[aria-pressed="true"]{border-color:var(--teal);background:var(--teal-soft)}
+  .opt[aria-pressed="true"]::before{border-color:var(--teal);background:var(--teal);box-shadow:inset 0 0 0 3px #fff}
+  .opt:disabled{cursor:default;opacity:.92}
+  .opt.best{border-color:var(--green);background:var(--green-soft)}
+  .opt.part{border-color:var(--amber);background:var(--amber-soft)}
+  .opt.miss{border-color:var(--coral);background:var(--coral-soft)}
+  .opt b{font-weight:700}
+  .opt small{display:block;color:var(--muted);font-size:11.5px;font-family:var(--font-mono)}
+  .card .scroll-x > table{min-width:560px}
+  .rowbtn{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;align-items:center}
+  .fb h3{margin:0 0 6px}
+  .fb p{margin:6px 0}
+  .fb .pts{font:600 11px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .scorecard{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:10px}
+  .scorecard div{background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 10px;text-align:center}
+  .scorecard b{display:block;font:700 22px var(--font-display);color:var(--ink)}
+  .scorecard span{font-size:11.5px;color:var(--muted)}
+  .final{text-align:center;padding:10px 0 4px}
+  .final .big{font:700 56px/1 var(--font-display);color:var(--teal)}
+  .final p{margin:6px 0 0;color:var(--ink-2)}
+  table.rounds td:first-child{font-weight:600;font-family:var(--font-body)}
+  table.rounds td{font-size:12.5px}
+  .flat .rm{fill:#CFE6E8;stroke:#14233A;stroke-opacity:.45;stroke-width:.05}
+  .flat .rm.station{fill:#DCD3F4}.flat .rm.med{fill:#F6DFB4}.flat .rm.break{fill:#CDE8D7}.flat .rm.supply{fill:#D3DBE4}
+  .flat .rl{font:700 .42px "JetBrains Mono",monospace;fill:#14233A;fill-opacity:.65}
+  .flat .pn{font:700 .4px "Figtree",sans-serif;fill:#14233A;text-anchor:middle;paint-order:stroke;stroke:#fff;stroke-width:.12}
+  .flat .ps{font:500 .26px "Figtree",sans-serif;fill:#66728A;text-anchor:middle;paint-order:stroke;stroke:#fff;stroke-width:.1}
+  .flat .pk{font:700 .34px "Figtree",sans-serif;fill:#fff;text-anchor:middle}
+  @media(max-width:520px){.scorecard{grid-template-columns:repeat(3,minmax(0,1fr))}.scorecard b{font-size:18px}}
+
+/*PAGE_CSS_END*/
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="au-logo" href="https://github.com/AU-Extension" target="_blank" rel="noopener" aria-label="Atlantis University">
+      <img src="https://raw.githubusercontent.com/AU-Extension/items/main/aulogo1.png" alt="Atlantis University">
+    </a>
+    <div class="crumb"><b>MHS 510</b> Leadership and Organizational Behavior · Week 5 · Interactive B</div>
+  </div>
+</header>
+
+<!--PAGE_BODY_START-->
+<main class="wrap">
+  <section class="hero reveal" style="--i:0">
+    <span class="eyebrow">Week 5 · Challenge</span>
+    <h1>Conflict rounds challenge</h1>
+    <p class="lede">Ten conflicts from 4 West, one at a time. For each, choose the conflict-handling mode, the first sentence the manager says, and the follow-up action. Each round is worth 10 points: 4 for the mode (2 for a defensible second choice), 3 for the sentence, 3 for the action (1 for a partial answer). Final score out of 100.</p>
+  </section>
+
+  <details class="howto reveal" style="--i:1">
+    <summary>How to use this interactive</summary>
+    <ol>
+      <li>Read the case. The floor shows where it happens and who is involved; orbit, zoom, or click a person to see their role.</li>
+      <li>Pick the mode that fits the first move (competing, collaborating, compromising, avoiding, accommodating).</li>
+      <li>Pick the first sentence the manager says, then the follow-up action for the days after.</li>
+      <li>Press "Check round". The feedback names the theory, cites the data file where one applies, and shows the scene resolving on the floor.</li>
+      <li>After ten rounds, read your score and the round table, then try again: the rounds and the options are shuffled each time.</li>
+    </ol>
+  </details>
+
+  <div class="grid two">
+    <section class="card reveal" style="--i:2" data-ref="RM 1 · FLOOR">
+      <h2>Where it happens</h2>
+      <div class="stage3d" id="stage"><div class="nogl" id="nogl" hidden>The 3D unit floor needs WebGL and the 3D libraries, which are not available here. The flat floor plan shows the same rooms and people, and the panel has every value.</div></div>
+      <div class="caption" id="cap"><div class="t" id="capT">Round 1</div><p id="capP">The case appears here with the people involved lit on the floor.</p></div>
+      <div class="stepper">
+        <button class="btn" type="button" data-view="overview">Overview</button>
+        <button class="btn" type="button" data-view="scene">Zoom to the scene</button>
+      </div>
+      <h3 style="margin-top:16px">The five modes in one line each</h3>
+      <div class="scroll-x"><table>
+        <thead><tr><th>Mode</th><th>Assertive</th><th>Cooperative</th><th>Use when</th></tr></thead>
+        <tbody>
+          <tr><td>Competing</td><td>high</td><td>low</td><td>safety or dignity now; a non-negotiable rule</td></tr>
+          <tr><td>Collaborating</td><td>high</td><td>high</td><td>both concerns matter; commitment needed; time exists</td></tr>
+          <tr><td>Compromising</td><td>medium</td><td>medium</td><td>equal power; deadline; a temporary settlement is enough</td></tr>
+          <tr><td>Avoiding</td><td>low</td><td>low</td><td>trivial issue; wrong moment; facts needed first</td></tr>
+          <tr><td>Accommodating</td><td>low</td><td>high</td><td>you were wrong; it matters more to them; goodwill</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <aside class="card reveal" style="--i:3" data-ref="STATION · ROUND">
+      <h2>Round <span id="rn">1</span> of 10</h2>
+      <div class="progress" id="progress" aria-hidden="true"></div>
+      <div id="round"></div>
+      <div id="final" hidden></div>
+    </aside>
+  </div>
+</main>
+
+<footer class="foot">Atlantis University · School of Health · MHS 510 Leadership and Organizational Behavior<div class="byline">By Professor De Leon</div></footer>
+
+<!--PAGE_BODY_END-->
+
+<script>
+// All logic inline. Guard GSAP so the page still works if the CDN fails:
+const hasGSAP = typeof window.gsap !== 'undefined';
+// LAB3D START: MHS 510 Unit3D kit (a low-poly isometric nursing unit floor, ported from the EGN 325 Lab3D kit). Paste as one block.
+// Needs Three.js r147 (three.min.js), examples/js/controls/OrbitControls.js, examples/js/renderers/CSS2DRenderer.js and GSAP 3.12.5.
+// Returns null when any of them (or WebGL) is missing: then show .nogl and draw the 2D SVG floor plan fallback.
+//
+// const lab = Unit3D(stageEl, {
+//   floor: {w: 24, d: 14, cx: 0, cz: 0, title: '4 WEST · MED-SURG · 32 BEDS', corridors: [{z: 0, w: 3}]},
+//   views: {overview: {pos: [0, 19, 15], tgt: [0, 0, 0.5], want: 1.55}, station: {...}},
+//   colors: {teal: '#0E7C86'}
+// });
+// lab.room(id, x, z, w, d, label, {kind: 'patient'|'station'|'med'|'supply'|'break'|'risk', door: 'n'|'s'|'e'|'w'|'none', bed, num}) -> rec {g, mat, el, val, sub, kind, x, z, w, d}
+// lab.person(id, x, z, role, color, {nm}) -> rec {g, mat, el, val, sub, role, x, z}      lab.walk(rec, [{x,z}...], {dur}) -> GSAP timeline
+// lab.set(rec, value, sub, pop)   lab.hi(rec, color)   lab.clear()   lab.pop(rec)
+// lab.silkRect(x0, x1, z0, z1)   lab.zone(text, x, z, color)   lab.label(html, cls, x, y, z, parent)
+// lab.busMat(color, {base, rest})  lab.trace([{x,z}...], lines, mat)  lab.glowBus(mat)
+// lab.fly([{x,z}...], text, color, {y, dur}) -> GSAP timeline (packet sphere + halo + pill label: a message, a task, a handoff)
+// lab.setView(name)  lab.focusOn(x, z, dist)  lab.zoom(factor)  lab.intro()  lab.onPick(fn)  lab.clearPackets()  lab.onFrame(fn)
+// lab.chip(key, {x, z, w, d, nm}) is kept as an alias of lab.room for older markup; lab.finishPins() is a no-op.
+// Zoom buttons (+, -, FIT) and the + - 0 keys are added to the stage automatically (opts.zoomUI: false turns them off; opts.fitView picks the FIT view).
+function Unit3D(stage, opts) {
+  opts = opts || {};
+  const hasG = typeof window.gsap !== 'undefined';
+  if (!window.THREE || !THREE.OrbitControls || !THREE.CSS2DRenderer || !hasG) return null;
+  try { const t = document.createElement('canvas'); if (!(t.getContext('webgl') || t.getContext('experimental-webgl'))) return null; } catch (e) { return null; }
+  const T = THREE;
+  const RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const B = Object.assign({w: 24, d: 14, cx: 0, cz: 0, title: '4 WEST · MED-SURG', corridors: null, seed: 7}, opts.floor || opts.board || {});
+  if (!B.corridors) B.corridors = [{z: B.cz, w: 3}];
+  const C = Object.assign({teal: '#0E7C86', coral: '#D4453F', amber: '#C27A08', green: '#1F8A4C', violet: '#6A4FC8', slate: '#5B6B82', ink: '#14233A'}, opts.colors || {});
+  const KIND = {   // room kinds: floor tint on the texture, wall tint, accent
+    patient: {fill: '#CFE6E8', accent: C.teal}, station: {fill: '#DCD3F4', accent: C.violet}, med: {fill: '#F6DFB4', accent: C.amber},
+    supply: {fill: '#D3DBE4', accent: C.slate}, break: {fill: '#CDE8D7', accent: C.green}, risk: {fill: '#F5CECB', accent: C.coral}
+  };
+  const ROLE = {manager: C.violet, charge: C.violet, nurse: C.teal, rn: C.teal, lpn: C.teal, cna: C.green, tech: C.green, md: C.slate, physician: C.slate, np: C.slate,
+    family: C.amber, patient: C.amber, visitor: C.amber, student: C.teal, educator: C.violet, hr: C.slate};
+
+  const renderer = new T.WebGLRenderer({antialias: true, alpha: true, powerPreference: 'high-performance'});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.outputEncoding = T.sRGBEncoding;
+  renderer.toneMapping = T.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
+  renderer.shadowMap.enabled = true; renderer.shadowMap.type = T.PCFSoftShadowMap;
+  renderer.setClearColor(0x000000, 0);   // transparent: the stage's CSS gradient shows behind the floor
+  renderer.domElement.className = 'gl';
+  stage.prepend(renderer.domElement);
+  const labelR = new T.CSS2DRenderer();
+  labelR.domElement.className = 'labels';
+  renderer.domElement.after(labelR.domElement);
+
+  const scene = new T.Scene();
+  scene.fog = new T.Fog(0xe6ecef, 42, 85);
+  const camera = new T.PerspectiveCamera(38, 1, 0.1, 220);
+  const controls = new T.OrbitControls(camera, labelR.domElement);
+  controls.enableDamping = true; controls.dampingFactor = 0.08;
+  controls.maxPolarAngle = Math.PI * 0.46; controls.minDistance = 4; controls.maxDistance = 46;
+  controls.zoomSpeed = 1.1;
+  // keep the mouse wheel inside the 3D view: zoom the floor, do not scroll the page
+  stage.addEventListener('wheel', e => e.preventDefault(), {passive: false});
+
+  // soft daylight: a white sky with a pale ground bounce, a warm sun with soft shadows, a cool teal fill from behind
+  scene.add(new T.HemisphereLight(0xffffff, 0xd9dde2, 0.5));
+  const sun = new T.DirectionalLight(0xfff3df, 0.9); sun.position.set(-8, 18, 10); sun.castShadow = true;
+  sun.shadow.mapSize.set(2048, 2048);
+  Object.assign(sun.shadow.camera, {left: -B.w / 2 - 2, right: B.w / 2 + 2, top: B.d / 2 + 2, bottom: -B.d / 2 - 2, near: 1, far: 50});
+  sun.shadow.bias = -0.0006; sun.shadow.radius = 4; scene.add(sun);
+  const fill = new T.DirectionalLight(0x9fd8de, 0.25); fill.position.set(12, 8, -10); scene.add(fill);
+
+  // the floor slab: a canvas texture with floor tiles, corridors, room fills, room numbers and the unit title
+  const cv = document.createElement('canvas'); cv.width = 2048; cv.height = Math.round(2048 * B.d / B.w);
+  const S = cv.width / B.w, px = x => (x - B.cx + B.w / 2) * S, pz = z => (z - B.cz + B.d / 2) * S;
+  const roomsDrawn = [];
+  function drawFloor() {
+    const g = cv.getContext('2d'), W = cv.width, H = cv.height;
+    const grd = g.createLinearGradient(0, 0, W, H); grd.addColorStop(0, '#ECE7DE'); grd.addColorStop(1, '#E2DCD1');
+    g.fillStyle = grd; g.fillRect(0, 0, W, H);
+    // corridors: lighter bands with a dashed teal wayfinding line down the middle
+    B.corridors.forEach(c => {
+      g.fillStyle = '#F7F4EE';
+      if (c.z != null) g.fillRect(0, pz(c.z - c.w / 2), W, c.w * S); else g.fillRect(px(c.x - c.w / 2), 0, c.w * S, H);
+    });
+    // floor tiles (one world unit each)
+    g.strokeStyle = 'rgba(20,35,58,0.11)'; g.lineWidth = 2; g.beginPath();
+    for (let x = 0; x <= B.w; x++) { g.moveTo(x * S, 0); g.lineTo(x * S, H); }
+    for (let z = 0; z <= B.d; z++) { g.moveTo(0, z * S); g.lineTo(W, z * S); }
+    g.stroke();
+    B.corridors.forEach(c => {
+      g.save(); g.setLineDash([S * 0.5, S * 0.35]); g.strokeStyle = 'rgba(14,124,134,0.35)'; g.lineWidth = 5; g.beginPath();
+      if (c.z != null) { g.moveTo(0, pz(c.z)); g.lineTo(W, pz(c.z)); } else { g.moveTo(px(c.x), 0); g.lineTo(px(c.x), H); }
+      g.stroke(); g.restore();
+    });
+    // rooms: tinted fill, ink outline, a threshold mark at the door and the room number
+    roomsDrawn.forEach(r => {
+      const k = KIND[r.kind] || KIND.patient, x0 = px(r.x - r.w / 2), z0 = pz(r.z - r.d / 2), w = r.w * S, d = r.d * S;
+      g.fillStyle = k.fill; g.fillRect(x0, z0, w, d);
+      g.strokeStyle = 'rgba(20,35,58,0.45)'; g.lineWidth = 4; g.strokeRect(x0, z0, w, d);
+      if (r.door !== 'none') {
+        const dw = Math.min(1.1, r.w * 0.5, r.d * 0.5) * S; g.strokeStyle = k.accent; g.lineWidth = 8; g.beginPath();
+        if (r.door === 's') { g.moveTo(x0 + w / 2 - dw / 2, z0 + d); g.lineTo(x0 + w / 2 + dw / 2, z0 + d); }
+        else if (r.door === 'n') { g.moveTo(x0 + w / 2 - dw / 2, z0); g.lineTo(x0 + w / 2 + dw / 2, z0); }
+        else if (r.door === 'e') { g.moveTo(x0 + w, z0 + d / 2 - dw / 2); g.lineTo(x0 + w, z0 + d / 2 + dw / 2); }
+        else { g.moveTo(x0, z0 + d / 2 - dw / 2); g.lineTo(x0, z0 + d / 2 + dw / 2); }
+        g.stroke();
+      }
+      g.fillStyle = 'rgba(20,35,58,0.6)'; g.font = '700 ' + Math.round(S * Math.min(0.55, r.d * 0.16)) + 'px "JetBrains Mono", ui-monospace, monospace';
+      g.textBaseline = 'top'; g.fillText(r.num, x0 + S * 0.2, z0 + S * 0.16);
+    });
+    g.fillStyle = 'rgba(20,35,58,0.6)'; g.font = '700 ' + Math.round(S * 0.5) + 'px "Bricolage Grotesque", "Figtree", sans-serif'; g.textBaseline = 'alphabetic';
+    if (B.title) g.fillText(B.title, S * 0.5, H - S * 0.35);
+  }
+  drawFloor();
+  const tex = new T.CanvasTexture(cv); tex.encoding = T.sRGBEncoding; tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  function refreshFloor() { drawFloor(); tex.needsUpdate = true; }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(refreshFloor);
+  const edge = new T.MeshStandardMaterial({color: 0xd6d0c5, roughness: .9});
+  const topM = new T.MeshStandardMaterial({map: tex, roughness: .85, metalness: 0});
+  const slab = new T.Mesh(new T.BoxGeometry(B.w, 0.3, B.d), [edge, edge, topM, edge, edge, edge]);
+  slab.position.set(B.cx, -0.15, B.cz); slab.receiveShadow = true; scene.add(slab);
+
+  const unit = new T.BoxGeometry(1, 1, 1);
+  const tape = new T.MeshBasicMaterial({color: 0x14233a, transparent: true, opacity: .4});
+  function silkRect(x0, x1, z0, z1) {   // a thin ink "tape line" rectangle on the floor, for grouping areas
+    const t = 0.05;
+    [[x0, x1, z0, z0], [x0, x1, z1, z1], [x0, x0, z0, z1], [x1, x1, z0, z1]].forEach(([a, b, c, d]) => {
+      const m = new T.Mesh(unit, tape); m.scale.set(Math.abs(b - a) + t, 0.01, Math.abs(d - c) + t);
+      m.position.set((a + b) / 2, 0.008, (c + d) / 2); scene.add(m);
+    });
+  }
+  function busMat(color, o) {   // a wayfinding line material that can glow (lab.glowBus) in its color
+    o = o || {};
+    const m = new T.MeshStandardMaterial({color: new T.Color(o.base || color), emissive: new T.Color(color), emissiveIntensity: o.rest != null ? o.rest : 0.15, roughness: .5, metalness: 0});
+    m.userData.rest = m.emissiveIntensity; return m;
+  }
+  const nrm = (a, b) => { const dx = b.x - a.x, dz = b.z - a.z, L = Math.hypot(dx, dz) || 1; return {x: -dz / L, z: dx / L}; };
+  function offsetLine(p, o) {
+    return p.map((q, i) => {
+      const nIn = i > 0 ? nrm(p[i - 1], q) : null, nOut = i < p.length - 1 ? nrm(q, p[i + 1]) : null;
+      let n = nIn || nOut;
+      if (nIn && nOut) { const k = 1 / (1 + nIn.x * nOut.x + nIn.z * nOut.z); n = {x: (nIn.x + nOut.x) * k, z: (nIn.z + nOut.z) * k}; }
+      return {x: q.x + n.x * o, z: q.z + n.z * o};
+    });
+  }
+  function trace(points, lines, mat) {   // painted floor lines along a corridor path (one line per lane)
+    const gap = 0.12, w = 0.06;
+    for (let li = 0; li < lines; li++) {
+      const pts = offsetLine(points, (li - (lines - 1) / 2) * gap);
+      for (let i = 0; i < pts.length - 1; i++) {
+        const a = pts[i], b = pts[i + 1], dx = b.x - a.x, dz = b.z - a.z, L = Math.hypot(dx, dz);
+        const m = new T.Mesh(unit, mat); m.scale.set(L + w, 0.02, w); m.position.set((a.x + b.x) / 2, 0.012, (a.z + b.z) / 2); m.rotation.y = -Math.atan2(dz, dx);
+        scene.add(m);
+      }
+      [pts[0], pts[pts.length - 1]].forEach(p => { const pad = new T.Mesh(new T.CylinderGeometry(0.1, 0.1, 0.022, 14), mat); pad.position.set(p.x, 0.012, p.z); scene.add(pad); });
+    }
+  }
+  function glowBus(m) {
+    if (!m) return;
+    gsap.killTweensOf(m);
+    gsap.timeline().to(m, {emissiveIntensity: 1.2, duration: 0.2}).to(m, {emissiveIntensity: m.userData.rest, duration: 1.4});
+  }
+  function label(html, cls, x, y, z, parent) {
+    const el = document.createElement('div'); el.className = cls; el.innerHTML = html;
+    const o = new T.CSS2DObject(el); o.position.set(x, y, z); (parent || scene).add(o); el._obj = o; return el;
+  }
+  function zone(text, x, z, color) { const el = label(text, 'zone', x, 0.05, z); if (color) el.style.setProperty('--c', color); return el; }
+
+  const recs = {}, pickables = [];
+  const wallMat = new T.MeshStandardMaterial({color: 0xeeeae2, roughness: .92, metalness: 0});
+  const bedMat = new T.MeshStandardMaterial({color: 0xffffff, roughness: .8});
+  const blanketMat = new T.MeshStandardMaterial({color: 0xcfe6e8, roughness: .9});
+  const counterMat = new T.MeshStandardMaterial({color: 0xe9e4f6, roughness: .8});
+  const WH = 0.55, WT = 0.1;
+  function wall(g, x, z, len, along, mat) {   // along: 'x' or 'z'
+    const m = new T.Mesh(unit, mat || wallMat);
+    if (along === 'x') m.scale.set(len, WH, WT); else m.scale.set(WT, WH, len);
+    m.position.set(x, WH / 2, z); m.castShadow = true; m.receiveShadow = true; g.add(m); return m;
+  }
+  function room(id, x, z, w, d, lbl, o) {
+    o = o || {};
+    const kind = o.kind || 'patient', k = KIND[kind] || KIND.patient;
+    let door = o.door;
+    if (!door) {   // auto: the door faces the nearest corridor
+      let best = null;
+      B.corridors.forEach(c => {
+        const dist = c.z != null ? Math.abs(z - c.z) : Math.abs(x - c.x);
+        if (!best || dist < best.dist) best = {dist: dist, side: c.z != null ? (z < c.z ? 's' : 'n') : (x < c.x ? 'e' : 'w')};
+      });
+      door = best ? best.side : 's';
+    }
+    const g = new T.Group(); g.position.set(x, 0, z);
+    const hw = w / 2, hd = d / 2, dw = Math.min(1.1, w * 0.5, d * 0.5);
+    // four walls, with a door gap in the wall that faces the corridor
+    const side = (name, len, place) => {
+      if (door !== name) { place(len, 0); return; }
+      const seg = (len - dw) / 2; place(seg, -(len / 2 - seg / 2)); place(seg, (len / 2 - seg / 2));
+    };
+    side('n', w, (len, off) => wall(g, off, -hd, len, 'x'));
+    side('s', w, (len, off) => wall(g, off, hd, len, 'x'));
+    side('w', d, (len, off) => wall(g, -hw, off, len, 'z'));
+    side('e', d, (len, off) => wall(g, hw, off, len, 'z'));
+    // the highlight plate: invisible until lab.hi tints it; it is also the click target
+    const mat = new T.MeshStandardMaterial({color: new T.Color(k.accent), transparent: true, opacity: 0, roughness: 1, depthWrite: false});
+    const plate = new T.Mesh(unit, mat); plate.scale.set(w - WT, 0.02, d - WT); plate.position.y = 0.025; g.add(plate);
+    plate.userData.key = id; pickables.push(plate);
+    if (kind === 'patient' && o.bed !== false) {   // a low-poly bed: frame, blanket, pillow
+      const bed = new T.Group(); const along = d >= w ? 'z' : 'x';
+      const bw = along === 'z' ? 0.9 : 1.9, bd = along === 'z' ? 1.9 : 0.9;
+      const f = new T.Mesh(unit, bedMat); f.scale.set(bw, 0.3, bd); f.position.y = 0.15; f.castShadow = true; f.receiveShadow = true; bed.add(f);
+      const bl = new T.Mesh(unit, blanketMat); bl.scale.set(bw - 0.08, 0.1, along === 'z' ? bd * 0.6 : bd - 0.08); if (along === 'x') bl.scale.set(bw * 0.6, 0.1, bd - 0.08);
+      bl.position.set(along === 'x' ? -bw * 0.2 : 0, 0.35, along === 'z' ? bd * 0.2 : 0); bed.add(bl);
+      const pw = new T.Mesh(unit, bedMat); pw.scale.set(along === 'z' ? bw - 0.3 : 0.3, 0.12, along === 'z' ? 0.3 : bd - 0.3); pw.position.set(along === 'x' ? bw / 2 - 0.3 : 0, 0.36, along === 'z' ? -bd / 2 + 0.3 : 0); bed.add(pw);
+      bed.position.set(along === 'z' ? -hw + bw / 2 + 0.35 : 0, 0, along === 'z' ? 0 : -hd + bd / 2 + 0.35); g.add(bed);
+    }
+    if (kind === 'station') {   // a counter in the middle of the station
+      const c = new T.Mesh(unit, counterMat); c.scale.set(Math.max(1, w * 0.55), 0.42, Math.max(0.6, d * 0.3)); c.position.y = 0.21; c.castShadow = true; c.receiveShadow = true; g.add(c);
+    }
+    scene.add(g);
+    const el = label('<span class="nm">' + (lbl || id) + '</span><span class="vl"></span><span class="sb"></span>', 'tag room', 0, WH + 0.25, 0, g);
+    const rec = {key: id, kind: 'room', roomKind: kind, accent: k.accent, g: g, mat: mat, el: el, val: el.querySelector('.vl'), sub: el.querySelector('.sb'), h: WH, x: x, z: z, w: w, d: d, door: door};
+    recs[id] = rec;
+    roomsDrawn.push({x: x, z: z, w: w, d: d, kind: kind, door: door, num: o.num != null ? String(o.num) : String(id)});
+    refreshFloor();
+    return rec;
+  }
+  function chip(key, o) { return room(key, o.x, o.z, o.w || 1.4, o.d || 1.2, o.nm || key, o); }
+  const headMat = new T.MeshStandardMaterial({color: 0xf3e7d3, roughness: .7});
+  const bodyGeo = T.CapsuleGeometry ? new T.CapsuleGeometry(0.2, 0.42, 4, 12) : new T.CylinderGeometry(0.2, 0.2, 0.82, 12);
+  const headGeo = new T.SphereGeometry(0.17, 16, 12);
+  const ringGeo = new T.RingGeometry(0.26, 0.34, 24);
+  function person(id, x, z, role, color, o) {
+    o = o || {};
+    const col = color || ROLE[(role || '').toLowerCase()] || C.slate;
+    const g = new T.Group(); g.position.set(x, 0, z);
+    const mat = new T.MeshStandardMaterial({color: new T.Color(col), roughness: .55, metalness: 0, emissive: new T.Color(0xffffff), emissiveIntensity: 0});
+    const body = new T.Mesh(bodyGeo, mat); body.position.y = 0.43; body.castShadow = true; g.add(body);
+    body.userData.key = id; pickables.push(body);
+    const head = new T.Mesh(headGeo, headMat); head.position.y = 1.0; head.castShadow = true; g.add(head);
+    const ring = new T.Mesh(ringGeo, new T.MeshBasicMaterial({color: new T.Color(col), transparent: true, opacity: .55, side: T.DoubleSide})); ring.rotation.x = -Math.PI / 2; ring.position.y = 0.03; g.add(ring);
+    scene.add(g);
+    const el = label('<span class="nm">' + (role || '') + '</span><span class="vl">' + (o.nm || id) + '</span><span class="sb"></span>', 'tag person', 0, 1.42, 0, g);
+    el.style.setProperty('--c', col);
+    const rec = {key: id, kind: 'person', role: role, color: col, g: g, mat: mat, el: el, name: el.querySelector('.vl'), val: el.querySelector('.sb'), sub: el.querySelector('.sb'), h: 1.2, x: x, z: z};
+    recs[id] = rec; return rec;
+  }
+  function walk(rec, path, o) {   // move a person token along corridor points; returns a GSAP timeline
+    o = o || {};
+    const tl = gsap.timeline();
+    let prev = {x: rec.g.position.x, z: rec.g.position.z}, L = 0;
+    path.forEach(p => { L += Math.hypot(p.x - prev.x, p.z - prev.z); prev = p; });
+    const total = o.dur || Math.max(0.4, Math.min(3, L / 3));
+    prev = {x: rec.g.position.x, z: rec.g.position.z};
+    path.forEach(p => {
+      const seg = Math.hypot(p.x - prev.x, p.z - prev.z);
+      tl.to(rec.g.position, {x: p.x, z: p.z, duration: L ? total * seg / L : 0.1, ease: 'none', onUpdate: () => { rec.x = rec.g.position.x; rec.z = rec.g.position.z; }});
+      prev = p;
+    });
+    if (!RM) tl.to(rec.g.position, {y: 0.08, duration: 0.18, yoyo: true, repeat: Math.max(1, Math.round(total / 0.18) - 1), ease: 'sine.inOut'}, 0).set(rec.g.position, {y: 0});
+    return tl;
+  }
+  function set(rec, value, sub, bump) {
+    if (!rec) return;
+    if (value != null) rec.val.textContent = value;
+    if (sub != null) rec.sub.textContent = sub;
+    if (bump) pop(rec);
+  }
+  function finishPins() {}
+
+  // packets: a small sphere with a soft halo and a pill label (a message, a task, a patient handoff)
+  const haloCv = document.createElement('canvas'); haloCv.width = haloCv.height = 64;
+  const hg = haloCv.getContext('2d'), rg = hg.createRadialGradient(32, 32, 0, 32, 32, 32);
+  rg.addColorStop(0, 'rgba(255,255,255,1)'); rg.addColorStop(.35, 'rgba(255,255,255,.4)'); rg.addColorStop(1, 'rgba(255,255,255,0)');
+  hg.fillStyle = rg; hg.fillRect(0, 0, 64, 64);
+  const haloTex = new T.CanvasTexture(haloCv);
+  const pktGeo = new T.SphereGeometry(0.15, 20, 14);
+  const live = new Set();
+  function removePacket(p) {
+    scene.remove(p.mesh); if (p.el.parentNode) p.el.parentNode.removeChild(p.el);
+    p.mesh.material.dispose(); p.halo.material.dispose(); live.delete(p);
+  }
+  function fly(path, text, color, o) {
+    o = o || {};
+    const y = o.y != null ? o.y : 0.9;
+    const v = path.map(p => new T.Vector3(p.x, y, p.z));
+    const mesh = new T.Mesh(pktGeo, new T.MeshStandardMaterial({color: new T.Color(color), emissive: new T.Color(color), emissiveIntensity: .35, roughness: .4}));
+    mesh.castShadow = true;
+    const halo = new T.Sprite(new T.SpriteMaterial({map: haloTex, color: new T.Color(color), depthWrite: false, transparent: true, opacity: .55}));
+    halo.scale.set(1.0, 1.0, 1.0); mesh.add(halo);
+    const el = document.createElement('div'); el.className = 'pkt'; el.style.setProperty('--c', color); el.textContent = text;
+    const lab = new T.CSS2DObject(el); lab.position.set(0, 0.45, 0); mesh.add(lab);
+    mesh.position.copy(v[0]); mesh.scale.setScalar(0.01); mesh.visible = false; scene.add(mesh);
+    const p = {mesh: mesh, halo: halo, el: el}; live.add(p);
+    let L = 0; for (let i = 1; i < v.length; i++) L += v[i].distanceTo(v[i - 1]);
+    const total = o.dur || Math.max(0.5, Math.min(2.4, L / 6));
+    const tl = gsap.timeline({onComplete: () => removePacket(p)});
+    tl.call(() => { mesh.visible = true; });
+    tl.to(mesh.scale, {x: 1, y: 1, z: 1, duration: 0.18, ease: 'back.out(2)'});
+    for (let i = 1; i < v.length; i++) { const seg = v[i].distanceTo(v[i - 1]); tl.to(mesh.position, {x: v[i].x, y: v[i].y, z: v[i].z, duration: L ? total * seg / L : 0.1, ease: 'none'}); }
+    tl.to(mesh.scale, {x: 0.01, y: 0.01, z: 0.01, duration: 0.18, ease: 'power2.in'});
+    return tl;
+  }
+  function clearPackets() { Array.from(live).forEach(removePacket); }
+
+  const active = new Set();
+  function hi(rec, color) {
+    if (!rec) return;
+    const col = color || rec.accent || rec.color || C.teal;
+    if (rec.kind === 'room') { rec.mat.color.set(col); gsap.to(rec.mat, {opacity: 0.38, duration: 0.3, overwrite: 'auto'}); }
+    else { rec.mat.emissive.set(col); gsap.to(rec.mat, {emissiveIntensity: 0.45, duration: 0.3, overwrite: 'auto'}); }
+    rec.el.classList.add('on'); rec.el.style.setProperty('--c', col); active.add(rec);
+  }
+  function clear() {
+    active.forEach(r => {
+      if (r.kind === 'room') gsap.to(r.mat, {opacity: 0, duration: 0.5, overwrite: 'auto'});
+      else gsap.to(r.mat, {emissiveIntensity: 0, duration: 0.5, overwrite: 'auto'});
+      r.el.classList.remove('on');
+    });
+    active.clear();
+  }
+  function pop(rec, big) {
+    if (!rec || RM) return;
+    if (rec.kind === 'room') gsap.fromTo(rec.g.scale, {x: big ? 1.08 : 1.04, y: 1.3, z: big ? 1.08 : 1.04}, {x: 1, y: 1, z: 1, duration: 0.65, ease: 'elastic.out(1,0.5)', overwrite: 'auto'});
+    else gsap.fromTo(rec.g.position, {y: big ? 0.6 : 0.35}, {y: 0, duration: 0.6, ease: 'bounce.out', overwrite: 'auto'});
+  }
+
+  // camera views keep the whole unit in frame on narrow screens
+  const views = opts.views || {overview: {pos: [0, 19, 15], tgt: [0, 0, 0.5], want: 1.55}};
+  function viewFor(name) {
+    const b = views[name] || views.overview;
+    const tgt = new T.Vector3(...b.tgt), pos = new T.Vector3(...b.pos);
+    const want = b.want || 1.25;
+    let f = camera.aspect < want ? Math.min(2.4, want / camera.aspect) : 1;
+    if (name === 'overview' || !views[name]) {
+      // the overview (and FIT) must show the whole floor width, also on narrow phone screens,
+      // leaving room for the zoom buttons at the right edge
+      const tanH = Math.tan(T.MathUtils.degToRad(camera.fov / 2)) * camera.aspect;
+      const need = (B.w / 2 + 0.5) / (tanH * 0.92) + B.d * 0.25;
+      f = Math.max(f, need / pos.distanceTo(tgt));
+      controls.maxDistance = Math.max(controls.maxDistance, need * 1.3);
+      if (scene.fog) { scene.fog.near = Math.max(scene.fog.near, need * 1.1); scene.fog.far = Math.max(scene.fog.far, need * 2.6); }
+    }
+    pos.sub(tgt).multiplyScalar(f).add(tgt);
+    return {pos: pos, tgt: tgt};
+  }
+  function setView(name, instant) {
+    const v = viewFor(name), d = (RM || instant) ? 0 : 1.2;
+    const k = 1 / (gsap.globalTimeline.timeScale() || 1);
+    gsap.to(camera.position, {x: v.pos.x, y: v.pos.y, z: v.pos.z, duration: d, ease: 'power2.inOut', overwrite: 'auto'}).timeScale(k);
+    gsap.to(controls.target, {x: v.tgt.x, y: v.tgt.y, z: v.tgt.z, duration: d, ease: 'power2.inOut', overwrite: 'auto'}).timeScale(k);
+  }
+  function focusOn(x, z, dist) {
+    const d = (dist || 7) * (camera.aspect < 1.2 ? Math.min(2.2, 1.25 / camera.aspect) : 1);
+    const k = 1 / (gsap.globalTimeline.timeScale() || 1);
+    gsap.to(camera.position, {x: x * 0.8, y: d * 1.15, z: z + d, duration: RM ? 0 : 1.0, ease: 'power2.inOut', overwrite: 'auto'}).timeScale(k);
+    gsap.to(controls.target, {x: x, y: 0, z: z, duration: RM ? 0 : 1.0, ease: 'power2.inOut', overwrite: 'auto'}).timeScale(k);
+  }
+
+  function resize() {
+    const w = stage.clientWidth, h = stage.clientHeight; if (!w || !h) return;
+    renderer.setSize(w, h, false); renderer.domElement.style.width = w + 'px'; renderer.domElement.style.height = h + 'px';
+    labelR.setSize(w, h);
+    camera.aspect = w / h; camera.updateProjectionMatrix();
+    stage.style.setProperty('--lab', Math.max(7, Math.min(12, w / 92)) + 'px');
+  }
+  // zoom buttons (+, -, Fit) and keys (+, -, 0): the mouse wheel and pinch still work, but buttons always do
+  function zoom(f) {
+    const t = controls.target, off = camera.position.clone().sub(t);
+    off.setLength(Math.max(controls.minDistance, Math.min(controls.maxDistance, off.length() * f)));
+    const p = t.clone().add(off), k = 1 / (gsap.globalTimeline.timeScale() || 1);
+    gsap.to(camera.position, {x: p.x, y: p.y, z: p.z, duration: RM ? 0 : 0.45, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
+  }
+  if (opts.zoomUI !== false) {
+    if (!document.getElementById('lab3d-zoom-css')) {
+      const st = document.createElement('style'); st.id = 'lab3d-zoom-css';
+      st.textContent = '.zoomctl{position:absolute;z-index:4;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:2px;padding:4px;background:rgba(255,255,255,.9);border:1px solid #D9D3C8;border-radius:10px;backdrop-filter:blur(6px);box-shadow:0 1px 2px rgba(20,35,58,.08)}' +
+        '.zoomctl button{width:38px;height:34px;border:0;border-radius:7px;background:transparent;color:#14233A;font:700 18px/1 "JetBrains Mono",ui-monospace,monospace;cursor:pointer;padding:0}' +
+        '.zoomctl button.fit{font-size:10px;letter-spacing:.06em;height:28px}.zoomctl button:hover{background:rgba(14,124,134,.12);color:#0E7C86}' +
+        '.zoomctl button:focus-visible{outline:2px solid #0E7C86;outline-offset:1px}@media(max-width:520px){.zoomctl{right:10px}.zoomctl button{width:34px;height:32px}}';
+      document.head.appendChild(st);
+    }
+    const box = document.createElement('div'); box.className = 'zoomctl'; box.setAttribute('role', 'group'); box.setAttribute('aria-label', 'Zoom');
+    box.innerHTML = '<button type="button" data-z="in" aria-label="Zoom in" title="Zoom in (+)">+</button>' +
+      '<button type="button" data-z="out" aria-label="Zoom out" title="Zoom out (-)">&minus;</button>' +
+      '<button type="button" class="fit" data-z="fit" aria-label="Show the whole unit" title="Show the whole unit (0)">FIT</button>';
+    stage.appendChild(box);
+    ['pointerdown', 'pointerup', 'wheel', 'click'].forEach(ev => box.addEventListener(ev, e => e.stopPropagation()));
+    box.addEventListener('click', e => {
+      const b = e.target.closest('button'); if (!b) return;
+      if (b.dataset.z === 'in') zoom(0.75); else if (b.dataset.z === 'out') zoom(1.33); else setView(opts.fitView || 'overview');
+    });
+    document.addEventListener('keydown', e => {
+      const t = e.target, tag = t && t.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) return;
+      if (e.key === '+' || e.key === '=') zoom(0.75);
+      else if (e.key === '-' || e.key === '_') zoom(1.33);
+      else if (e.key === '0') setView(opts.fitView || 'overview');
+    });
+  }
+  new ResizeObserver(resize).observe(stage); resize();
+  const frames = [];
+  (function loop(t) { requestAnimationFrame(loop); frames.forEach(f => f(t)); controls.update(); renderer.render(scene, camera); labelR.render(scene, camera); })(0);
+
+  // picking: click (not drag) on a room floor or a person
+  const ray = new T.Raycaster(), mouse = new T.Vector2(); let down = null, pickCb = null;
+  labelR.domElement.addEventListener('pointerdown', e => { down = [e.clientX, e.clientY]; });
+  labelR.domElement.addEventListener('pointerup', e => {
+    if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 5 || !pickCb) return;
+    const r = labelR.domElement.getBoundingClientRect();
+    mouse.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+    ray.setFromCamera(mouse, camera);
+    const hit = ray.intersectObjects(pickables, false)[0];
+    if (hit) pickCb(hit.object.userData.key);
+  });
+
+  function intro() {
+    const v = viewFor('overview'); camera.position.copy(v.pos); controls.target.copy(v.tgt);
+    if (RM) return;
+    gsap.from(camera.position, {x: v.pos.x - 4, y: v.pos.y + 12, z: v.pos.z + 10, duration: 1.8, ease: 'power3.out'});
+    const rooms = Object.values(recs).filter(r => r.kind === 'room').map(r => r.g.position);
+    const people = Object.values(recs).filter(r => r.kind === 'person').map(r => r.g.position);
+    if (rooms.length) gsap.from(rooms, {y: 2.2, duration: 0.7, ease: 'back.out(1.6)', stagger: 0.03, delay: 0.2});
+    if (people.length) gsap.from(people, {y: 3, duration: 0.6, ease: 'bounce.out', stagger: 0.08, delay: 0.7});
+  }
+
+  const labApi = {T: T, scene: scene, camera: camera, controls: controls, renderer: renderer, recs: recs, colors: C, kinds: KIND, roles: ROLE,
+    room: room, person: person, walk: walk, set: set, chip: chip, finishPins: finishPins, silkRect: silkRect, zone: zone, label: label, busMat: busMat, trace: trace, glowBus: glowBus,
+    fly: fly, clearPackets: clearPackets, hi: hi, clear: clear, pop: pop, setView: setView, focusOn: focusOn, intro: intro, zoom: zoom, refreshFloor: refreshFloor,
+    onPick: cb => { pickCb = cb; }, onFrame: f => frames.push(f), unit: unit};
+  (window.__labs = window.__labs || []).push(labApi);   // lets tests reach the camera
+  return labApi;
+}
+// LAB3D END
+
+// Any localStorage use must be wrapped in try/catch and be optional.
+const hasTHREE = typeof window.THREE !== 'undefined';
+/* ---- 3D stage helper (Three.js r147 UMD). Usage:
+   const st = make3D(document.getElementById('stage'), {camera:[6,5,8]});
+   if (st) { st.scene.add(mesh); st.onFrame(t => {...}); } else { draw the 2D fallback }
+   Labels: st.label(object3D, 'text') keeps an HTML label over a 3D object.
+   Prefer Unit3D (above) for unit-floor scenes; make3D stays for small one-off models. ---- */
+function make3D(el, opts = {}) {
+  const ok = typeof window.THREE !== 'undefined' && (() => { try { const c = document.createElement('canvas'); return !!(c.getContext('webgl') || c.getContext('experimental-webgl')); } catch (e) { return false; } })();
+  if (!ok) { el.insertAdjacentHTML('beforeend', '<div class="fallback">3D view unavailable on this device. The step-by-step view below shows the same thing.</div>'); return null; }
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  el.appendChild(renderer.domElement);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, 1.6, 0.1, 500);
+  camera.position.set(...(opts.camera || [6, 5, 8]));
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xd8dee3, 0.9));
+  const dir = new THREE.DirectionalLight(0xfff4e0, 0.8); dir.position.set(5, 10, 7); scene.add(dir);
+  let controls = null;
+  if (THREE.OrbitControls) { controls = new THREE.OrbitControls(camera, renderer.domElement); controls.enableDamping = true; controls.target.set(...(opts.target || [0, 0, 0])); }
+  const labels = []; const frames = [];
+  function label(obj, text) { const d = document.createElement('div'); d.className = 'label3d'; d.textContent = text; el.appendChild(d); labels.push({ obj, d }); return d; }
+  function resize() { const w = el.clientWidth, h = el.clientHeight || w / 1.6; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); }
+  new ResizeObserver(resize).observe(el); resize();
+  const v = new THREE.Vector3();
+  (function loop(t) {
+    frames.forEach(f => f(t)); if (controls) controls.update(); renderer.render(scene, camera);
+    labels.forEach(({ obj, d }) => { obj.getWorldPosition(v); v.project(camera); d.style.left = ((v.x + 1) / 2 * el.clientWidth) + 'px'; d.style.top = ((1 - v.y) / 2 * el.clientHeight) + 'px'; d.style.display = v.z < 1 ? '' : 'none'; });
+    requestAnimationFrame(loop);
+  })(0);
+  return { THREE, scene, camera, renderer, controls, label, onFrame: f => frames.push(f) };
+}
+
+//PAGE_JS_START
+(function () {
+/* ---------------- the 4 West floor used by every MHS 510 page: rooms 401 to 408 on the north side, the office, station, med room, break room and rooms 409 to 412 on the south side ---------------- */
+const $ = s => document.querySelector(s), $$ = s => Array.from(document.querySelectorAll(s));
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const COL = {teal: css('--teal'), coral: css('--coral'), amber: css('--amber'), green: css('--green'), violet: css('--violet'), slate: css('--slate')};
+const RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+let speed = 1;
+const ROOMS = [];
+['401', '402', '403', '404', '405', '406', '407', '408'].forEach((n, i) => ROOMS.push({id: n, x: -10.4 + i * 2.95, z: -3.6, w: 2.6, d: 4, kind: 'patient', label: 'Room ' + n}));
+ROOMS.push({id: 'office', x: -10.8, z: 3.6, w: 2.2, d: 4, kind: 'supply', label: 'Manager office', num: 'MGR'});
+ROOMS.push({id: 'station', x: -7.4, z: 3.6, w: 4.6, d: 4, kind: 'station', label: 'Nurse station', num: 'STATION'});
+ROOMS.push({id: 'med', x: -3.6, z: 3.6, w: 2.2, d: 4, kind: 'med', label: 'Med room', num: 'MED'});
+ROOMS.push({id: 'break', x: -1, z: 3.6, w: 2.6, d: 4, kind: 'break', label: 'Break room', num: 'BREAK'});
+[['409', 2.0], ['410', 4.85], ['411', 7.7], ['412', 10.55]].forEach(([n, x]) => ROOMS.push({id: n, x: x, z: 3.6, w: 2.5, d: 4, kind: 'patient', label: 'Room ' + n}));
+const ROOM = {}; ROOMS.forEach(r => ROOM[r.id] = r);
+
+function Graphics3D(stage, PEOPLE, opts) {
+  opts = opts || {};
+  const lab = Unit3D(stage, {
+    floor: {w: 24, d: 12, title: opts.title || '4 WEST · MED-SURG · 32 BEDS', corridors: [{z: 0, w: 3}]},
+    views: Object.assign({overview: {pos: [0, 19, 15], tgt: [0, 0, 0.5], want: 1.55}, station: {pos: [-7, 9, 8.5], tgt: [-7.5, 0, 1.2], want: 1.5}, rooms: {pos: [5, 9, 7.5], tgt: [5, 0, -1], want: 1.5}}, opts.views || {})
+  });
+  if (!lab) return null;
+  ROOMS.forEach(r => lab.room(r.id, r.x, r.z, r.w, r.d, r.label, {kind: r.kind, num: r.num || r.id}));
+  PEOPLE.forEach(p => lab.person(p.id, p.x, p.z, p.role, p.c, {nm: p.nm}));
+  lab.zone('patient rooms 401 to 408', 0, -6.3, COL.teal);
+  if (opts.zones) opts.zones.forEach(z => lab.zone(z.text, z.x, z.z, z.c));
+  lab.intro();
+  const api = {
+    kind: '3d', lab: lab,
+    reset() {
+      lab.clear(); lab.clearPackets();
+      PEOPLE.forEach(p => { const r = lab.recs[p.id]; gsap.killTweensOf(r.g.position); r.g.position.set(p.x, 0, p.z); r.x = p.x; r.z = p.z; r.sub.textContent = ''; });
+    },
+    hi: (id, c) => lab.hi(lab.recs[id], c),
+    unhi(id) { const r = lab.recs[id]; if (!r) return; if (r.kind === 'room') gsap.to(r.mat, {opacity: 0, duration: 0.4}); else gsap.to(r.mat, {emissiveIntensity: 0, duration: 0.4}); r.el.classList.remove('on'); },
+    clear: () => lab.clear(),
+    set: (id, sub, pop) => { const r = lab.recs[id]; if (r) { r.sub.textContent = sub || ''; if (pop) lab.pop(r); } },
+    name: (id, nm) => { const r = lab.recs[id]; if (r && r.name) r.name.textContent = nm; },
+    show(id, on) { const r = lab.recs[id]; if (!r) return; r.g.visible = !!on; if (r.el._obj) r.el._obj.visible = !!on; },
+    walk(id, path, dur, instant) {
+      const r = lab.recs[id]; if (!r) return;
+      gsap.killTweensOf(r.g.position);
+      if (instant || RM) { const p = path[path.length - 1]; r.g.position.set(p.x, 0, p.z); r.x = p.x; r.z = p.z; return; }
+      lab.walk(r, path, {dur: dur}).timeScale(speed);
+    },
+    fly(path, text, c, instant) { if (instant) return; lab.fly(path.map(p => ({x: p.x, z: p.z})), text, c, {y: 0.9, dur: 1.5}).timeScale(speed); },
+    focus: (x, z, d) => lab.focusOn(x, z, d),
+    view: n => lab.setView(n),
+    onPick: cb => lab.onPick(cb)
+  };
+  return api;
+}
+
+function Graphics2D(stage, PEOPLE, opts) {
+  opts = opts || {};
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('viewBox', '0 0 24 12'); svg.setAttribute('class', 'flat'); svg.setAttribute('role', 'img');
+  svg.setAttribute('aria-label', 'Flat plan of the 4 West floor with the people in the scene.');
+  const X = x => x + 12, Z = z => z + 6;
+  const KF = {patient: '', station: 'station', med: 'med', break: 'break', supply: 'supply'};
+  let s = '<rect x="0" y="0" width="24" height="12" fill="#ECE7DE"/><rect x="0" y="4.5" width="24" height="3" fill="#F7F4EE"/>';
+  for (let i = 0; i <= 24; i++) s += '<line x1="' + i + '" y1="0" x2="' + i + '" y2="12" stroke="#14233A" stroke-opacity=".08" stroke-width=".02"/>';
+  for (let i = 0; i <= 12; i++) s += '<line x1="0" y1="' + i + '" x2="24" y2="' + i + '" stroke="#14233A" stroke-opacity=".08" stroke-width=".02"/>';
+  s += '<line x1="0" y1="6" x2="24" y2="6" stroke="#0E7C86" stroke-opacity=".35" stroke-width=".06" stroke-dasharray=".5 .35"/>';
+  ROOMS.forEach(r => {
+    s += '<rect class="rm ' + KF[r.kind] + '" x="' + (X(r.x) - r.w / 2) + '" y="' + (Z(r.z) - r.d / 2) + '" width="' + r.w + '" height="' + r.d + '"/>';
+    s += '<rect data-rh="' + r.id + '" x="' + (X(r.x) - r.w / 2 + 0.06) + '" y="' + (Z(r.z) - r.d / 2 + 0.06) + '" width="' + (r.w - 0.12) + '" height="' + (r.d - 0.12) + '" fill="none" opacity="0"/>';
+    s += '<text class="rl" x="' + (X(r.x) - r.w / 2 + 0.18) + '" y="' + (Z(r.z) - r.d / 2 + 0.55) + '">' + (r.num || r.id) + '</text>';
+    if (r.kind === 'patient') s += '<rect x="' + (X(r.x) - 0.45) + '" y="' + (Z(r.z) - 0.95) + '" width=".9" height="1.9" rx=".1" fill="#fff" stroke="#14233A" stroke-opacity=".3" stroke-width=".04"/>';
+  });
+  s += '<text x=".5" y="11.75" font-size=".32" font-weight="700" fill="#14233A" fill-opacity=".6" style="font-family:Bricolage Grotesque,Figtree,sans-serif">' + esc(opts.title || '4 WEST · MED-SURG · 32 BEDS') + '</text>';
+  PEOPLE.forEach(p => {
+    s += '<g data-p="' + p.id + '" style="cursor:pointer"><circle class="ring" r=".42" fill="none" stroke="' + p.c + '" stroke-opacity=".0" stroke-width=".12"/><circle class="dot" r=".3" fill="' + p.c + '" stroke="#fff" stroke-width=".06"/>' +
+      '<text class="pn" y="-.5">' + esc(p.nm) + '</text><text class="ps" y=".85"></text></g>';
+  });
+  s += '<g data-pk hidden><circle r=".3" fill="#0E7C86"/><text class="pk" y="-.5"></text></g>';
+  svg.innerHTML = s; stage.appendChild(svg);
+  const pos = {}; PEOPLE.forEach(p => pos[p.id] = {x: p.x, z: p.z});
+  const gOf = id => svg.querySelector('g[data-p="' + id + '"]');
+  const place = id => gOf(id).setAttribute('transform', 'translate(' + X(pos[id].x) + ' ' + Z(pos[id].z) + ')');
+  PEOPLE.forEach(p => place(p.id));
+  let pickCb = null;
+  PEOPLE.forEach(p => gOf(p.id).addEventListener('click', () => pickCb && pickCb(p.id)));
+  const pk = svg.querySelector('g[data-pk]'); let pkTimer = null;
+  const api = {
+    kind: '2d', svg: svg,
+    reset() {
+      api.clear(); PEOPLE.forEach(p => { if (hasGSAP) gsap.killTweensOf(pos[p.id]); pos[p.id].x = p.x; pos[p.id].z = p.z; place(p.id); gOf(p.id).querySelector('.ps').textContent = ''; });
+      pk.setAttribute('hidden', ''); if (pkTimer) clearTimeout(pkTimer);
+    },
+    hi(id, c) {
+      const g = gOf(id);
+      if (g) { const r = g.querySelector('.ring'); r.setAttribute('stroke', c); r.setAttribute('stroke-opacity', '.9'); return; }
+      const rh = svg.querySelector('rect[data-rh="' + id + '"]'); if (rh) { rh.setAttribute('fill', c); rh.setAttribute('opacity', '.35'); }
+    },
+    unhi(id) { const g = gOf(id); if (g) { g.querySelector('.ring').setAttribute('stroke-opacity', '0'); return; } const rh = svg.querySelector('rect[data-rh="' + id + '"]'); if (rh) rh.setAttribute('opacity', '0'); },
+    clear() { svg.querySelectorAll('.ring').forEach(r => r.setAttribute('stroke-opacity', '0')); svg.querySelectorAll('rect[data-rh]').forEach(r => r.setAttribute('opacity', '0')); },
+    set(id, sub) { const g = gOf(id); if (g) g.querySelector('.ps').textContent = sub || ''; },
+    name(id, nm) { const g = gOf(id); if (g) g.querySelector('.pn').textContent = nm; },
+    show(id, on) { const g = gOf(id); if (g) g.style.display = on ? '' : 'none'; },
+    walk(id, path, dur, instant) {
+      const p = pos[id]; if (!p) return;
+      if (hasGSAP) gsap.killTweensOf(p);
+      if (instant || !hasGSAP || RM) { const e = path[path.length - 1]; p.x = e.x; p.z = e.z; place(id); return; }
+      const tl = gsap.timeline(); const per = (dur || 1.4) / path.length;
+      path.forEach(q => tl.to(p, {x: q.x, z: q.z, duration: per, ease: 'none', onUpdate: () => place(id)}));
+      tl.timeScale(speed);
+    },
+    fly(path, text, c, instant) {
+      if (instant) return;
+      if (pkTimer) clearTimeout(pkTimer);
+      pk.removeAttribute('hidden'); pk.querySelector('circle').setAttribute('fill', c); pk.querySelector('.pk').textContent = text;
+      const q = {x: path[0].x, z: path[0].z}; const put = () => pk.setAttribute('transform', 'translate(' + X(q.x) + ' ' + Z(q.z) + ')');
+      put();
+      if (!hasGSAP || RM) { const e = path[path.length - 1]; q.x = e.x; q.z = e.z; put(); pkTimer = setTimeout(() => pk.setAttribute('hidden', ''), 1400); return; }
+      const tl = gsap.timeline({onComplete: () => pk.setAttribute('hidden', '')}); const per = 1.4 / (path.length - 1 || 1);
+      path.slice(1).forEach(e => tl.to(q, {x: e.x, z: e.z, duration: per, ease: 'none', onUpdate: put}));
+      tl.timeScale(speed);
+    },
+    focus() {}, view() {}, onPick: cb => { pickCb = cb; }
+  };
+  return api;
+}
+function makeFloor(stage, PEOPLE, opts) {
+  let g = Graphics3D(stage, PEOPLE, opts);
+  if (!g) { const n = $('#nogl'); if (n) n.hidden = false; g = Graphics2D(stage, PEOPLE, opts); }
+  return g;
+}
+/* ---------------- cast ---------------- */
+const PEOPLE = [
+  {id: 'mgr', role: 'MANAGER', nm: 'You', x: -11.3, z: 0, c: COL.violet, who: 'Nurse manager of 4 West (you)'},
+  {id: 'dalia', role: 'CHARGE', nm: 'Dalia F.', x: -7.4, z: 0.9, c: COL.violet, who: 'Dalia Fernández, day charge nurse, 14 years'},
+  {id: 'patricia', role: 'RN', nm: 'Patricia W.', x: -6.0, z: -0.9, c: COL.teal, who: 'Patricia Whitfield, day RN, 18.9 years, relief charge nurse on Dalia\'s days off'},
+  {id: 'yesenia', role: 'CHARGE', nm: 'Yesenia C.', x: -1, z: 0.9, c: COL.violet, who: 'Yesenia Castro, night charge nurse, 4 years'},
+  {id: 'kwame', role: 'CHARGE', nm: 'Kwame B.', x: 10.55, z: 0.9, c: COL.violet, who: 'Kwame Boateng, night charge nurse, 2 years'},
+  {id: 'stephanie', role: 'RN', nm: 'Stephanie D.', x: 7.3, z: -0.9, c: COL.teal, who: 'Stephanie Dubois, day RN, hired May 2026'},
+  {id: 'joel', role: 'RN', nm: 'Joel Q.', x: 1.4, z: -0.9, c: COL.teal, who: 'Joel Quiñones, day RN, 1.4 years'},
+  {id: 'tamika', role: 'RN', nm: 'Tamika F.', x: 4.85, z: 0.9, c: COL.teal, who: 'Tamika Fergus, day RN, 4.6 years, falls team'},
+  {id: 'gladys', role: 'CNA', nm: 'Gladys P.', x: 4.35, z: -0.9, c: COL.green, who: 'Gladys Peñaranda, day CNA, 10 years'},
+  {id: 'kayla', role: 'CNA', nm: 'Kayla F.', x: -3.1, z: -0.9, c: COL.green, who: 'Kayla Ferreira, day CNA, hired in 2026'},
+  {id: 'md', role: 'MD', nm: 'Dr. Ruiz', x: 9.1, z: 0, c: COL.slate, who: 'Dr. Ruiz, hospitalist'},
+  {id: 'pharm', role: 'PHARM', nm: 'Rafael S.', x: -3.6, z: 0.9, c: COL.slate, who: 'Rafael Serrano, PharmD, clinical pharmacist'},
+  {id: 'family', role: 'FAMILY', nm: 'Daughter', x: -1.55, z: -0.9, c: COL.amber, who: 'Daughter of the patient in room 404'},
+  {id: 'beatriz', role: 'EDUCATOR', nm: 'Beatriz L.', x: 2.0, z: 0.9, c: COL.violet, who: 'Beatriz Lemos, unit educator shared with 4 East'},
+  {id: 'marcus', role: 'CHARGE', nm: 'Marcus R.', x: -8.8, z: -0.9, c: COL.violet, who: 'Marcus Reid, day charge nurse, 6 years'},
+  {id: 'carmen', role: 'RN', nm: 'Carmen A.', x: 7.7, z: 0.9, c: COL.teal, who: 'Carmen Alvarado, senior day RN, 21 years'},
+  {id: 'terrence', role: 'DIRECTOR', nm: 'Terrence O.', x: -10.8, z: 0.9, c: COL.slate, who: 'Terrence Okafor, Director of Medical-Surgical Services'}
+];
+const HOME = {}; PEOPLE.forEach(p => HOME[p.id] = {x: p.x, z: p.z});
+const stage = $('#stage');
+const gfx = makeFloor(stage, PEOPLE, {title: '4 WEST · MED-SURG · 32 BEDS · CONFLICT ROUNDS'});
+
+/* ---------------- the modes ---------------- */
+const MODES = [
+  {k: 'competing', n: 'Competing', s: 'assertive, uncooperative'}, {k: 'collaborating', n: 'Collaborating', s: 'assertive and cooperative'},
+  {k: 'compromising', n: 'Compromising', s: 'medium on both'}, {k: 'avoiding', n: 'Avoiding', s: 'unassertive, uncooperative'}, {k: 'accommodating', n: 'Accommodating', s: 'unassertive, cooperative'}
+];
+/* ---------------- the ten rounds. mode: [best, second]; sent and act: {t, p} with p = points (3 best, 1 partial, 0 wrong) ---------------- */
+const ROUNDS = [
+  {id: 'md', title: 'A physician shouts at a new nurse', where: 'Nurse station, 2:50 p.m., Thursday', room: '408', people: ['md', 'stephanie'], focus: [-7, 0.5],
+    text: "Dr. Ruiz, a hospitalist, raises his voice at Stephanie Dubois (day RN, hired in May) at the nurse station over a page about room 408 that reached him late. The family from 408 is standing in the corridor. Stephanie has gone silent. You are ten feet away.",
+    mode: ['competing', 'collaborating'],
+    sent: [{t: 'Dr. Ruiz, step into the conference room with me. Now.', p: 3}, {t: 'Stephanie, what did you do to make him react like that?', p: 0}, {t: 'Doctor, I will come and talk with you in five minutes in my office.', p: 1}, {t: 'We are all under pressure today, let us just forget it.', p: 0}],
+    act: [{t: 'Debrief Stephanie before the end of the shift, file the incident report, and route the conduct concern through the medical staff process (Dr. Arango, the hospitalist medical director).', p: 3}, {t: 'Tell Stephanie she can file a report if she wants to.', p: 1}, {t: 'Ask Dr. Ruiz to apologize when he has a moment.', p: 0}, {t: 'Move Stephanie to a different assignment so they do not cross paths.', p: 0}],
+    why: "Dignity and safety are at stake right now, in public, with a new nurse who has gone silent. That is the case for competing: high assertiveness, low cooperation, for the next sixty seconds. The first sentence removes the scene from the corridor; it does not ask the nurse to explain herself and it does not postpone (five minutes is a long time to stand there). Collaborating is the right second move, in private, about the paging process. incidents.csv has a report just like it: INC-059, a hospitalist raised his voice at a day RN over a delayed page about room 408 and left before she could respond. Two of the 11 incivility reports are on days and involve non-nursing staff; the manager's duty to act covers all of them.",
+    resolve: {sub: {md: 'conference room', stephanie: 'debriefed'}, c: COL.green}},
+  {id: 'cnas', title: 'Two CNAs refuse to work together', where: '7:05 a.m., the day shift is starting', room: 'station', people: ['gladys', 'kayla'], focus: [-5, 0.5],
+    text: "Gladys Peñaranda (CNA, 10 years) and Kayla Ferreira (CNA, hired this year) tell Dalia they will not work the same hall today. Gladys says Kayla disappears on breaks; Kayla says Gladys talks about her to patients. Fourteen two-person assists are on the board. Dalia sends them to you.",
+    mode: ['compromising', 'collaborating'],
+    sent: [{t: 'For today, Gladys takes 401 to 408 and Kayla takes 409 to 416; two-person assists you still do together. We meet at 3 p.m. to sort this out properly.', p: 3}, {t: 'Work it out between yourselves and tell me what you decide.', p: 1}, {t: 'If you cannot work together, one of you goes home.', p: 0}, {t: 'Gladys, you have ten years here, you should know better.', p: 0}],
+    act: [{t: 'Meet both at 3 p.m., hear each side separately first, agree on two or three working norms (breaks, assists, how to raise a problem), and write them on the CNA assignment sheet.', p: 3}, {t: 'Ask Dalia to keep them on opposite sides of the unit for the rest of the month.', p: 1}, {t: 'Send both to Human Resources.', p: 0}, {t: 'Do nothing unless it happens again.', p: 0}],
+    why: "At 7:05 a.m. with patients waiting, the goal is a workable split for today: medium assertiveness (you decide the halls), medium cooperation (they keep the assists). That is compromising, with a time limit on it. Collaborating is the right mode for the 3 p.m. meeting, when there is time to hear interests (Kayla's breaks, Gladys's reputation) and build norms. The engagement survey explains why this matters: CNAs score lowest on 'I have a say in decisions' (2.10) and 'I have opportunities to grow' (2.00), so a meeting where they write the norms themselves does double duty.",
+    resolve: {sub: {gladys: '401 to 408', kayla: '409 to 416'}, c: COL.amber}},
+  {id: 'family', title: 'A family member records staff', where: 'Room 404, 11:20 a.m.', room: '404', people: ['family'], focus: [-1.5, -1.5],
+    text: "The daughter of the patient in room 404 is recording nurses on her phone after her mother's 9 a.m. medication was given at 10:40. She says she will post it. The RN has backed out of the room and asks you to come. Hospital policy restricts recording of staff and other patients.",
+    mode: ['collaborating', 'accommodating'],
+    sent: [{t: 'I can see you are worried about your mother. Let us sit down right now, and I will go through everything that happened this morning and explain our policy on recording.', p: 3}, {t: 'Please stop recording. It is against hospital policy.', p: 1}, {t: 'If you keep recording, I will have to call security.', p: 0}, {t: 'The nurses are doing their best; you need to be patient with them.', p: 0}],
+    act: [{t: 'Hold a care conference today with the daughter, the nurse, and the hospitalist; document the complaint and the response; notify patient relations and follow the recording policy as written.', p: 3}, {t: 'Ask the charge nurse to reassign the patient to a senior nurse for the rest of the stay.', p: 1}, {t: 'Restrict visitors for that room.', p: 0}, {t: 'Tell staff to keep their distance from the room.', p: 0}],
+    why: "The recording is a position; the interest behind it is fear that her mother is not safe. Collaborating starts from the interest, answers the real question (why the dose was late), and brings the policy in as an objective criterion rather than a threat. Leading with the policy is not wrong, but it is the wrong first sentence. Patient complaints are in incidents.csv (8 in six months); the morning medication delay is the kind of event that becomes one. A care conference the same day is the follow-up that turns a complaint into a documented, resolved concern.",
+    resolve: {sub: {family: 'care conference 2 p.m.'}, c: COL.green}},
+  {id: 'assign', title: 'The hardest patients go to the same nurse', where: 'Day shift, assignment sheet', room: '405', people: ['patricia', 'joel'], focus: [-2.5, 0.5],
+    text: "Patricia Whitfield (18.9 years) covers charge on Dalia's days off. Joel Quiñones (RN, 1.4 years) tells you that on Patricia's days he always gets the heaviest assignment. You pull four weeks of assignment sheets: Joel had the highest-acuity group on 9 of Patricia's 12 shifts. Patricia says 'he needs to toughen up'.",
+    mode: ['collaborating', 'competing'],
+    sent: [{t: 'Patricia, I pulled the last four weeks of assignments. Joel had the highest acuity on 9 of your 12 shifts. Help me understand how the assignments get made.', p: 3}, {t: 'Patricia, from now on I approve the assignments on your charge days.', p: 1}, {t: 'Joel, you need to learn to speak up for yourself.', p: 0}, {t: 'Patricia, people are saying you have a problem with Joel.', p: 0}],
+    act: [{t: 'Agree with all the charge nurses on an acuity-based assignment rule, audit the sheets for a month, and check in with Joel at two weeks.', p: 3}, {t: 'Take Patricia off charge duty for a while.', p: 1}, {t: 'Tell Joel to request different days.', p: 0}, {t: 'Send a staff-wide email about fairness in assignments.', p: 0}],
+    why: "Making assignments is legitimate power; using it to punish a nurse turns it into coercive power, and that pattern is incivility whether or not a voice is raised. The manager must be assertive about the pattern (it stops) and cooperative about the fix, because Patricia will still be charge next week: collaborating. Opening with the data and a genuine question is the assertive half done without an accusation; taking over the assignments (competing) works but loses an 18-year nurse's goodwill. An acuity rule turns a personal dispute into an objective criterion, which is also the negotiation lesson of this week.",
+    resolve: {sub: {patricia: 'acuity rule', joel: 'check-in in 2 weeks'}, c: COL.green}},
+  {id: 'pharm', title: 'Pharmacy and the night nurses dispute a protocol', where: 'Med room, medication safety meeting', room: 'med', people: ['pharm', 'yesenia'], focus: [-3, 0.5],
+    text: "Rafael Serrano, the clinical pharmacist, wants a second barcode scan added to every insulin dose after the unit's medication errors. The night nurses say it adds four minutes per dose with four RNs for 28 patients, and that most errors happen when someone is on an overtime shift. Both sides want you to rule.",
+    mode: ['collaborating', 'compromising'],
+    sent: [{t: 'Rafael, we both want zero insulin errors. Let us look at the 18 medication errors together and find a step that works at 3 a.m. with four nurses.', p: 3}, {t: 'Let us pilot your step on days only and see how it goes.', p: 1}, {t: 'Pharmacy does not run my unit.', p: 0}, {t: 'Fine, we will do it your way.', p: 0}],
+    act: [{t: 'Review incidents.csv together (11 of the 18 medication errors involved an RN on an overtime shift), then run a night-shift trial of the step with Yesenia and Kwame and measure at 30 days.', p: 3}, {t: 'Escalate to the medication safety committee without the data.', p: 1}, {t: 'Tell the nurses to skip the step when they are busy.', p: 0}, {t: 'Accept the step and move on.', p: 0}],
+    why: "This is functional conflict: a disagreement about the task that can improve the decision, between people who will keep working together. Collaborating fits: both concerns (safety, feasibility at 3 a.m.) matter, and you want commitment from pharmacy and from nights. The data shifts the question: incidents.csv shows 18 medication errors, 11 of them (61 percent) involving an RN on an overtime shift while overtime is 7.5 percent of paid hours, so fatigue is the bigger cause and an extra scan is only part of the answer. A days-only pilot (compromising) is defensible but avoids the shift where the problem lives.",
+    resolve: {sub: {pharm: 'joint review', yesenia: 'night trial'}, c: COL.green}},
+  {id: 'argue', title: 'Two nurses argue in front of a family', where: 'Corridor outside room 412, 9:19 p.m.', room: '412', people: ['kwame', 'carmen'], focus: [9, 0.5],
+    text: "You are on the unit late. Outside room 412, two night RNs argue loudly about who takes the admission coming from the emergency department. The patient's son in 412 has stepped into the doorway. Kwame is on the phone with the ED. You are the senior person present.",
+    mode: ['competing', 'compromising'],
+    sent: [{t: 'Not here. Both of you, nurse station, now. Kwame, when you are off the phone, please cover 412 for five minutes.', p: 3}, {t: 'Could you two keep it down? The family can hear you.', p: 1}, {t: 'Whoever has fewer patients takes the admission. End of discussion.', p: 0}, {t: 'I will let the two of you sort it out.', p: 0}],
+    act: [{t: 'Apologize to the family, hear both nurses after the shift, and write an admission assignment rule (rotation by last admission, adjusted for acuity) into the charge nurse checklist.', p: 3}, {t: 'Write both nurses up for unprofessional conduct.', p: 1}, {t: 'Nothing; it was a one-time thing.', p: 0}, {t: 'Assign every admission to the charge nurse from now on.', p: 0}],
+    why: "In the moment, competing: the scene ends now, in a sentence that moves people and protects the patient's family. Deciding the admission on the spot without facts is also assertive, but it settles the wrong question and leaves the pattern. Compromising on the admission itself is the natural second move at the station. incidents.csv holds the original: INC-072, two night RNs argued over an admission assignment within earshot of the family in room 425. The follow-up is a rule, not a reprimand, because the cause is a missing norm, not two bad nurses.",
+    resolve: {sub: {kwame: 'covers 412', carmen: 'to the station'}, c: COL.amber}},
+  {id: 'cart', title: 'Where should the supply cart go?', where: '7:05 a.m., during handoff', room: 'station', people: ['marcus', 'carmen'], focus: [-7, 0.5],
+    text: "During the 7 a.m. handoff, Marcus Reid and Carmen Alvarado disagree about where the new supply cart should sit, by the station or by room 408. Both want you to rule right now, while four nurses are giving report around them.",
+    mode: ['avoiding', 'compromising'],
+    sent: [{t: 'Not during handoff. Put it on the 9 a.m. huddle agenda and we decide there.', p: 3}, {t: 'Leave it where it is for today.', p: 1}, {t: 'Carmen is right, move it to 408.', p: 0}, {t: 'Why are you two always fighting about something?', p: 0}],
+    act: [{t: 'At the huddle, let the day team decide with one criterion (fewest steps for the busiest rooms) and move on.', p: 3}, {t: 'Decide yourself and email the decision to everyone.', p: 1}, {t: 'Set up a supply cart committee.', p: 0}, {t: 'Forget about it and hope it goes away.', p: 0}],
+    why: "A trivial issue, the wrong moment, and a decision the team can make itself: this is where avoiding is the right mode, as long as it is postponing to a named time, not ignoring. incidents.csv shows why the moment matters: 13 of the 15 handoff misses happened between 6:30 and 7:30 or between 18:30 and 19:30, so anything that pulls attention from report at 7:05 has a cost. Compromising (split the difference) would be a defensible quick fix, but it still spends handoff minutes on a cart.",
+    resolve: {sub: {marcus: 'huddle 9 a.m.', carmen: 'huddle 9 a.m.'}, c: COL.green}},
+  {id: 'educ', title: 'The educator wants to run the session her way', where: 'Break room, planning the pump in-service', room: 'break', people: ['beatriz'], focus: [-1, 0.5],
+    text: "You built a slide deck for the infusion pump in-service. Beatriz Lemos, the unit educator (praised in 10 of 120 survey comments, more than anyone), wants hands-on stations with the pumps instead, which takes longer to set up. You prefer your slides. She is shared with 4 East and has limited time.",
+    mode: ['accommodating', 'collaborating'],
+    sent: [{t: 'You are the educator and you know how people learn. Do it your way, and tell me what you need from me.', p: 3}, {t: 'Let us do half slides and half stations.', p: 1}, {t: 'I already built the slides; we are using them.', p: 0}, {t: 'Why do you always change my plans?', p: 0}],
+    act: [{t: 'Book the room and the pumps, protect her time with 4 East for the session, and attend as a learner.', p: 3}, {t: 'Ask her to send you the lesson plan for approval first.', p: 1}, {t: 'Let her handle it and do not show up.', p: 0}, {t: 'Ask the 4 East manager to decide.', p: 0}],
+    why: "Accommodating is right when the issue matters more to the other person, when they know more than you about it, and when goodwill is worth more than the point. All three apply: Beatriz is the expert (expert and referent power), the format is her field, and she is a champion you will need in Week 6. Splitting it (compromising) spends her goodwill to keep slides nobody asked for. Attending as a learner is the follow-up that costs nothing and signals that her expertise is valued.",
+    resolve: {sub: {beatriz: 'stations booked'}, c: COL.green}},
+  {id: 'float', title: 'The director needs a nurse for 4 East', where: 'Manager office, the director on the phone', room: 'office', people: ['terrence', 'tamika'], focus: [-9, 0.5],
+    text: "Terrence Okafor, your director, needs one 4 West day RN to float to 4 East for the next two weeks. You need Tamika Fergus on 4 West the week of the 12th for the falls team pilot. Terrence has the authority to simply take the nurse; you both know it, and he is asking instead.",
+    mode: ['compromising', 'collaborating'],
+    sent: [{t: 'I can give you one RN for the week of the 5th. For the week of the 12th, 4 East covers from its per diem pool, and the falls pilot keeps Tamika.', p: 3}, {t: 'Take whoever you need; I will manage.', p: 1}, {t: 'No. The falls pilot comes first.', p: 0}, {t: 'Ask Dr. Quintana to decide.', p: 0}],
+    act: [{t: 'Confirm the split in writing to Terrence and Lisa Harrington, adjust the schedule, and tell the falls team why.', p: 3}, {t: 'Agree verbally and hope it works out.', p: 1}, {t: 'Cancel the falls pilot.', p: 0}, {t: 'Pay overtime on 4 West to cover both weeks.', p: 0}],
+    why: "A deadline, a temporary need, and a director who could use legitimate power but prefers not to: compromising fits. Each side gives one week. Accommodating (take whoever you need) costs the falls pilot, which matters: 16 of the 27 falls in incidents.csv happened on night weekends and the pilot is your answer to that. Overtime to cover both is the expensive non-answer: the unit's Overtime premium line is already $141,158 over budget for the year (unit_budget.csv). Collaborating is defensible if there were time for a joint staffing plan across both units.",
+    resolve: {sub: {terrence: 'week of the 5th', tamika: 'falls pilot, week of the 12th'}, c: COL.amber}},
+  {id: 'kwame', title: 'The pattern around the night charge nurse', where: '6:40 a.m., end of Kwame\'s shift', room: 'station', people: ['kwame'], focus: [9, 0.5],
+    text: "Eleven incivility reports in six months, nine on nights, eight describing a first-year nurse. Three night RNs left citing the relationship with the charge nurse (turnover.csv). Last night's report, INC-096, happened on Kwame's charge night. The comments never name him. The new nurses have named him to you in person.",
+    mode: ['collaborating', 'competing'],
+    sent: [{t: 'Kwame, I need 30 minutes with you after your shift, in my office. I want to talk about the reports from new nurses, and about what you need at 3 a.m.', p: 3}, {t: 'Kwame, this stops today.', p: 1}, {t: 'I know the new nurses are a lot. I need you.', p: 0}, {t: 'Nothing yet; I will wait for the next survey.', p: 0}],
+    act: [{t: 'State the standard (no correction in front of the team), agree on a night check-in and private corrections, document the plan with HR informed, meet the new nurses this week, check in at two weeks.', p: 3}, {t: 'Write a formal warning and file it.', p: 1}, {t: 'Move the new nurses to Yesenia\'s nights.', p: 0}, {t: 'Tell the new nurses to come prepared.', p: 0}],
+    why: "The standard is not negotiable (assertive); the 'how' is built with Kwame (cooperative): collaborating, with competing as the fallback if the behavior continues after a documented plan. 'This stops today' is assertive but public and factless, which is why it scores partial credit. Avoiding and accommodating both read as permission. The follow-up has four parts that the explorer showed: the standard, the check-in format, documentation with HR informed, and the follow-up with the new nurses. Three resignations citing the charge nurse relationship cost about $62,000 each to recruit and onboard: $186,000, before agency coverage.",
+    resolve: {sub: {kwame: '30 minutes, office'}, c: COL.green}}
+];
+const TOTAL = 10;
+
+/* ---------------- state ---------------- */
+let order = [], cur = 0, results = [], pick = {mode: null, sent: null, act: null}, view = null, locked = false;
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function start() {
+  order = shuffle(ROUNDS.map((r, i) => i)); cur = 0; results = []; $('#final').hidden = true; $('#round').hidden = false;
+  showRound();
+}
+function round() { return ROUNDS[order[cur]]; }
+function renderProgress() {
+  const box = $('#progress'); box.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) { const b = document.createElement('i'); const r = results[i]; if (r) b.className = r.pts === 10 ? 'full' : r.pts >= 5 ? 'part' : 'zero'; if (i === cur && cur < TOTAL) b.classList.add('now'); box.appendChild(b); }
+}
+let resolveTimer = null;
+function scene(r) {
+  if (resolveTimer) clearTimeout(resolveTimer);
+  gfx.reset();
+  PEOPLE.forEach(p => gfx.show(p.id, p.id === 'mgr' || r.people.includes(p.id)));
+  gfx.hi(r.room, COL.coral);
+  r.people.forEach(id => { gfx.hi(id, COL.coral); gfx.set(id, 'involved'); });
+  const rm = ROOM[r.room]; const tx = rm ? rm.x : 0;
+  gfx.walk('mgr', [{x: Math.max(-11.3, Math.min(11.3, tx - 1.2)), z: 0}], 1.6, !hasGSAP);
+  gfx.focus(r.focus[0], r.focus[1], 9);
+  $('#capT').textContent = 'Round ' + (cur + 1) + ' · ' + r.where;
+  $('#capP').textContent = r.text;
+}
+function showRound() {
+  const r = round(); locked = false; pick = {mode: null, sent: null, act: null};
+  view = {sent: shuffle(r.sent.map((s, i) => i)), act: shuffle(r.act.map((a, i) => i))};
+  $('#rn').textContent = cur + 1; renderProgress(); scene(r);
+  const box = $('#round');
+  let h = '<div class="case"><div class="t">' + esc(r.title) + '</div><p>' + esc(r.text) + '</p><div class="where">' + esc(r.where) + '</div></div>';
+  h += '<div class="q">1. Which mode fits the first move? <small>4 points</small></div><div class="opts modes" data-g="mode">' + MODES.map(m => '<button type="button" class="opt" data-v="' + m.k + '" aria-pressed="false"><span><b>' + m.n + '</b><small>' + m.s + '</small></span></button>').join('') + '</div>';
+  h += '<div class="q">2. The first sentence the manager says <small>3 points</small></div><div class="opts" data-g="sent">' + view.sent.map(i => '<button type="button" class="opt" data-v="' + i + '" aria-pressed="false"><span>' + esc(r.sent[i].t) + '</span></button>').join('') + '</div>';
+  h += '<div class="q">3. The follow-up action <small>3 points</small></div><div class="opts" data-g="act">' + view.act.map(i => '<button type="button" class="opt" data-v="' + i + '" aria-pressed="false"><span>' + esc(r.act[i].t) + '</span></button>').join('') + '</div>';
+  h += '<div class="rowbtn"><button type="button" class="btn primary" id="check" disabled>Check round</button><span class="hint" id="pickHint">Pick one answer in each group.</span></div><div id="fb"></div>';
+  box.innerHTML = h;
+  $$('#round .opts').forEach(g => g.querySelectorAll('.opt').forEach(b => b.onclick = () => {
+    if (locked) return;
+    g.querySelectorAll('.opt').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+    pick[g.dataset.g] = b.dataset.v;
+    const ready = pick.mode && pick.sent !== null && pick.act !== null;
+    $('#check').disabled = !ready; $('#pickHint').textContent = ready ? '' : 'Pick one answer in each group.';
+  }));
+  $('#check').onclick = check;
+  if (hasGSAP && !RM) gsap.from('#round .case', {opacity: 0, y: 8, duration: .35});
+  window.scrollTo({top: Math.max(0, $('#round').getBoundingClientRect().top + window.scrollY - 90), behavior: RM ? 'auto' : 'smooth'});
+}
+function scoreRound(r, p) {
+  const m = p.mode === r.mode[0] ? 4 : p.mode === r.mode[1] ? 2 : 0;
+  const s = r.sent[+p.sent].p, a = r.act[+p.act].p;
+  return {m, s, a, pts: m + s + a};
+}
+function check() {
+  if (locked) return; locked = true;
+  const r = round(), sc = scoreRound(r, pick);
+  results[cur] = {title: r.title, pts: sc.pts, mode: pick.mode, best: r.mode[0]};
+  $$('#round .opts[data-g=mode] .opt').forEach(b => { if (b.dataset.v === r.mode[0]) b.classList.add('best'); else if (b.dataset.v === r.mode[1]) b.classList.add('part'); else if (b.dataset.v === pick.mode) b.classList.add('miss'); b.disabled = true; });
+  ['sent', 'act'].forEach(g => $$('#round .opts[data-g=' + g + '] .opt').forEach(b => { const p = r[g][+b.dataset.v].p; if (p === 3) b.classList.add('best'); else if (p === 1) b.classList.add('part'); else if (b.dataset.v === String(pick[g])) b.classList.add('miss'); b.disabled = true; }));
+  const bestMode = MODES.find(m => m.k === r.mode[0]).n, secondMode = MODES.find(m => m.k === r.mode[1]).n;
+  const fb = $('#fb');
+  fb.innerHTML = '<div class="feedback ' + (sc.pts === 10 ? 'ok' : sc.pts >= 5 ? 'info' : 'bad') + ' fb"><h3>' + sc.pts + ' of 10 · best mode: ' + bestMode + ' <span class="pts">(defensible second: ' + secondMode + ')</span></h3>' +
+    '<div class="scorecard"><div><b>' + sc.m + '/4</b><span>mode</span></div><div><b>' + sc.s + '/3</b><span>first sentence</span></div><div><b>' + sc.a + '/3</b><span>follow-up</span></div></div>' +
+    '<p>' + esc(r.why) + '</p></div>' +
+    '<div class="rowbtn"><button type="button" class="btn primary" id="nextBtn">' + (cur + 1 < TOTAL ? 'Next round' : 'See the final score') + '</button></div>';
+  $('#nextBtn').onclick = () => { cur++; if (cur < TOTAL) showRound(); else finish(); };
+  $('#check').disabled = true; renderProgress();
+  // the scene resolves on the floor: the manager's sentence flies to the first person involved, the room settles to the outcome color
+  const r0 = ROOM[r.room], who = r.people[0];
+  gfx.fly([{x: Math.max(-11.3, Math.min(11.3, (r0 ? r0.x : 0) - 1.2)), z: 0}, HOME[who]], 'first sentence', sc.s === 3 ? COL.teal : COL.amber, !hasGSAP);
+  resolveTimer = setTimeout(() => { gfx.unhi(r.room); gfx.hi(r.room, r.resolve.c); r.people.forEach(id => { gfx.unhi(id); gfx.hi(id, r.resolve.c); gfx.set(id, r.resolve.sub[id] || ''); }); }, hasGSAP ? 1500 / speed : 0);
+  $('#capT').textContent = 'Round ' + (cur + 1) + ' · ' + sc.pts + ' of 10';
+  $('#capP').textContent = (sc.pts === 10 ? 'Best answers on all three. ' : sc.m === 4 ? 'Right mode. ' : sc.m === 2 ? 'A defensible mode; ' + bestMode.toLowerCase() + ' fits better. ' : 'The fitting mode is ' + bestMode.toLowerCase() + '. ') + 'Green marks a resolved scene, amber a settlement that needs a follow-up.';
+  if (hasGSAP && !RM) gsap.from(fb, {opacity: 0, y: 8, duration: .35});
+}
+function finish() {
+  const total = results.reduce((s, r) => s + r.pts, 0);
+  $('#round').hidden = true; renderProgress();
+  const f = $('#final'); f.hidden = false;
+  f.innerHTML = '<div class="final"><div class="big">' + total + '</div><p>out of 100 · ' + (total >= 90 ? 'You choose the mode for the situation, not for your comfort.' : total >= 70 ? 'Solid. Reread the rounds where the sentence or the follow-up lost points: the mode is often right and the words are not.' : 'Try again. Ask of every case: is safety at stake now, does the relationship continue, and is this a standard or a preference?') + '</p></div>' +
+    '<div class="scroll-x" style="margin-top:12px"><table class="rounds"><thead><tr><th>Round</th><th>Your mode</th><th>Best mode</th><th>Points</th></tr></thead><tbody>' +
+    results.map(r => '<tr><td>' + esc(r.title) + '</td><td>' + esc(MODES.find(m => m.k === r.mode).n) + '</td><td>' + esc(MODES.find(m => m.k === r.best).n) + '</td><td>' + r.pts + '</td></tr>').join('') + '</tbody></table></div>' +
+    '<div class="rowbtn"><button type="button" class="btn primary" id="again">Try again (shuffled)</button></div>';
+  $('#again').onclick = start;
+  if (resolveTimer) clearTimeout(resolveTimer);
+  $('#rn').textContent = '10'; gfx.reset(); PEOPLE.forEach(p => gfx.show(p.id, ['mgr', 'dalia', 'marcus', 'yesenia', 'kwame'].includes(p.id))); gfx.view('overview');
+  $('#capT').textContent = 'Final score ' + total + ' of 100'; $('#capP').textContent = 'The rounds and the options are shuffled each time. Collaborating was the best mode in four rounds, competing in two, compromising in two, avoiding in one, accommodating in one.';
+}
+$$('.stepper [data-view]').forEach(b => b.onclick = () => { if (b.dataset.view === 'scene') { const r = round(); if (r && cur < TOTAL) gfx.focus(r.focus[0], r.focus[1], 9); } else gfx.view('overview'); });
+gfx.onPick(id => { const p = PEOPLE.find(x => x.id === id); if (p) { $('#capT').textContent = 'Who is this?'; $('#capP').textContent = p.who + '.'; } });
+if (location.hash === '#test') window.__rounds = {ROUNDS, order: () => order, scoreRound};
+start();
+})();
+
+//PAGE_JS_END
+</script>
+</body>
+</html>

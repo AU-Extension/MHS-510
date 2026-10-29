@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MHS 510 Data</title>
+<meta name="description" content="Datasets for MHS 510.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Figtree:ital,wght@0,300..900;1,300..900&family=JetBrains+Mono:wght@100..800&display=swap" rel="stylesheet">
+<style>
+  /* ===== MHS 510 "4 West unit board" theme v1 (a nursing unit status whiteboard: linen page, navy ink, teal actions). Paste as the first block of every page's <style>. ===== */
+  :root{
+    --au-red:#E1141E; --au-red-dark:#A3282B;
+    /* base: linen page, soft panels, navy ink */
+    --paper:#F6F3EE; --paper-deep:#ECE7DF; --panel:#FFFFFF; --panel-2:#F4F1EB; --line:#D9D3C8; --line-2:#C4BCAE;
+    --ink:#14233A; --ink-2:#36465E; --muted:#66728A;
+    /* accents with fixed meanings (the same thing gets the same color on every page) */
+    --teal:#0E7C86;    /* primary actions and the student's own moves */
+    --coral:#D4453F;   /* conflict and risk */
+    --amber:#C27A08;   /* caution and in-progress */
+    --green:#1F8A4C;   /* stable, positive, correct */
+    --violet:#6A4FC8;  /* leadership moves and theory tags */
+    --slate:#5B6B82;   /* neutral data */
+    --teal-soft:rgba(14,124,134,.10); --coral-soft:rgba(212,69,63,.10); --amber-soft:rgba(194,122,8,.12); --green-soft:rgba(31,138,76,.10); --violet-soft:rgba(106,79,200,.10); --slate-soft:rgba(91,107,130,.10);
+    --ok:var(--green); --bad:var(--coral); --warn:var(--amber);
+    --ok-soft:var(--green-soft); --bad-soft:var(--coral-soft); --warn-soft:var(--amber-soft);
+    --font-display:"Bricolage Grotesque","Figtree","Helvetica Neue",sans-serif;
+    --font-body:"Figtree","Helvetica Neue",sans-serif;
+    --font-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+    --mono:var(--font-mono); --sans:var(--font-body); --display:var(--font-display);
+    --r:10px; --radius:10px; --lab:10px;
+    --shadow:0 1px 2px rgba(20,35,58,.06),0 8px 22px rgba(20,35,58,.07);
+    --shadow-sm:0 1px 2px rgba(20,35,58,.08);
+    /* legacy names used by older page code and shared markup, mapped to the light theme */
+    --board:#ECE7DF; --board-deep:#F6F3EE; --bg:#F6F3EE; --card:#FFFFFF; --edge:#D9D3C8; --edge-2:#C4BCAE; --dim:#66728A;
+    --silk:#14233A; --silk-2:#36465E; --silk-dim:#66728A; --copper:#0E7C86; --neon:#0E7C86;
+    --addr:#C27A08; --data:#0E7C86; --ctrl:#D4453F; --alu:#1F8A4C; --oper:#6A4FC8; --out:#1F8A4C; --led:#1F8A4C;
+    --code-bg:#EEF1F4; --code-ink:#14233A; --au-red-soft:rgba(225,20,30,.10);
+    --net-blue:#0E7C86; --net-green:#1F8A4C; --net-amber:#C27A08; --net-purple:#6A4FC8; --net-teal:#0E7C86;
+    color-scheme:light;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  html{background:var(--paper)}
+  [hidden]{display:none!important}
+  /* page: linen with a faint whiteboard grid and a soft teal wash at the top */
+  body{color:var(--ink);font-family:var(--font-body);font-size:15.5px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden;
+    background:
+      radial-gradient(900px 420px at 18% -8%,rgba(14,124,134,.10) 0%,transparent 65%),
+      radial-gradient(700px 360px at 92% 8%,rgba(106,79,200,.06) 0%,transparent 60%),
+      linear-gradient(rgba(20,35,58,.045) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(20,35,58,.045) 1px,transparent 1px),
+      var(--paper);
+    background-size:auto,auto,28px 28px,28px 28px,auto}
+  button,input,select,textarea{font:inherit;color:inherit}
+  a{color:var(--teal)}
+  :focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+  /* brand bar: white with the AU red rule (the logo PNG is cropped with a wrapper) */
+  .topbar{position:relative;z-index:5;background:#fff;border-bottom:3px solid var(--au-red);box-shadow:0 1px 0 rgba(20,35,58,.06)}
+  .topbar-inner{max-width:none;margin:0 auto;padding:8px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .au-logo{width:130px;height:36px;overflow:hidden;flex:none;display:block}
+  .au-logo img{width:145px;height:auto;margin:-28px 0 0 -8px;display:block}
+  .crumb{font-size:13px;color:#6B7280;letter-spacing:.02em;border-left:1px solid #E3E6EB;padding-left:16px}
+  .crumb b{color:#16181D;font-weight:600}
+  .crumb a{color:#A3282B;text-decoration:none}
+  /* page mode (challenges and pages with a scrolling layout) */
+  main,.wrap{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:26px 16px 36px}
+  .hero{margin:0 0 20px}
+  .eyebrow{display:block;margin:0;font:600 11px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--teal);background:none;padding:0}
+  h1{margin:6px 0 8px;font-family:var(--font-display);font-weight:700;font-size:clamp(26px,3.6vw,40px);line-height:1.1;letter-spacing:-.015em;text-wrap:balance;color:var(--ink);font-variation-settings:"opsz" 96}
+  h1 .num{color:var(--teal)}
+  h2{margin:0 0 10px;font-family:var(--font-display);font-weight:600;font-size:17px;letter-spacing:-.005em;color:var(--ink)}
+  h2 small,h3 small{color:var(--muted);font-weight:400;font-family:var(--font-body);font-size:.8em}
+  h3{margin:0 0 8px;font-family:var(--font-display);font-weight:600;font-size:14.5px;color:var(--ink)}
+  .lede{margin:0;color:var(--ink-2);font-size:16px;max-width:68ch}
+  .muted{color:var(--muted)}
+  .spec{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow-sm)}
+  .spec div{background:var(--panel);padding:10px 12px}
+  .spec b{display:block;font:700 17px var(--font-display);color:var(--ink)}
+  .spec span{font-size:12.5px;color:var(--muted)}
+  @media(min-width:960px){.hero.split{display:grid;grid-template-columns:1.35fr 1fr;gap:18px;align-items:end}}
+  /* cards: soft white panels with a faint ruled-line pattern, like a whiteboard with guide lines */
+  .card{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px;min-width:0;color:var(--ink);box-shadow:var(--shadow);
+    background-image:linear-gradient(180deg,rgba(255,255,255,.6),rgba(255,255,255,0) 60px),repeating-linear-gradient(180deg,transparent 0 27px,rgba(20,35,58,.035) 27px 28px)}
+  .card[data-ref]::after{content:attr(data-ref);position:absolute;top:10px;right:14px;font:600 9.5px var(--font-mono);letter-spacing:.12em;color:var(--slate);opacity:.7}
+  .grid{display:grid;gap:16px}
+  .grid>*{min-width:0}
+  @media(min-width:900px){.grid.two{grid-template-columns:minmax(0,1.45fr) minmax(0,1fr)}}
+  details,details.howto{border:1px solid var(--line);border-radius:var(--r);background:var(--panel);box-shadow:var(--shadow-sm)}
+  details.howto{margin:0 0 16px}
+  summary{cursor:pointer;padding:11px 14px;font:600 14px var(--font-display);color:var(--ink)}
+  details>*:not(summary){margin-left:14px;margin-right:14px}
+  details.howto ol,details.howto ul{margin:4px 14px 12px;padding-left:20px;color:var(--ink-2)}
+  details.howto li{margin-bottom:5px}
+  details.howto li::marker{color:var(--teal);font-weight:600}
+  .btn{border:1px solid var(--line-2);background:var(--panel);border-radius:8px;padding:9px 13px;font:600 13px var(--font-body);color:var(--ink);cursor:pointer;transition:border-color .2s,background .2s,box-shadow .2s;display:inline-flex;gap:6px;align-items:center;justify-content:center;box-shadow:var(--shadow-sm)}
+  .btn:hover:not(:disabled){border-color:var(--teal);background:var(--teal-soft)}
+  .btn.primary,.btn.go{background:var(--teal);border-color:var(--teal);color:#fff}
+  .btn.primary:hover:not(:disabled),.btn.go:hover:not(:disabled){background:#0B6A73;border-color:#0B6A73}
+  .btn[aria-pressed="true"],.btn.on{border-color:var(--teal);color:var(--teal);background:var(--teal-soft)}
+  .btn:disabled,.btn[disabled]{opacity:.45;cursor:not-allowed}
+  input[type=text],input[type=number],select,textarea{background:#fff;border:1px solid var(--line-2);border-radius:8px;padding:8px 10px;font:500 14px var(--font-body);color:var(--ink);min-width:0}
+  input[type=checkbox],input[type=radio],input[type=range]{accent-color:var(--teal)}
+  .mono,code,kbd{font-family:var(--font-mono);font-size:.9em}
+  code{background:rgba(20,35,58,.07);padding:1px 5px;border-radius:4px}
+  .cli{background:var(--code-bg);color:var(--code-ink);font:500 12.5px/1.6 var(--font-mono);border-radius:8px;padding:12px 14px;overflow:auto;white-space:pre;border:1px solid var(--line)}
+  .pill{display:inline-block;font:600 10.5px var(--font-mono);letter-spacing:.06em;padding:3px 8px;border-radius:999px;background:var(--panel-2);color:var(--ink-2);border:1px solid var(--line)}
+  .pill.teal{color:var(--teal);border-color:var(--teal);background:var(--teal-soft)}
+  .pill.violet{color:var(--violet);border-color:var(--violet);background:var(--violet-soft)}
+  .pill.coral{color:var(--coral);border-color:var(--coral);background:var(--coral-soft)}
+  .pill.amber{color:var(--amber);border-color:var(--amber);background:var(--amber-soft)}
+  .pill.green{color:var(--green);border-color:var(--green);background:var(--green-soft)}
+  .feedback{border-radius:8px;padding:11px 13px;margin-top:12px;font-size:14.5px;color:var(--ink)}
+  .feedback.ok{background:var(--green-soft);border:1px solid rgba(31,138,76,.5)}
+  .feedback.bad{background:var(--coral-soft);border:1px solid rgba(212,69,63,.5)}
+  .feedback.info{background:var(--teal-soft);border:1px solid rgba(14,124,134,.45)}
+  .score{display:flex;gap:12px;align-items:center;flex-wrap:wrap;font:600 12.5px var(--font-mono);color:var(--muted)}
+  .score .big{font:700 36px/1 var(--font-display);color:var(--ink);font-variant-numeric:tabular-nums}
+  table,table.data{border-collapse:collapse;width:100%;font:500 12.5px var(--font-mono);font-variant-numeric:tabular-nums}
+  th,table.data th{font-weight:600;color:var(--muted);text-align:left;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;padding:7px 8px;border-bottom:1px solid var(--line);background:var(--panel-2)}
+  td,table.data td{padding:5px 8px;border-bottom:1px solid rgba(20,35,58,.08)}
+  .scroll-x,.memwrap{overflow-x:auto}
+  .memwrap{border:1px solid var(--line);border-radius:8px;background:#fff}
+  svg text{font-family:var(--font-body)}
+  /* step-by-step explanation (page mode and app mode) */
+  .stepper{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:12px}
+  .caption,.narr{background:var(--panel-2);border:1px solid var(--line);border-radius:var(--r);padding:13px 15px;color:var(--ink)}
+  .caption{margin-top:12px;min-height:4.4em}
+  .caption .t{font:600 11px var(--font-mono);letter-spacing:.1em;color:var(--cap,var(--teal));margin-bottom:6px;text-transform:uppercase}
+  .caption p{margin:0}
+  .narr{display:flex;flex-direction:column;gap:8px}
+  .narr-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font:500 11px var(--font-mono);color:var(--muted)}
+  .ptag{display:inline-flex;align-items:center;gap:7px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink)}
+  .ptag::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--pc,var(--muted))}
+  .narr p{margin:0;font-size:15.5px;line-height:1.55;min-height:4.6em}
+  .controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .controls .btn{padding:10px 6px}
+  .speed{display:flex;align-items:center;gap:12px;font:500 12px var(--font-body);color:var(--muted)}
+  .speed input{flex:1;min-width:0}
+  .speed output{color:var(--ink);width:3.5em;text-align:right;font-variant-numeric:tabular-nums}
+  .hint{margin:0;font-size:12.5px;color:var(--muted)}
+  .rail{display:flex;gap:2px;margin:4px 0 12px;padding:4px;list-style:none;background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm)}
+  .rail>div,.rail>li{flex:1;text-align:center;font:600 11px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;padding:6px 8px;border-radius:7px;color:var(--muted);transition:background .25s,color .25s}
+  .rail>div small{display:block;font:400 10px var(--font-body);letter-spacing:.02em;text-transform:none;margin-top:2px;opacity:.85}
+  .rail>.on{background:var(--c,var(--teal));color:#fff}
+  .rail>.done{color:var(--c,var(--teal))}
+  /* live state (the unit board: a row of key figures) */
+  .regs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .reg{border:1px solid var(--line);border-radius:8px;padding:9px 11px;background:#fff;transition:border-color .3s,background .3s;min-width:0}
+  .reg.kv{display:grid;grid-template-columns:1fr auto;gap:1px 8px;align-items:baseline}
+  .reg.on,.reg.flash{border-color:var(--hc,var(--teal));background:var(--teal-soft)}
+  .reg .rn{font:600 12.5px var(--font-body);color:var(--ink-2)}
+  .reg .rv{font:700 18px var(--font-display);text-align:right;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .reg .rf{font-size:11.5px;color:var(--muted)}
+  .reg .rs{font:500 10.5px var(--font-mono);color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+  .reg.wide{grid-column:1/-1}
+  .reg .n{display:flex;justify-content:space-between;align-items:baseline;font:600 12.5px var(--font-body);color:var(--ink)}
+  .reg .n b{font:700 18px var(--font-display);font-variant-numeric:tabular-nums}
+  .bits{grid-column:1/-1;display:grid;grid-template-columns:repeat(var(--nb,8),1fr);gap:4px;margin-top:8px}
+  .bit{display:flex;flex-direction:column;align-items:center;gap:3px;font:500 9.5px var(--font-mono);color:var(--muted)}
+  .bit i{width:100%;height:16px;border-radius:3px;background:var(--panel-2);border:1px solid var(--line);transition:background .25s}
+  .bit.one i{background:var(--green);border-color:var(--green)}
+  .ledbits{display:flex;gap:4px;margin:6px 0 2px;flex-wrap:wrap}
+  .ledbits i{width:16px;height:16px;border-radius:3px;background:var(--panel-2);border:1px solid var(--line);font:600 9px/14px var(--font-mono);font-style:normal;color:var(--muted);text-align:center}
+  .ledbits i.on{background:var(--green);border-color:var(--green);color:#fff}
+  .tape{display:flex;flex-wrap:wrap;gap:4px;min-height:34px;align-content:flex-start}
+  .tape span{font:600 13px var(--font-mono);color:var(--green);background:var(--green-soft);border:1px solid rgba(31,138,76,.4);border-radius:5px;padding:3px 7px;font-variant-numeric:tabular-nums}
+  .tape em{font-style:normal;font-size:12px;color:var(--muted)}
+  .notice{margin:0;padding-left:18px;color:var(--ink-2);font-size:14px;display:flex;flex-direction:column;gap:6px}
+  .notice li::marker{color:var(--teal)}
+  .legend{display:flex;flex-wrap:wrap;gap:4px 14px;font:500 11px var(--font-mono);color:var(--ink-2);letter-spacing:.03em}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:16px;height:4px;border-radius:2px;background:var(--c)}
+  /* app mode: the 3D unit floor fills the left, a control rail sits on the right (stacks under the floor on phones) */
+  .app{display:grid;grid-template-columns:minmax(0,1fr) minmax(340px,410px);height:calc(100vh - 55px);min-height:560px}
+  .stage{position:relative;min-width:0;min-height:320px;overflow:hidden;touch-action:none;
+    background:radial-gradient(ellipse at 45% 35%,#FBFAF7 0%,#E6ECEF 70%,#DCE3E8 100%)}
+  .stage .gl{position:absolute;inset:0;display:block;z-index:1}
+  .stage .labels{position:absolute!important;top:0;left:0;z-index:2}
+  .stage .flat,.stage3d .flat{position:absolute;inset:0;width:100%;height:100%;z-index:1}
+  .nogl{position:absolute;left:0;right:0;top:0;padding:7px 12px;text-align:center;color:var(--ink-2);font-size:12.5px;z-index:4;background:rgba(255,255,255,.92);border-bottom:1px solid var(--line)}
+  .stage:has(.nogl:not([hidden])) .hud-top{top:48px}
+  .stage:has(.nogl:not([hidden])) .flat,.stage3d:has(.nogl:not([hidden])) .flat{top:36px;height:calc(100% - 36px)}
+  .hud{position:absolute;z-index:3;pointer-events:none;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .hud button,.hud a{pointer-events:auto}
+  .hud-top{top:14px;left:16px;right:16px}
+  .hud-bottom{bottom:14px;left:16px;right:16px;justify-content:space-between;align-items:flex-end}
+  .hud .phases,.hud .ticks,.hud .legend,.hud .views{background:rgba(255,255,255,.86);border:1px solid var(--line);border-radius:var(--r);backdrop-filter:blur(6px);box-shadow:var(--shadow-sm)}
+  .phases{list-style:none;margin:0;padding:4px;display:flex;gap:2px}
+  .phases li{font:600 11px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;padding:6px 10px;border-radius:7px;color:var(--muted);transition:background .25s,color .25s}
+  .phases li.on{background:var(--c,var(--teal));color:#fff}
+  .ticks{font:500 11.5px var(--font-mono);color:var(--muted);padding:9px 10px;font-variant-numeric:tabular-nums}
+  .ticks b{color:var(--ink);font-weight:700}
+  .hud .legend{padding:8px 12px}
+  .views{display:flex;gap:2px;padding:4px}
+  .views button{border:0;background:transparent;font:600 11.5px var(--font-body);padding:6px 10px;border-radius:7px;color:var(--muted);cursor:pointer}
+  .views button:hover{color:var(--ink)}
+  .views button.on{background:var(--teal);color:#fff}
+  .credit{flex-basis:100%;margin:2px 0 0 2px;font:700 14px var(--font-display);letter-spacing:.02em;color:var(--teal);text-shadow:0 0 3px #fff,0 0 8px #fff}
+  /* 3D tags: ink text with a white halo so they stay readable over the floor */
+  .tag,.stage3d .label3d{pointer-events:none;display:flex;flex-direction:column;align-items:center;font-family:var(--font-body);line-height:1.15;text-align:center;color:var(--ink);text-shadow:0 0 2px #fff,0 0 4px #fff,0 0 8px #fff}
+  .tag .nm{font-size:calc(var(--lab) * .9);font-weight:600;letter-spacing:.04em;color:var(--ink-2)}
+  .tag .vl{font-size:calc(var(--lab) * 1.3);font-weight:700;font-variant-numeric:tabular-nums;font-family:var(--font-display)}
+  .tag .sb{font-size:calc(var(--lab) * .78);color:var(--muted);letter-spacing:.02em}
+  .tag .sb:empty{display:none}
+  .tag.on .nm{color:var(--ink)}
+  .tag.on .vl{color:var(--teal)}
+  .tag.person .nm{font-family:var(--font-mono);font-size:calc(var(--lab) * .8);text-transform:uppercase;letter-spacing:.08em}
+  .cell .nm{font-size:calc(var(--lab) * .75)}
+  .cell .vl{font-size:calc(var(--lab) * 1.15)}
+  .zone{pointer-events:none;font-family:var(--font-mono);font-weight:600;font-size:calc(var(--lab) * .82);letter-spacing:.14em;text-transform:uppercase;color:var(--c,var(--slate));opacity:.9;white-space:nowrap;text-align:center;line-height:1.3;text-shadow:0 0 3px #fff,0 0 6px #fff}
+  .lcd{pointer-events:none;font-family:var(--font-display);font-weight:700;color:var(--teal);font-size:calc(var(--lab) * 2);font-variant-numeric:tabular-nums;text-shadow:0 0 3px #fff}
+  .pkt{pointer-events:none;font-family:var(--font-body);font-size:calc(var(--lab) * 1.1);font-weight:700;color:#fff;background:var(--c);padding:3px 8px;border-radius:999px;box-shadow:0 2px 8px rgba(20,35,58,.25);white-space:nowrap;border:1px solid rgba(255,255,255,.6)}
+  .panel{min-width:0;overflow-y:auto;background:var(--panel);border-left:1px solid var(--line);padding:20px 18px 28px;display:flex;flex-direction:column;gap:22px;
+    background-image:repeating-linear-gradient(180deg,transparent 0 27px,rgba(20,35,58,.035) 27px 28px)}
+  .panel h1{font-size:26px;margin:4px 0 6px}
+  /* the older make3D stage (page mode) */
+  .stage3d{position:relative;width:100%;aspect-ratio:16/10;min-height:280px;border-radius:var(--r);overflow:hidden;touch-action:none;border:1px solid var(--line);
+    background:radial-gradient(ellipse at 45% 35%,#FBFAF7 0%,#E6ECEF 70%,#DCE3E8 100%)}
+  @media(max-width:640px){.stage3d{aspect-ratio:4/3}}
+  .stage3d canvas,.stage3d .gl{position:absolute;inset:0;display:block;width:100%!important;height:100%!important}
+  .stage3d .labels{position:absolute!important;top:0;left:0;z-index:2}
+  .stage3d .fallback{position:absolute;left:0;right:0;bottom:0;padding:6px 10px;font-size:12px;color:var(--ink-2);background:rgba(255,255,255,.9);text-align:center}
+  .stage3d .label3d{position:absolute;transform:translate(-50%,-50%);white-space:nowrap;font-size:11px;font-weight:600}
+  .stage3d .label3d.pkt{color:#fff;text-shadow:none;background:var(--c,currentColor);padding:2px 7px;border-radius:999px}
+  footer.foot{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:16px;color:var(--muted);font-size:12.5px;border-top:1px solid var(--line)}
+  footer.foot .byline,.byline{margin-top:4px;font:700 14px var(--font-display)!important;letter-spacing:.02em;color:var(--teal)!important}
+  .reveal{animation:rise .7s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*80ms)}
+  @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  @media(max-width:860px){
+    .app .stage .zoomctl{top:56px;right:10px;transform:none;flex-direction:row}
+    .app{grid-template-columns:1fr;height:auto}
+    .app .stage{height:62vh;min-height:360px}
+    .panel{border-left:0;border-top:1px solid var(--line);overflow:visible}
+  }
+  @media(max-width:520px){
+    .hud .legend{font-size:10px;gap:3px 10px}
+    .phases li{padding:5px 7px;font-size:10px}
+    .controls{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .card{padding:14px}
+  }
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  .scroll-x{position:relative}
+  @media(max-width:640px){
+    :root{--lab:8px}
+    .tag .sb{display:none}
+    .scroll-x::before{content:"Swipe sideways to see the whole table";display:block;font:500 11px var(--font-mono);letter-spacing:.04em;color:var(--muted);margin:0 0 6px}
+  }
+  /* ===== end of theme ===== */
+
+  .hero{max-width:900px}
+  .weeks{display:grid;gap:16px;counter-reset:wk}
+  @media(min-width:760px){.weeks{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(min-width:1120px){.weeks{grid-template-columns:repeat(3,minmax(0,1fr))}}
+  .weeks>.card{animation:rise .75s cubic-bezier(.2,.7,.2,1) both;overflow:hidden}
+  .weeks>.card:nth-child(1){animation-delay:.15s}.weeks>.card:nth-child(2){animation-delay:.24s}.weeks>.card:nth-child(3){animation-delay:.33s}
+  .weeks>.card:nth-child(4){animation-delay:.42s}.weeks>.card:nth-child(5){animation-delay:.51s}.weeks>.card:nth-child(6){animation-delay:.6s}
+  .weeks>.card:nth-child(7){animation-delay:.69s}.weeks>.card:nth-child(8){animation-delay:.78s}.weeks>.card:nth-child(9){animation-delay:.87s}
+  .hero{animation:rise .75s cubic-bezier(.2,.7,.2,1) both}
+  .wk:not(.featured){counter-increment:wk}
+  .wk:not(.featured)::before{content:counter(wk,decimal-leading-zero);position:absolute;right:12px;bottom:-14px;top:auto;font:800 76px/1 var(--font-display);color:rgba(14,124,134,.08);pointer-events:none}
+  .wk h2{font:600 17px/1.3 var(--font-display);letter-spacing:-.005em;margin:8px 0 12px;max-width:85%}
+  .wk a.item{display:flex;justify-content:space-between;gap:12px;align-items:center;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:8px;background:#fff;font-weight:500;transition:border-color .15s,background .15s,transform .15s}
+  .wk a.item:hover{border-color:var(--teal);background:var(--teal-soft);transform:translateX(3px)}
+  .wk a.item span.k{font:600 10px var(--font-mono);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;padding:3px 8px;border-radius:999px;border:1px solid currentColor;color:var(--teal);background:var(--teal-soft)}
+  .wk a.item span.k.challenge{color:var(--violet);background:var(--violet-soft)}
+  .wk a.item span.k.simulator,.wk a.item span.k.data{color:var(--slate);background:var(--slate-soft)}
+  .wk.featured{grid-column:1/-1;border-color:rgba(14,124,134,.45);box-shadow:0 0 0 1px rgba(14,124,134,.12),0 14px 40px rgba(14,124,134,.12);
+    background:radial-gradient(600px 220px at 90% 0%,rgba(14,124,134,.12),transparent 70%),linear-gradient(180deg,#fff,#F3F8F8)}
+  .wk.featured .eyebrow{color:var(--teal)}
+  .wk.featured h2{font:700 clamp(22px,3vw,30px)/1.2 var(--font-display);letter-spacing:-.01em}
+  .wk.featured p{max-width:760px;color:var(--ink-2)!important}
+  .wk.featured a.item{display:inline-flex;background:var(--teal);color:#fff;border-color:var(--teal);font:600 13.5px var(--font-body);padding:11px 16px;box-shadow:0 6px 18px rgba(14,124,134,.3)}
+  .wk.featured a.item:hover{background:#0B6A73;border-color:#0B6A73}
+  .wk.featured a.item span.k{display:none}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="topbar-inner">
+<a class="au-logo" href="https://github.com/AU-Extension" target="_blank" rel="noopener" aria-label="Atlantis University"><img src="https://raw.githubusercontent.com/AU-Extension/items/main/aulogo1.png" alt="Atlantis University"></a>
+<div class="crumb"><b>MHS 510</b> Leadership and Organizational Behavior · Course data</div></div></header>
+<main class="wrap">
+<section class="hero"><span class="eyebrow">Fictional data</span><h1>Course datasets</h1>
+<p class="lede">Every dataset used in this course. All people, organizations, and businesses are invented. Download a file and open it in Excel or Google Sheets.</p></section>
+<div class="weeks">
+<section class="card wk"><h2 style="font-family:var(--mono);font-size:16px">staff_roster.csv</h2><p style="margin:0 0 10px;color:var(--ink-2)">The 48 people who work on 4 West on 2026-09-30: 30 RNs (18 day, 12 night), 4 LPNs, 12 CNAs, and 2 unit secretaries, with tenure, generation, education, certification, charge and preceptor roles, languages, home area, last evaluation score, and formal recognitions in the last 12 months. (48 rows)</p><p style="margin:0 0 10px;font-size:13px;color:var(--muted)">Columns: staff_id, name, role, shift, employment, fte, hire_date, years_on_unit, years_in_nursing, birth_year, generation, education, certification, charge_nurse, preceptor, languages, home_area, last_eval_score, recognition_last_12mo</p><a class="item" href="staff_roster.csv" download>Download staff_roster.csv<span class="k">CSV</span></a></section>
+<section class="card wk"><h2 style="font-family:var(--mono);font-size:16px">engagement_survey.csv</h2><p style="margin:0 0 10px;color:var(--ink-2)">41 anonymous responses to the September 2026 unit engagement survey: ten original items on a 1 to 5 scale (1 strongly disagree, 5 strongly agree) and an engagement index. Item 10 (burnout) is reverse-scored: the index is the mean of items 1 to 9 plus (6 minus item 10). (41 rows)</p><p style="margin:0 0 10px;font-size:13px;color:var(--muted)">Columns: response_id, role, shift, tenure_band, generation, q01_recognized, q02_manager_support, q03_workload_manageable, q04_teamwork, q05_voice, q06_growth, q07_safe_to_speak, q08_handoffs, q09_intent_to_stay, q10_burnout, engagement_index</p><a class="item" href="engagement_survey.csv" download>Download engagement_survey.csv<span class="k">CSV</span></a></section>
+<section class="card wk"><h2 style="font-family:var(--mono);font-size:16px">survey_comments.csv</h2><p style="margin:0 0 10px;color:var(--ink-2)">120 free-text comments from the same survey, in English and Spanish, without theme or sentiment labels. (120 rows)</p><p style="margin:0 0 10px;font-size:13px;color:var(--muted)">Columns: comment_id, role, shift, comment</p><a class="item" href="survey_comments.csv" download>Download survey_comments.csv<span class="k">CSV</span></a></section>
+<section class="card wk"><h2 style="font-family:var(--mono);font-size:16px">schedule.csv</h2><p style="margin:0 0 10px;color:var(--ink-2)">Four weeks of the 4 West schedule (2026-09-03 to 2026-09-30), one row per person per shift worked, both shifts. The charge nurse of each shift has the role Charge RN and is counted outside the patient ratio. Contract staff who are not unit employees appear with the ids AGENCY and FLOAT. `hours` are paid hours for the shift; `overtime_hours` are the hours paid at the overtime rate (a whole extra shift, or the time a nurse stayed past 12 hours). (597 rows)</p><p style="margin:0 0 10px;font-size:13px;color:var(--muted)">Columns: date, day_of_week, shift, staff_id, name, role, hours, overtime_hours, source</p><a class="item" href="schedule.csv" download>Download schedule.csv<span class="k">CSV</span></a></section>
+<section class="card wk"><h2 style="font-family:var(--mono);font-size:16px">daily_census.csv</h2><p style="margin:0 0 10px;color:var(--ink-2)">Six months of census and staffing, one row per date and shift (Day is 7 a.m. to 7 p.m., Night is 7 p.m. to 7 a.m.). `rn_on_shift` counts bedside RNs (the charge nurse excluded) and matches the schedule for the dates both files cover. `patients_per_rn` = census / rn_on_shift; `nursing_hours` = 12 x (RNs + CNAs + LPNs on the shift); `hppd` (hours per patient day) = nursing_hours / census. (366 rows)</p><p style="margin:0 0 10px;font-size:13px;color:var(--muted)">Columns: date, day_of_week, shift, census, admissions, discharges, rn_on_shift, cna_on_shift, call_outs, patients_per_rn, nursing_hours, hppd</p><a class="item" href="daily_census.csv" download>Download daily_census.csv<span class="k">CSV</span></a></section>
+<section class="card wk"><h2 style="font-family:var(--mono);font-size:16px">incidents.csv</h2><p style="margin:0 0 10px;color:var(--ink-2)">Six months of incident reports on 4 West: falls, medication errors, pressure injuries, handoff misses, patient complaints, staff injuries, and incivility reports, each with time, severity, room (401 to 432), the contributing factor assigned by the reviewer, and a one-sentence description. (96 rows)</p><p style="margin:0 0 10px;font-size:13px;color:var(--muted)">Columns: incident_id, date, shift, time_of_day, type, severity, room, contributing_factor, description</p><a class="item" href="incidents.csv" download>Download incidents.csv<span class="k">CSV</span></a></section>
+<section class="card wk"><h2 style="font-family:var(--mono);font-size:16px">unit_scorecard.csv</h2><p style="margin:0 0 10px;color:var(--ink-2)">The monthly 4 West scorecard for the fiscal year 2025-10 to 2026-09: patient days, nurse-sensitive indicators per 1,000 patient days, HCAHPS top-box percentages, RN turnover and vacancy, overtime and agency use, length of stay, the engagement index, and the hospital benchmarks (falls 2.5 per 1,000 patient days, nurse communication 78 percent). RN turnover is annualized from the trailing 12 months of separations; vacancy compares filled RN positions with the 35 budgeted. (12 rows)</p><p style="margin:0 0 10px;font-size:13px;color:var(--muted)">Columns: month, patient_days, falls, falls_per_1000_pt_days, hapi, hapi_per_1000_pt_days, med_errors_per_1000_doses, hcahps_nurse_communication_topbox_pct, hcahps_responsiveness_topbox_pct, rn_turnover_annualized_pct, rn_vacancy_pct, overtime_pct_of_hours, agency_hours, avg_los_days, engagement_index, hospital_benchmark_falls, hospital_benchmark_hcahps_comm</p><a class="item" href="unit_scorecard.csv" download>Download unit_scorecard.csv<span class="k">CSV</span></a></section>
+<section class="card wk"><h2 style="font-family:var(--mono);font-size:16px">turnover.csv</h2><p style="margin:0 0 10px;color:var(--ink-2)">The 26 people who left 4 West between April 2025 and September 2026, with hire and exit dates, tenure in months, the exit reason recorded by Human Resources, whether they would return, and one sentence from the exit interview. (26 rows)</p><p style="margin:0 0 10px;font-size:13px;color:var(--muted)">Columns: staff_id, name, role, shift, hire_date, exit_date, tenure_months, exit_reason, would_return, exit_comment</p><a class="item" href="turnover.csv" download>Download turnover.csv<span class="k">CSV</span></a></section>
+<section class="card wk"><h2 style="font-family:var(--mono);font-size:16px">unit_budget.csv</h2><p style="margin:0 0 10px;color:var(--ink-2)">Budget and actual spending for 4 West by month and category for the fiscal year 2025-10 to 2026-09 (12 months x 9 categories). `variance` is actual minus budget; a positive number means overspent. The Overtime premium line carries all pay for overtime hours; Agency staffing is agency hours x $95. (108 rows)</p><p style="margin:0 0 10px;font-size:13px;color:var(--muted)">Columns: month, category, budget, actual, variance</p><a class="item" href="unit_budget.csv" download>Download unit_budget.csv<span class="k">CSV</span></a></section>
+<section class="card wk"><h2 style="font-family:var(--mono);font-size:16px">stakeholders.csv</h2><p style="margin:0 0 10px;color:var(--ink-2)">The 14 people and roles that matter for the bedside shift report change on 4 West, with influence (1 low to 5 high), current support (-2 strongly against to +2 champion), main concern, and what each person values. (14 rows)</p><p style="margin:0 0 10px;font-size:13px;color:var(--muted)">Columns: stakeholder, role, influence, current_support, main_concern, what_they_value</p><a class="item" href="stakeholders.csv" download>Download stakeholders.csv<span class="k">CSV</span></a></section>
+<section class="card wk featured"><span class="eyebrow">Reference</span><h2>Budget and staffing facts</h2><p style="margin:0 0 10px;color:var(--ink-2)">Use these facts, with the files above, for every cost calculation in the course.</p><ul style="margin:0;padding-left:20px;color:var(--ink-2)"><li>RN base pay: $41 per hour.</li><li>One 1.0 FTE (full-time equivalent) = 2,080 paid hours per year, so one 1.0 FTE RN costs $41 x 2,080 = $85,280 per year in base pay.</li><li>Benefits add 28 percent: $85,280 x 1.28 = $109,158 per year for one 1.0 FTE RN.</li><li>Overtime is paid at 1.5 x base pay: $61.50 per hour for an RN.</li><li>An agency RN is billed at $95 per hour.</li><li>Recruiting and onboarding one RN costs about $62,000 (advertising, orientation, preceptor time, and agency coverage while the position is vacant).</li><li>Target staffing on 4 West: 1 RN to 5 patients on days, 1 RN to 6 on nights, one CNA to 8 to 10 patients, one charge nurse per shift outside the ratio.</li><li>A full-time 4 West nurse works three 12-hour shifts a week (0.9 FTE); part-time is 0.6 FTE and per diem 0.1 FTE in the roster.</li></ul></section>
+</div>
+</main>
+<footer class="foot">Atlantis University · School of Health · MHS 510 Leadership and Organizational Behavior<div class="byline">By Professor De Leon</div></footer>
+</body>
+</html>

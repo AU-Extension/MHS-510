@@ -1,0 +1,1043 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decision bias challenge</title>
+<meta name="description" content="MHS 510 Week 7 interactive: Ten management meetings on 4 West, each with a bias or an ethical principle at stake. Name it, pick the move that fixes it, and score your judgment out of 100.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Figtree:ital,wght@0,300..900;1,300..900&family=JetBrains+Mono:wght@100..800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/renderers/CSS2DRenderer.js"></script>
+<style>
+  /* ===== MHS 510 "4 West unit board" theme v1 (a nursing unit status whiteboard: linen page, navy ink, teal actions). Paste as the first block of every page's <style>. ===== */
+  :root{
+    --au-red:#E1141E; --au-red-dark:#A3282B;
+    /* base: linen page, soft panels, navy ink */
+    --paper:#F6F3EE; --paper-deep:#ECE7DF; --panel:#FFFFFF; --panel-2:#F4F1EB; --line:#D9D3C8; --line-2:#C4BCAE;
+    --ink:#14233A; --ink-2:#36465E; --muted:#66728A;
+    /* accents with fixed meanings (the same thing gets the same color on every page) */
+    --teal:#0E7C86;    /* primary actions and the student's own moves */
+    --coral:#D4453F;   /* conflict and risk */
+    --amber:#C27A08;   /* caution and in-progress */
+    --green:#1F8A4C;   /* stable, positive, correct */
+    --violet:#6A4FC8;  /* leadership moves and theory tags */
+    --slate:#5B6B82;   /* neutral data */
+    --teal-soft:rgba(14,124,134,.10); --coral-soft:rgba(212,69,63,.10); --amber-soft:rgba(194,122,8,.12); --green-soft:rgba(31,138,76,.10); --violet-soft:rgba(106,79,200,.10); --slate-soft:rgba(91,107,130,.10);
+    --ok:var(--green); --bad:var(--coral); --warn:var(--amber);
+    --ok-soft:var(--green-soft); --bad-soft:var(--coral-soft); --warn-soft:var(--amber-soft);
+    --font-display:"Bricolage Grotesque","Figtree","Helvetica Neue",sans-serif;
+    --font-body:"Figtree","Helvetica Neue",sans-serif;
+    --font-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+    --mono:var(--font-mono); --sans:var(--font-body); --display:var(--font-display);
+    --r:10px; --radius:10px; --lab:10px;
+    --shadow:0 1px 2px rgba(20,35,58,.06),0 8px 22px rgba(20,35,58,.07);
+    --shadow-sm:0 1px 2px rgba(20,35,58,.08);
+    /* legacy names used by older page code and shared markup, mapped to the light theme */
+    --board:#ECE7DF; --board-deep:#F6F3EE; --bg:#F6F3EE; --card:#FFFFFF; --edge:#D9D3C8; --edge-2:#C4BCAE; --dim:#66728A;
+    --silk:#14233A; --silk-2:#36465E; --silk-dim:#66728A; --copper:#0E7C86; --neon:#0E7C86;
+    --addr:#C27A08; --data:#0E7C86; --ctrl:#D4453F; --alu:#1F8A4C; --oper:#6A4FC8; --out:#1F8A4C; --led:#1F8A4C;
+    --code-bg:#EEF1F4; --code-ink:#14233A; --au-red-soft:rgba(225,20,30,.10);
+    --net-blue:#0E7C86; --net-green:#1F8A4C; --net-amber:#C27A08; --net-purple:#6A4FC8; --net-teal:#0E7C86;
+    color-scheme:light;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  html{background:var(--paper)}
+  [hidden]{display:none!important}
+  /* page: linen with a faint whiteboard grid and a soft teal wash at the top */
+  body{color:var(--ink);font-family:var(--font-body);font-size:15.5px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden;
+    background:
+      radial-gradient(900px 420px at 18% -8%,rgba(14,124,134,.10) 0%,transparent 65%),
+      radial-gradient(700px 360px at 92% 8%,rgba(106,79,200,.06) 0%,transparent 60%),
+      linear-gradient(rgba(20,35,58,.045) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(20,35,58,.045) 1px,transparent 1px),
+      var(--paper);
+    background-size:auto,auto,28px 28px,28px 28px,auto}
+  button,input,select,textarea{font:inherit;color:inherit}
+  a{color:var(--teal)}
+  :focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+  /* brand bar: white with the AU red rule (the logo PNG is cropped with a wrapper) */
+  .topbar{position:relative;z-index:5;background:#fff;border-bottom:3px solid var(--au-red);box-shadow:0 1px 0 rgba(20,35,58,.06)}
+  .topbar-inner{max-width:none;margin:0 auto;padding:8px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .au-logo{width:130px;height:36px;overflow:hidden;flex:none;display:block}
+  .au-logo img{width:145px;height:auto;margin:-28px 0 0 -8px;display:block}
+  .crumb{font-size:13px;color:#6B7280;letter-spacing:.02em;border-left:1px solid #E3E6EB;padding-left:16px}
+  .crumb b{color:#16181D;font-weight:600}
+  .crumb a{color:#A3282B;text-decoration:none}
+  /* page mode (challenges and pages with a scrolling layout) */
+  main,.wrap{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:26px 16px 36px}
+  .hero{margin:0 0 20px}
+  .eyebrow{display:block;margin:0;font:600 11px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--teal);background:none;padding:0}
+  h1{margin:6px 0 8px;font-family:var(--font-display);font-weight:700;font-size:clamp(26px,3.6vw,40px);line-height:1.1;letter-spacing:-.015em;text-wrap:balance;color:var(--ink);font-variation-settings:"opsz" 96}
+  h1 .num{color:var(--teal)}
+  h2{margin:0 0 10px;font-family:var(--font-display);font-weight:600;font-size:17px;letter-spacing:-.005em;color:var(--ink)}
+  h2 small,h3 small{color:var(--muted);font-weight:400;font-family:var(--font-body);font-size:.8em}
+  h3{margin:0 0 8px;font-family:var(--font-display);font-weight:600;font-size:14.5px;color:var(--ink)}
+  .lede{margin:0;color:var(--ink-2);font-size:16px;max-width:68ch}
+  .muted{color:var(--muted)}
+  .spec{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow-sm)}
+  .spec div{background:var(--panel);padding:10px 12px}
+  .spec b{display:block;font:700 17px var(--font-display);color:var(--ink)}
+  .spec span{font-size:12.5px;color:var(--muted)}
+  @media(min-width:960px){.hero.split{display:grid;grid-template-columns:1.35fr 1fr;gap:18px;align-items:end}}
+  /* cards: soft white panels with a faint ruled-line pattern, like a whiteboard with guide lines */
+  .card{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px;min-width:0;color:var(--ink);box-shadow:var(--shadow);
+    background-image:linear-gradient(180deg,rgba(255,255,255,.6),rgba(255,255,255,0) 60px),repeating-linear-gradient(180deg,transparent 0 27px,rgba(20,35,58,.035) 27px 28px)}
+  .card[data-ref]::after{content:attr(data-ref);position:absolute;top:10px;right:14px;font:600 9.5px var(--font-mono);letter-spacing:.12em;color:var(--slate);opacity:.7}
+  .grid{display:grid;gap:16px}
+  .grid>*{min-width:0}
+  @media(min-width:900px){.grid.two{grid-template-columns:minmax(0,1.45fr) minmax(0,1fr)}}
+  details,details.howto{border:1px solid var(--line);border-radius:var(--r);background:var(--panel);box-shadow:var(--shadow-sm)}
+  details.howto{margin:0 0 16px}
+  summary{cursor:pointer;padding:11px 14px;font:600 14px var(--font-display);color:var(--ink)}
+  details>*:not(summary){margin-left:14px;margin-right:14px}
+  details.howto ol,details.howto ul{margin:4px 14px 12px;padding-left:20px;color:var(--ink-2)}
+  details.howto li{margin-bottom:5px}
+  details.howto li::marker{color:var(--teal);font-weight:600}
+  .btn{border:1px solid var(--line-2);background:var(--panel);border-radius:8px;padding:9px 13px;font:600 13px var(--font-body);color:var(--ink);cursor:pointer;transition:border-color .2s,background .2s,box-shadow .2s;display:inline-flex;gap:6px;align-items:center;justify-content:center;box-shadow:var(--shadow-sm)}
+  .btn:hover:not(:disabled){border-color:var(--teal);background:var(--teal-soft)}
+  .btn.primary,.btn.go{background:var(--teal);border-color:var(--teal);color:#fff}
+  .btn.primary:hover:not(:disabled),.btn.go:hover:not(:disabled){background:#0B6A73;border-color:#0B6A73}
+  .btn[aria-pressed="true"],.btn.on{border-color:var(--teal);color:var(--teal);background:var(--teal-soft)}
+  .btn:disabled,.btn[disabled]{opacity:.45;cursor:not-allowed}
+  input[type=text],input[type=number],select,textarea{background:#fff;border:1px solid var(--line-2);border-radius:8px;padding:8px 10px;font:500 14px var(--font-body);color:var(--ink);min-width:0}
+  input[type=checkbox],input[type=radio],input[type=range]{accent-color:var(--teal)}
+  .mono,code,kbd{font-family:var(--font-mono);font-size:.9em}
+  code{background:rgba(20,35,58,.07);padding:1px 5px;border-radius:4px}
+  .cli{background:var(--code-bg);color:var(--code-ink);font:500 12.5px/1.6 var(--font-mono);border-radius:8px;padding:12px 14px;overflow:auto;white-space:pre;border:1px solid var(--line)}
+  .pill{display:inline-block;font:600 10.5px var(--font-mono);letter-spacing:.06em;padding:3px 8px;border-radius:999px;background:var(--panel-2);color:var(--ink-2);border:1px solid var(--line)}
+  .pill.teal{color:var(--teal);border-color:var(--teal);background:var(--teal-soft)}
+  .pill.violet{color:var(--violet);border-color:var(--violet);background:var(--violet-soft)}
+  .pill.coral{color:var(--coral);border-color:var(--coral);background:var(--coral-soft)}
+  .pill.amber{color:var(--amber);border-color:var(--amber);background:var(--amber-soft)}
+  .pill.green{color:var(--green);border-color:var(--green);background:var(--green-soft)}
+  .feedback{border-radius:8px;padding:11px 13px;margin-top:12px;font-size:14.5px;color:var(--ink)}
+  .feedback.ok{background:var(--green-soft);border:1px solid rgba(31,138,76,.5)}
+  .feedback.bad{background:var(--coral-soft);border:1px solid rgba(212,69,63,.5)}
+  .feedback.info{background:var(--teal-soft);border:1px solid rgba(14,124,134,.45)}
+  .score{display:flex;gap:12px;align-items:center;flex-wrap:wrap;font:600 12.5px var(--font-mono);color:var(--muted)}
+  .score .big{font:700 36px/1 var(--font-display);color:var(--ink);font-variant-numeric:tabular-nums}
+  table,table.data{border-collapse:collapse;width:100%;font:500 12.5px var(--font-mono);font-variant-numeric:tabular-nums}
+  th,table.data th{font-weight:600;color:var(--muted);text-align:left;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;padding:7px 8px;border-bottom:1px solid var(--line);background:var(--panel-2)}
+  td,table.data td{padding:5px 8px;border-bottom:1px solid rgba(20,35,58,.08)}
+  .scroll-x,.memwrap{overflow-x:auto}
+  .memwrap{border:1px solid var(--line);border-radius:8px;background:#fff}
+  svg text{font-family:var(--font-body)}
+  /* step-by-step explanation (page mode and app mode) */
+  .stepper{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:12px}
+  .caption,.narr{background:var(--panel-2);border:1px solid var(--line);border-radius:var(--r);padding:13px 15px;color:var(--ink)}
+  .caption{margin-top:12px;min-height:4.4em}
+  .caption .t{font:600 11px var(--font-mono);letter-spacing:.1em;color:var(--cap,var(--teal));margin-bottom:6px;text-transform:uppercase}
+  .caption p{margin:0}
+  .narr{display:flex;flex-direction:column;gap:8px}
+  .narr-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font:500 11px var(--font-mono);color:var(--muted)}
+  .ptag{display:inline-flex;align-items:center;gap:7px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink)}
+  .ptag::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--pc,var(--muted))}
+  .narr p{margin:0;font-size:15.5px;line-height:1.55;min-height:4.6em}
+  .controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .controls .btn{padding:10px 6px}
+  .speed{display:flex;align-items:center;gap:12px;font:500 12px var(--font-body);color:var(--muted)}
+  .speed input{flex:1;min-width:0}
+  .speed output{color:var(--ink);width:3.5em;text-align:right;font-variant-numeric:tabular-nums}
+  .hint{margin:0;font-size:12.5px;color:var(--muted)}
+  .rail{display:flex;gap:2px;margin:4px 0 12px;padding:4px;list-style:none;background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm)}
+  .rail>div,.rail>li{flex:1;text-align:center;font:600 11px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;padding:6px 8px;border-radius:7px;color:var(--muted);transition:background .25s,color .25s}
+  .rail>div small{display:block;font:400 10px var(--font-body);letter-spacing:.02em;text-transform:none;margin-top:2px;opacity:.85}
+  .rail>.on{background:var(--c,var(--teal));color:#fff}
+  .rail>.done{color:var(--c,var(--teal))}
+  /* live state (the unit board: a row of key figures) */
+  .regs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .reg{border:1px solid var(--line);border-radius:8px;padding:9px 11px;background:#fff;transition:border-color .3s,background .3s;min-width:0}
+  .reg.kv{display:grid;grid-template-columns:1fr auto;gap:1px 8px;align-items:baseline}
+  .reg.on,.reg.flash{border-color:var(--hc,var(--teal));background:var(--teal-soft)}
+  .reg .rn{font:600 12.5px var(--font-body);color:var(--ink-2)}
+  .reg .rv{font:700 18px var(--font-display);text-align:right;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .reg .rf{font-size:11.5px;color:var(--muted)}
+  .reg .rs{font:500 10.5px var(--font-mono);color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+  .reg.wide{grid-column:1/-1}
+  .reg .n{display:flex;justify-content:space-between;align-items:baseline;font:600 12.5px var(--font-body);color:var(--ink)}
+  .reg .n b{font:700 18px var(--font-display);font-variant-numeric:tabular-nums}
+  .bits{grid-column:1/-1;display:grid;grid-template-columns:repeat(var(--nb,8),1fr);gap:4px;margin-top:8px}
+  .bit{display:flex;flex-direction:column;align-items:center;gap:3px;font:500 9.5px var(--font-mono);color:var(--muted)}
+  .bit i{width:100%;height:16px;border-radius:3px;background:var(--panel-2);border:1px solid var(--line);transition:background .25s}
+  .bit.one i{background:var(--green);border-color:var(--green)}
+  .ledbits{display:flex;gap:4px;margin:6px 0 2px;flex-wrap:wrap}
+  .ledbits i{width:16px;height:16px;border-radius:3px;background:var(--panel-2);border:1px solid var(--line);font:600 9px/14px var(--font-mono);font-style:normal;color:var(--muted);text-align:center}
+  .ledbits i.on{background:var(--green);border-color:var(--green);color:#fff}
+  .tape{display:flex;flex-wrap:wrap;gap:4px;min-height:34px;align-content:flex-start}
+  .tape span{font:600 13px var(--font-mono);color:var(--green);background:var(--green-soft);border:1px solid rgba(31,138,76,.4);border-radius:5px;padding:3px 7px;font-variant-numeric:tabular-nums}
+  .tape em{font-style:normal;font-size:12px;color:var(--muted)}
+  .notice{margin:0;padding-left:18px;color:var(--ink-2);font-size:14px;display:flex;flex-direction:column;gap:6px}
+  .notice li::marker{color:var(--teal)}
+  .legend{display:flex;flex-wrap:wrap;gap:4px 14px;font:500 11px var(--font-mono);color:var(--ink-2);letter-spacing:.03em}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:16px;height:4px;border-radius:2px;background:var(--c)}
+  /* app mode: the 3D unit floor fills the left, a control rail sits on the right (stacks under the floor on phones) */
+  .app{display:grid;grid-template-columns:minmax(0,1fr) minmax(340px,410px);height:calc(100vh - 55px);min-height:560px}
+  .stage{position:relative;min-width:0;min-height:320px;overflow:hidden;touch-action:none;
+    background:radial-gradient(ellipse at 45% 35%,#FBFAF7 0%,#E6ECEF 70%,#DCE3E8 100%)}
+  .stage .gl{position:absolute;inset:0;display:block;z-index:1}
+  .stage .labels{position:absolute!important;top:0;left:0;z-index:2}
+  .stage .flat,.stage3d .flat{position:absolute;inset:0;width:100%;height:100%;z-index:1}
+  .nogl{position:absolute;left:0;right:0;top:0;padding:7px 12px;text-align:center;color:var(--ink-2);font-size:12.5px;z-index:4;background:rgba(255,255,255,.92);border-bottom:1px solid var(--line)}
+  .stage:has(.nogl:not([hidden])) .hud-top{top:48px}
+  .stage:has(.nogl:not([hidden])) .flat,.stage3d:has(.nogl:not([hidden])) .flat{top:36px;height:calc(100% - 36px)}
+  .hud{position:absolute;z-index:3;pointer-events:none;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .hud button,.hud a{pointer-events:auto}
+  .hud-top{top:14px;left:16px;right:16px}
+  .hud-bottom{bottom:14px;left:16px;right:16px;justify-content:space-between;align-items:flex-end}
+  .hud .phases,.hud .ticks,.hud .legend,.hud .views{background:rgba(255,255,255,.86);border:1px solid var(--line);border-radius:var(--r);backdrop-filter:blur(6px);box-shadow:var(--shadow-sm)}
+  .phases{list-style:none;margin:0;padding:4px;display:flex;gap:2px}
+  .phases li{font:600 11px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;padding:6px 10px;border-radius:7px;color:var(--muted);transition:background .25s,color .25s}
+  .phases li.on{background:var(--c,var(--teal));color:#fff}
+  .ticks{font:500 11.5px var(--font-mono);color:var(--muted);padding:9px 10px;font-variant-numeric:tabular-nums}
+  .ticks b{color:var(--ink);font-weight:700}
+  .hud .legend{padding:8px 12px}
+  .views{display:flex;gap:2px;padding:4px}
+  .views button{border:0;background:transparent;font:600 11.5px var(--font-body);padding:6px 10px;border-radius:7px;color:var(--muted);cursor:pointer}
+  .views button:hover{color:var(--ink)}
+  .views button.on{background:var(--teal);color:#fff}
+  .credit{flex-basis:100%;margin:2px 0 0 2px;font:700 14px var(--font-display);letter-spacing:.02em;color:var(--teal);text-shadow:0 0 3px #fff,0 0 8px #fff}
+  /* 3D tags: ink text with a white halo so they stay readable over the floor */
+  .tag,.stage3d .label3d{pointer-events:none;display:flex;flex-direction:column;align-items:center;font-family:var(--font-body);line-height:1.15;text-align:center;color:var(--ink);text-shadow:0 0 2px #fff,0 0 4px #fff,0 0 8px #fff}
+  .tag .nm{font-size:calc(var(--lab) * .9);font-weight:600;letter-spacing:.04em;color:var(--ink-2)}
+  .tag .vl{font-size:calc(var(--lab) * 1.3);font-weight:700;font-variant-numeric:tabular-nums;font-family:var(--font-display)}
+  .tag .sb{font-size:calc(var(--lab) * .78);color:var(--muted);letter-spacing:.02em}
+  .tag .sb:empty{display:none}
+  .tag.on .nm{color:var(--ink)}
+  .tag.on .vl{color:var(--teal)}
+  .tag.person .nm{font-family:var(--font-mono);font-size:calc(var(--lab) * .8);text-transform:uppercase;letter-spacing:.08em}
+  .cell .nm{font-size:calc(var(--lab) * .75)}
+  .cell .vl{font-size:calc(var(--lab) * 1.15)}
+  .zone{pointer-events:none;font-family:var(--font-mono);font-weight:600;font-size:calc(var(--lab) * .82);letter-spacing:.14em;text-transform:uppercase;color:var(--c,var(--slate));opacity:.9;white-space:nowrap;text-align:center;line-height:1.3;text-shadow:0 0 3px #fff,0 0 6px #fff}
+  .lcd{pointer-events:none;font-family:var(--font-display);font-weight:700;color:var(--teal);font-size:calc(var(--lab) * 2);font-variant-numeric:tabular-nums;text-shadow:0 0 3px #fff}
+  .pkt{pointer-events:none;font-family:var(--font-body);font-size:calc(var(--lab) * 1.1);font-weight:700;color:#fff;background:var(--c);padding:3px 8px;border-radius:999px;box-shadow:0 2px 8px rgba(20,35,58,.25);white-space:nowrap;border:1px solid rgba(255,255,255,.6)}
+  .panel{min-width:0;overflow-y:auto;background:var(--panel);border-left:1px solid var(--line);padding:20px 18px 28px;display:flex;flex-direction:column;gap:22px;
+    background-image:repeating-linear-gradient(180deg,transparent 0 27px,rgba(20,35,58,.035) 27px 28px)}
+  .panel h1{font-size:26px;margin:4px 0 6px}
+  /* the older make3D stage (page mode) */
+  .stage3d{position:relative;width:100%;aspect-ratio:16/10;min-height:280px;border-radius:var(--r);overflow:hidden;touch-action:none;border:1px solid var(--line);
+    background:radial-gradient(ellipse at 45% 35%,#FBFAF7 0%,#E6ECEF 70%,#DCE3E8 100%)}
+  @media(max-width:640px){.stage3d{aspect-ratio:4/3}}
+  .stage3d canvas,.stage3d .gl{position:absolute;inset:0;display:block;width:100%!important;height:100%!important}
+  .stage3d .labels{position:absolute!important;top:0;left:0;z-index:2}
+  .stage3d .fallback{position:absolute;left:0;right:0;bottom:0;padding:6px 10px;font-size:12px;color:var(--ink-2);background:rgba(255,255,255,.9);text-align:center}
+  .stage3d .label3d{position:absolute;transform:translate(-50%,-50%);white-space:nowrap;font-size:11px;font-weight:600}
+  .stage3d .label3d.pkt{color:#fff;text-shadow:none;background:var(--c,currentColor);padding:2px 7px;border-radius:999px}
+  footer.foot{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:16px;color:var(--muted);font-size:12.5px;border-top:1px solid var(--line)}
+  footer.foot .byline,.byline{margin-top:4px;font:700 14px var(--font-display)!important;letter-spacing:.02em;color:var(--teal)!important}
+  .reveal{animation:rise .7s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*80ms)}
+  @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  @media(max-width:860px){
+    .app .stage .zoomctl{top:56px;right:10px;transform:none;flex-direction:row}
+    .app{grid-template-columns:1fr;height:auto}
+    .app .stage{height:62vh;min-height:360px}
+    .panel{border-left:0;border-top:1px solid var(--line);overflow:visible}
+  }
+  @media(max-width:520px){
+    .hud .legend{font-size:10px;gap:3px 10px}
+    .phases li{padding:5px 7px;font-size:10px}
+    .controls{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .card{padding:14px}
+  }
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  .scroll-x{position:relative}
+  @media(max-width:640px){
+    :root{--lab:8px}
+    .tag .sb{display:none}
+    .scroll-x::before{content:"Swipe sideways to see the whole table";display:block;font:500 11px var(--font-mono);letter-spacing:.04em;color:var(--muted);margin:0 0 6px}
+  }
+  /* ===== end of theme ===== */
+
+  /* page-specific CSS below: light unit board, palette with meaning (see build/theme/THEME.md) */
+/*W78 CSS START*/
+.round-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+  .round-head .pill{font-size:11px}
+  .scene{font-size:15px;line-height:1.55;margin:0 0 12px;padding:12px 14px;border-left:3px solid var(--violet);background:var(--violet-soft);border-radius:0 8px 8px 0}
+  .scene b{color:var(--violet)}
+  .q{font:600 14px var(--font-display);margin:12px 0 6px;color:var(--ink)}
+  .opts{display:flex;flex-direction:column;gap:6px}
+  .opts .btn{justify-content:flex-start;text-align:left;font-weight:500;font-size:13.5px;padding:9px 12px;line-height:1.35}
+  .opts .btn.right{border-color:var(--green);color:var(--green);background:var(--green-soft)}
+  .opts .btn.part{border-color:var(--amber);color:var(--amber);background:var(--amber-soft)}
+  .opts .btn.wrong{border-color:var(--coral);color:var(--coral);background:var(--coral-soft)}
+  .opts .btn:disabled{opacity:.75}
+  .progress{display:flex;gap:3px;margin:0 0 10px}
+  .progress i{flex:1;height:6px;border-radius:3px;background:var(--line)}
+  .progress i.on{background:var(--violet)}
+  .progress i.ok{background:var(--green)}.progress i.part{background:var(--amber)}.progress i.bad{background:var(--coral)}
+  .final{text-align:center;padding:18px 10px}
+  .final .big{font:700 54px/1 var(--font-display);color:var(--teal)}
+  .final p{margin:8px 0 0;color:var(--ink-2)}
+  .model{min-width:760px}
+  .model th,.model td{vertical-align:top;font-family:var(--font-body);font-size:13px;white-space:normal}
+  .model td:first-child{font-weight:600;white-space:nowrap}
+  .people{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+  .people span{font:500 11.5px var(--font-mono);padding:3px 8px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink-2)}
+  .people span.on{border-color:var(--violet);color:var(--violet);background:var(--violet-soft)}
+  .flat .tk{font:700 .5px var(--font-body);fill:#fff;text-anchor:middle;pointer-events:none}
+  .flat .rl{font:600 .42px var(--font-mono);fill:#36465E;pointer-events:none}
+  .flat .zl{font:700 .55px var(--font-mono);fill:#5B6B82;text-anchor:middle}
+  .stage3d .tag.room{display:none}
+  .stage3d .tag.room.on,.stage3d .tag.room.keep{display:flex}
+/*W78 CSS END*/
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="au-logo" href="https://github.com/AU-Extension" target="_blank" rel="noopener" aria-label="Atlantis University">
+      <img src="https://raw.githubusercontent.com/AU-Extension/items/main/aulogo1.png" alt="Atlantis University">
+    </a>
+    <div class="crumb"><b>MHS 510</b> Leadership and Organizational Behavior · Week 7 · Interactive B</div>
+  </div>
+</header>
+
+<!--W78 BODY START-->
+<main class="wrap">
+  <section class="hero reveal" style="--i:0">
+    <span class="eyebrow">Week 7 · Challenge</span>
+    <h1>Decision bias challenge</h1>
+    <p class="lede">Ten management meetings on 4 West, each with a bias or an ethical principle at stake. Name what is at work, pick the move that fixes it, and score your judgment out of 100. Violet marks leadership moves and theory; coral marks the risk in the room.</p>
+  </section>
+
+  <details class="howto reveal" style="--i:1">
+    <summary>How to use this interactive</summary>
+    <ol>
+      <li>Read the scene. The floor shows where it happens and who is in the room; the claim at stake flies in as a packet.</li>
+      <li>Question 1: name the bias or the ethical principle (6 points; 2 points for a defensible second choice).</li>
+      <li>Question 2: choose the de-biasing move or the ethical step (4 points; 1 point for a partial move).</li>
+      <li>Read the feedback: it explains with the course model and the unit's own numbers, then press Next round.</li>
+      <li>After ten rounds you get a score out of 100 and can try again with the rounds and answers shuffled.</li>
+    </ol>
+  </details>
+
+  <div class="grid two">
+    <section class="card reveal" style="--i:2" data-ref="RM 1 · FLOOR">
+      <h2>Where it happens</h2>
+      <div class="stage3d" id="stage"><div class="nogl" id="nogl" hidden>The 3D unit floor needs WebGL and the 3D libraries, which are not available here. The flat floor plan shows the same rooms, people and packets, and the panel has every value.</div></div>
+      <div class="caption" id="cap"><div class="t" id="capT">Round 1</div><p id="capP">The scene is loading.</p></div>
+      <div class="people" id="people" aria-label="People in this round"></div>
+    </section>
+    <aside class="card reveal" style="--i:3" data-ref="STATION · ROUND">
+      <div class="progress" id="progress" aria-hidden="true"></div>
+      <div id="round"></div>
+    </aside>
+  </div>
+
+  <section class="card reveal" style="--i:4" data-ref="THEORY · MODEL" style="margin-top:16px">
+    <h2>The course model: what each bias looks like on a unit and the move that fixes it</h2>
+    <div class="scroll-x"><table class="model">
+      <thead><tr><th>Name</th><th>What it is</th><th>How it sounds on 4 West</th><th>The move</th></tr></thead>
+      <tbody id="modelBody"></tbody>
+    </table></div>
+  </section>
+
+  <section class="card reveal" style="--i:5" data-ref="NOTES" style="margin-top:16px">
+    <h2>Things to notice</h2>
+    <ul class="notice">
+      <li>Most biases are fixed by the same habit: go to the file before you go to the meeting. The scorecard, the incident file and the schedule are the outside view.</li>
+      <li>Groupthink is quiet. A fast, unanimous decision in a room with a strong voice is a warning, not a success.</li>
+      <li>Sunk cost and escalation of commitment look like loyalty. Decide on what the next dollar and the next month will buy, never on what was already spent.</li>
+      <li>An AI assistant writes fluent numbers. Fluency is not evidence: every figure in a report is traced to its file and row before it leaves the unit.</li>
+      <li>The four principles (autonomy, beneficence, nonmaleficence, justice) apply to staff decisions as much as to patient care. A schedule can be unjust; a staffing plan can do harm.</li>
+    </ul>
+  </section>
+</main>
+
+<footer class="foot">Atlantis University · School of Health · MHS 510 Leadership and Organizational Behavior<div class="byline">By Professor De Leon</div></footer>
+<!--W78 BODY END-->
+
+<script>
+// All logic inline. Guard GSAP so the page still works if the CDN fails:
+const hasGSAP = typeof window.gsap !== 'undefined';
+// LAB3D START: MHS 510 Unit3D kit (a low-poly isometric nursing unit floor, ported from the EGN 325 Lab3D kit). Paste as one block.
+// Needs Three.js r147 (three.min.js), examples/js/controls/OrbitControls.js, examples/js/renderers/CSS2DRenderer.js and GSAP 3.12.5.
+// Returns null when any of them (or WebGL) is missing: then show .nogl and draw the 2D SVG floor plan fallback.
+//
+// const lab = Unit3D(stageEl, {
+//   floor: {w: 24, d: 14, cx: 0, cz: 0, title: '4 WEST · MED-SURG · 32 BEDS', corridors: [{z: 0, w: 3}]},
+//   views: {overview: {pos: [0, 19, 15], tgt: [0, 0, 0.5], want: 1.55}, station: {...}},
+//   colors: {teal: '#0E7C86'}
+// });
+// lab.room(id, x, z, w, d, label, {kind: 'patient'|'station'|'med'|'supply'|'break'|'risk', door: 'n'|'s'|'e'|'w'|'none', bed, num}) -> rec {g, mat, el, val, sub, kind, x, z, w, d}
+// lab.person(id, x, z, role, color, {nm}) -> rec {g, mat, el, val, sub, role, x, z}      lab.walk(rec, [{x,z}...], {dur}) -> GSAP timeline
+// lab.set(rec, value, sub, pop)   lab.hi(rec, color)   lab.clear()   lab.pop(rec)
+// lab.silkRect(x0, x1, z0, z1)   lab.zone(text, x, z, color)   lab.label(html, cls, x, y, z, parent)
+// lab.busMat(color, {base, rest})  lab.trace([{x,z}...], lines, mat)  lab.glowBus(mat)
+// lab.fly([{x,z}...], text, color, {y, dur}) -> GSAP timeline (packet sphere + halo + pill label: a message, a task, a handoff)
+// lab.setView(name)  lab.focusOn(x, z, dist)  lab.zoom(factor)  lab.intro()  lab.onPick(fn)  lab.clearPackets()  lab.onFrame(fn)
+// lab.chip(key, {x, z, w, d, nm}) is kept as an alias of lab.room for older markup; lab.finishPins() is a no-op.
+// Zoom buttons (+, -, FIT) and the + - 0 keys are added to the stage automatically (opts.zoomUI: false turns them off; opts.fitView picks the FIT view).
+function Unit3D(stage, opts) {
+  opts = opts || {};
+  const hasG = typeof window.gsap !== 'undefined';
+  if (!window.THREE || !THREE.OrbitControls || !THREE.CSS2DRenderer || !hasG) return null;
+  try { const t = document.createElement('canvas'); if (!(t.getContext('webgl') || t.getContext('experimental-webgl'))) return null; } catch (e) { return null; }
+  const T = THREE;
+  const RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const B = Object.assign({w: 24, d: 14, cx: 0, cz: 0, title: '4 WEST · MED-SURG', corridors: null, seed: 7}, opts.floor || opts.board || {});
+  if (!B.corridors) B.corridors = [{z: B.cz, w: 3}];
+  const C = Object.assign({teal: '#0E7C86', coral: '#D4453F', amber: '#C27A08', green: '#1F8A4C', violet: '#6A4FC8', slate: '#5B6B82', ink: '#14233A'}, opts.colors || {});
+  const KIND = {   // room kinds: floor tint on the texture, wall tint, accent
+    patient: {fill: '#CFE6E8', accent: C.teal}, station: {fill: '#DCD3F4', accent: C.violet}, med: {fill: '#F6DFB4', accent: C.amber},
+    supply: {fill: '#D3DBE4', accent: C.slate}, break: {fill: '#CDE8D7', accent: C.green}, risk: {fill: '#F5CECB', accent: C.coral}
+  };
+  const ROLE = {manager: C.violet, charge: C.violet, nurse: C.teal, rn: C.teal, lpn: C.teal, cna: C.green, tech: C.green, md: C.slate, physician: C.slate, np: C.slate,
+    family: C.amber, patient: C.amber, visitor: C.amber, student: C.teal, educator: C.violet, hr: C.slate};
+
+  const renderer = new T.WebGLRenderer({antialias: true, alpha: true, powerPreference: 'high-performance'});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.outputEncoding = T.sRGBEncoding;
+  renderer.toneMapping = T.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
+  renderer.shadowMap.enabled = true; renderer.shadowMap.type = T.PCFSoftShadowMap;
+  renderer.setClearColor(0x000000, 0);   // transparent: the stage's CSS gradient shows behind the floor
+  renderer.domElement.className = 'gl';
+  stage.prepend(renderer.domElement);
+  const labelR = new T.CSS2DRenderer();
+  labelR.domElement.className = 'labels';
+  renderer.domElement.after(labelR.domElement);
+
+  const scene = new T.Scene();
+  scene.fog = new T.Fog(0xe6ecef, 42, 85);
+  const camera = new T.PerspectiveCamera(38, 1, 0.1, 220);
+  const controls = new T.OrbitControls(camera, labelR.domElement);
+  controls.enableDamping = true; controls.dampingFactor = 0.08;
+  controls.maxPolarAngle = Math.PI * 0.46; controls.minDistance = 4; controls.maxDistance = 46;
+  controls.zoomSpeed = 1.1;
+  // keep the mouse wheel inside the 3D view: zoom the floor, do not scroll the page
+  stage.addEventListener('wheel', e => e.preventDefault(), {passive: false});
+
+  // soft daylight: a white sky with a pale ground bounce, a warm sun with soft shadows, a cool teal fill from behind
+  scene.add(new T.HemisphereLight(0xffffff, 0xd9dde2, 0.5));
+  const sun = new T.DirectionalLight(0xfff3df, 0.9); sun.position.set(-8, 18, 10); sun.castShadow = true;
+  sun.shadow.mapSize.set(2048, 2048);
+  Object.assign(sun.shadow.camera, {left: -B.w / 2 - 2, right: B.w / 2 + 2, top: B.d / 2 + 2, bottom: -B.d / 2 - 2, near: 1, far: 50});
+  sun.shadow.bias = -0.0006; sun.shadow.radius = 4; scene.add(sun);
+  const fill = new T.DirectionalLight(0x9fd8de, 0.25); fill.position.set(12, 8, -10); scene.add(fill);
+
+  // the floor slab: a canvas texture with floor tiles, corridors, room fills, room numbers and the unit title
+  const cv = document.createElement('canvas'); cv.width = 2048; cv.height = Math.round(2048 * B.d / B.w);
+  const S = cv.width / B.w, px = x => (x - B.cx + B.w / 2) * S, pz = z => (z - B.cz + B.d / 2) * S;
+  const roomsDrawn = [];
+  function drawFloor() {
+    const g = cv.getContext('2d'), W = cv.width, H = cv.height;
+    const grd = g.createLinearGradient(0, 0, W, H); grd.addColorStop(0, '#ECE7DE'); grd.addColorStop(1, '#E2DCD1');
+    g.fillStyle = grd; g.fillRect(0, 0, W, H);
+    // corridors: lighter bands with a dashed teal wayfinding line down the middle
+    B.corridors.forEach(c => {
+      g.fillStyle = '#F7F4EE';
+      if (c.z != null) g.fillRect(0, pz(c.z - c.w / 2), W, c.w * S); else g.fillRect(px(c.x - c.w / 2), 0, c.w * S, H);
+    });
+    // floor tiles (one world unit each)
+    g.strokeStyle = 'rgba(20,35,58,0.11)'; g.lineWidth = 2; g.beginPath();
+    for (let x = 0; x <= B.w; x++) { g.moveTo(x * S, 0); g.lineTo(x * S, H); }
+    for (let z = 0; z <= B.d; z++) { g.moveTo(0, z * S); g.lineTo(W, z * S); }
+    g.stroke();
+    B.corridors.forEach(c => {
+      g.save(); g.setLineDash([S * 0.5, S * 0.35]); g.strokeStyle = 'rgba(14,124,134,0.35)'; g.lineWidth = 5; g.beginPath();
+      if (c.z != null) { g.moveTo(0, pz(c.z)); g.lineTo(W, pz(c.z)); } else { g.moveTo(px(c.x), 0); g.lineTo(px(c.x), H); }
+      g.stroke(); g.restore();
+    });
+    // rooms: tinted fill, ink outline, a threshold mark at the door and the room number
+    roomsDrawn.forEach(r => {
+      const k = KIND[r.kind] || KIND.patient, x0 = px(r.x - r.w / 2), z0 = pz(r.z - r.d / 2), w = r.w * S, d = r.d * S;
+      g.fillStyle = k.fill; g.fillRect(x0, z0, w, d);
+      g.strokeStyle = 'rgba(20,35,58,0.45)'; g.lineWidth = 4; g.strokeRect(x0, z0, w, d);
+      if (r.door !== 'none') {
+        const dw = Math.min(1.1, r.w * 0.5, r.d * 0.5) * S; g.strokeStyle = k.accent; g.lineWidth = 8; g.beginPath();
+        if (r.door === 's') { g.moveTo(x0 + w / 2 - dw / 2, z0 + d); g.lineTo(x0 + w / 2 + dw / 2, z0 + d); }
+        else if (r.door === 'n') { g.moveTo(x0 + w / 2 - dw / 2, z0); g.lineTo(x0 + w / 2 + dw / 2, z0); }
+        else if (r.door === 'e') { g.moveTo(x0 + w, z0 + d / 2 - dw / 2); g.lineTo(x0 + w, z0 + d / 2 + dw / 2); }
+        else { g.moveTo(x0, z0 + d / 2 - dw / 2); g.lineTo(x0, z0 + d / 2 + dw / 2); }
+        g.stroke();
+      }
+      g.fillStyle = 'rgba(20,35,58,0.6)'; g.font = '700 ' + Math.round(S * Math.min(0.55, r.d * 0.16)) + 'px "JetBrains Mono", ui-monospace, monospace';
+      g.textBaseline = 'top'; g.fillText(r.num, x0 + S * 0.2, z0 + S * 0.16);
+    });
+    g.fillStyle = 'rgba(20,35,58,0.6)'; g.font = '700 ' + Math.round(S * 0.5) + 'px "Bricolage Grotesque", "Figtree", sans-serif'; g.textBaseline = 'alphabetic';
+    if (B.title) g.fillText(B.title, S * 0.5, H - S * 0.35);
+  }
+  drawFloor();
+  const tex = new T.CanvasTexture(cv); tex.encoding = T.sRGBEncoding; tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  function refreshFloor() { drawFloor(); tex.needsUpdate = true; }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(refreshFloor);
+  const edge = new T.MeshStandardMaterial({color: 0xd6d0c5, roughness: .9});
+  const topM = new T.MeshStandardMaterial({map: tex, roughness: .85, metalness: 0});
+  const slab = new T.Mesh(new T.BoxGeometry(B.w, 0.3, B.d), [edge, edge, topM, edge, edge, edge]);
+  slab.position.set(B.cx, -0.15, B.cz); slab.receiveShadow = true; scene.add(slab);
+
+  const unit = new T.BoxGeometry(1, 1, 1);
+  const tape = new T.MeshBasicMaterial({color: 0x14233a, transparent: true, opacity: .4});
+  function silkRect(x0, x1, z0, z1) {   // a thin ink "tape line" rectangle on the floor, for grouping areas
+    const t = 0.05;
+    [[x0, x1, z0, z0], [x0, x1, z1, z1], [x0, x0, z0, z1], [x1, x1, z0, z1]].forEach(([a, b, c, d]) => {
+      const m = new T.Mesh(unit, tape); m.scale.set(Math.abs(b - a) + t, 0.01, Math.abs(d - c) + t);
+      m.position.set((a + b) / 2, 0.008, (c + d) / 2); scene.add(m);
+    });
+  }
+  function busMat(color, o) {   // a wayfinding line material that can glow (lab.glowBus) in its color
+    o = o || {};
+    const m = new T.MeshStandardMaterial({color: new T.Color(o.base || color), emissive: new T.Color(color), emissiveIntensity: o.rest != null ? o.rest : 0.15, roughness: .5, metalness: 0});
+    m.userData.rest = m.emissiveIntensity; return m;
+  }
+  const nrm = (a, b) => { const dx = b.x - a.x, dz = b.z - a.z, L = Math.hypot(dx, dz) || 1; return {x: -dz / L, z: dx / L}; };
+  function offsetLine(p, o) {
+    return p.map((q, i) => {
+      const nIn = i > 0 ? nrm(p[i - 1], q) : null, nOut = i < p.length - 1 ? nrm(q, p[i + 1]) : null;
+      let n = nIn || nOut;
+      if (nIn && nOut) { const k = 1 / (1 + nIn.x * nOut.x + nIn.z * nOut.z); n = {x: (nIn.x + nOut.x) * k, z: (nIn.z + nOut.z) * k}; }
+      return {x: q.x + n.x * o, z: q.z + n.z * o};
+    });
+  }
+  function trace(points, lines, mat) {   // painted floor lines along a corridor path (one line per lane)
+    const gap = 0.12, w = 0.06;
+    for (let li = 0; li < lines; li++) {
+      const pts = offsetLine(points, (li - (lines - 1) / 2) * gap);
+      for (let i = 0; i < pts.length - 1; i++) {
+        const a = pts[i], b = pts[i + 1], dx = b.x - a.x, dz = b.z - a.z, L = Math.hypot(dx, dz);
+        const m = new T.Mesh(unit, mat); m.scale.set(L + w, 0.02, w); m.position.set((a.x + b.x) / 2, 0.012, (a.z + b.z) / 2); m.rotation.y = -Math.atan2(dz, dx);
+        scene.add(m);
+      }
+      [pts[0], pts[pts.length - 1]].forEach(p => { const pad = new T.Mesh(new T.CylinderGeometry(0.1, 0.1, 0.022, 14), mat); pad.position.set(p.x, 0.012, p.z); scene.add(pad); });
+    }
+  }
+  function glowBus(m) {
+    if (!m) return;
+    gsap.killTweensOf(m);
+    gsap.timeline().to(m, {emissiveIntensity: 1.2, duration: 0.2}).to(m, {emissiveIntensity: m.userData.rest, duration: 1.4});
+  }
+  function label(html, cls, x, y, z, parent) {
+    const el = document.createElement('div'); el.className = cls; el.innerHTML = html;
+    const o = new T.CSS2DObject(el); o.position.set(x, y, z); (parent || scene).add(o); el._obj = o; return el;
+  }
+  function zone(text, x, z, color) { const el = label(text, 'zone', x, 0.05, z); if (color) el.style.setProperty('--c', color); return el; }
+
+  const recs = {}, pickables = [];
+  const wallMat = new T.MeshStandardMaterial({color: 0xeeeae2, roughness: .92, metalness: 0});
+  const bedMat = new T.MeshStandardMaterial({color: 0xffffff, roughness: .8});
+  const blanketMat = new T.MeshStandardMaterial({color: 0xcfe6e8, roughness: .9});
+  const counterMat = new T.MeshStandardMaterial({color: 0xe9e4f6, roughness: .8});
+  const WH = 0.55, WT = 0.1;
+  function wall(g, x, z, len, along, mat) {   // along: 'x' or 'z'
+    const m = new T.Mesh(unit, mat || wallMat);
+    if (along === 'x') m.scale.set(len, WH, WT); else m.scale.set(WT, WH, len);
+    m.position.set(x, WH / 2, z); m.castShadow = true; m.receiveShadow = true; g.add(m); return m;
+  }
+  function room(id, x, z, w, d, lbl, o) {
+    o = o || {};
+    const kind = o.kind || 'patient', k = KIND[kind] || KIND.patient;
+    let door = o.door;
+    if (!door) {   // auto: the door faces the nearest corridor
+      let best = null;
+      B.corridors.forEach(c => {
+        const dist = c.z != null ? Math.abs(z - c.z) : Math.abs(x - c.x);
+        if (!best || dist < best.dist) best = {dist: dist, side: c.z != null ? (z < c.z ? 's' : 'n') : (x < c.x ? 'e' : 'w')};
+      });
+      door = best ? best.side : 's';
+    }
+    const g = new T.Group(); g.position.set(x, 0, z);
+    const hw = w / 2, hd = d / 2, dw = Math.min(1.1, w * 0.5, d * 0.5);
+    // four walls, with a door gap in the wall that faces the corridor
+    const side = (name, len, place) => {
+      if (door !== name) { place(len, 0); return; }
+      const seg = (len - dw) / 2; place(seg, -(len / 2 - seg / 2)); place(seg, (len / 2 - seg / 2));
+    };
+    side('n', w, (len, off) => wall(g, off, -hd, len, 'x'));
+    side('s', w, (len, off) => wall(g, off, hd, len, 'x'));
+    side('w', d, (len, off) => wall(g, -hw, off, len, 'z'));
+    side('e', d, (len, off) => wall(g, hw, off, len, 'z'));
+    // the highlight plate: invisible until lab.hi tints it; it is also the click target
+    const mat = new T.MeshStandardMaterial({color: new T.Color(k.accent), transparent: true, opacity: 0, roughness: 1, depthWrite: false});
+    const plate = new T.Mesh(unit, mat); plate.scale.set(w - WT, 0.02, d - WT); plate.position.y = 0.025; g.add(plate);
+    plate.userData.key = id; pickables.push(plate);
+    if (kind === 'patient' && o.bed !== false) {   // a low-poly bed: frame, blanket, pillow
+      const bed = new T.Group(); const along = d >= w ? 'z' : 'x';
+      const bw = along === 'z' ? 0.9 : 1.9, bd = along === 'z' ? 1.9 : 0.9;
+      const f = new T.Mesh(unit, bedMat); f.scale.set(bw, 0.3, bd); f.position.y = 0.15; f.castShadow = true; f.receiveShadow = true; bed.add(f);
+      const bl = new T.Mesh(unit, blanketMat); bl.scale.set(bw - 0.08, 0.1, along === 'z' ? bd * 0.6 : bd - 0.08); if (along === 'x') bl.scale.set(bw * 0.6, 0.1, bd - 0.08);
+      bl.position.set(along === 'x' ? -bw * 0.2 : 0, 0.35, along === 'z' ? bd * 0.2 : 0); bed.add(bl);
+      const pw = new T.Mesh(unit, bedMat); pw.scale.set(along === 'z' ? bw - 0.3 : 0.3, 0.12, along === 'z' ? 0.3 : bd - 0.3); pw.position.set(along === 'x' ? bw / 2 - 0.3 : 0, 0.36, along === 'z' ? -bd / 2 + 0.3 : 0); bed.add(pw);
+      bed.position.set(along === 'z' ? -hw + bw / 2 + 0.35 : 0, 0, along === 'z' ? 0 : -hd + bd / 2 + 0.35); g.add(bed);
+    }
+    if (kind === 'station') {   // a counter in the middle of the station
+      const c = new T.Mesh(unit, counterMat); c.scale.set(Math.max(1, w * 0.55), 0.42, Math.max(0.6, d * 0.3)); c.position.y = 0.21; c.castShadow = true; c.receiveShadow = true; g.add(c);
+    }
+    scene.add(g);
+    const el = label('<span class="nm">' + (lbl || id) + '</span><span class="vl"></span><span class="sb"></span>', 'tag room', 0, WH + 0.25, 0, g);
+    const rec = {key: id, kind: 'room', roomKind: kind, accent: k.accent, g: g, mat: mat, el: el, val: el.querySelector('.vl'), sub: el.querySelector('.sb'), h: WH, x: x, z: z, w: w, d: d, door: door};
+    recs[id] = rec;
+    roomsDrawn.push({x: x, z: z, w: w, d: d, kind: kind, door: door, num: o.num != null ? String(o.num) : String(id)});
+    refreshFloor();
+    return rec;
+  }
+  function chip(key, o) { return room(key, o.x, o.z, o.w || 1.4, o.d || 1.2, o.nm || key, o); }
+  const headMat = new T.MeshStandardMaterial({color: 0xf3e7d3, roughness: .7});
+  const bodyGeo = T.CapsuleGeometry ? new T.CapsuleGeometry(0.2, 0.42, 4, 12) : new T.CylinderGeometry(0.2, 0.2, 0.82, 12);
+  const headGeo = new T.SphereGeometry(0.17, 16, 12);
+  const ringGeo = new T.RingGeometry(0.26, 0.34, 24);
+  function person(id, x, z, role, color, o) {
+    o = o || {};
+    const col = color || ROLE[(role || '').toLowerCase()] || C.slate;
+    const g = new T.Group(); g.position.set(x, 0, z);
+    const mat = new T.MeshStandardMaterial({color: new T.Color(col), roughness: .55, metalness: 0, emissive: new T.Color(0xffffff), emissiveIntensity: 0});
+    const body = new T.Mesh(bodyGeo, mat); body.position.y = 0.43; body.castShadow = true; g.add(body);
+    body.userData.key = id; pickables.push(body);
+    const head = new T.Mesh(headGeo, headMat); head.position.y = 1.0; head.castShadow = true; g.add(head);
+    const ring = new T.Mesh(ringGeo, new T.MeshBasicMaterial({color: new T.Color(col), transparent: true, opacity: .55, side: T.DoubleSide})); ring.rotation.x = -Math.PI / 2; ring.position.y = 0.03; g.add(ring);
+    scene.add(g);
+    const el = label('<span class="nm">' + (role || '') + '</span><span class="vl">' + (o.nm || id) + '</span><span class="sb"></span>', 'tag person', 0, 1.42, 0, g);
+    el.style.setProperty('--c', col);
+    const rec = {key: id, kind: 'person', role: role, color: col, g: g, mat: mat, el: el, name: el.querySelector('.vl'), val: el.querySelector('.sb'), sub: el.querySelector('.sb'), h: 1.2, x: x, z: z};
+    recs[id] = rec; return rec;
+  }
+  function walk(rec, path, o) {   // move a person token along corridor points; returns a GSAP timeline
+    o = o || {};
+    const tl = gsap.timeline();
+    let prev = {x: rec.g.position.x, z: rec.g.position.z}, L = 0;
+    path.forEach(p => { L += Math.hypot(p.x - prev.x, p.z - prev.z); prev = p; });
+    const total = o.dur || Math.max(0.4, Math.min(3, L / 3));
+    prev = {x: rec.g.position.x, z: rec.g.position.z};
+    path.forEach(p => {
+      const seg = Math.hypot(p.x - prev.x, p.z - prev.z);
+      tl.to(rec.g.position, {x: p.x, z: p.z, duration: L ? total * seg / L : 0.1, ease: 'none', onUpdate: () => { rec.x = rec.g.position.x; rec.z = rec.g.position.z; }});
+      prev = p;
+    });
+    if (!RM) tl.to(rec.g.position, {y: 0.08, duration: 0.18, yoyo: true, repeat: Math.max(1, Math.round(total / 0.18) - 1), ease: 'sine.inOut'}, 0).set(rec.g.position, {y: 0});
+    return tl;
+  }
+  function set(rec, value, sub, bump) {
+    if (!rec) return;
+    if (value != null) rec.val.textContent = value;
+    if (sub != null) rec.sub.textContent = sub;
+    if (bump) pop(rec);
+  }
+  function finishPins() {}
+
+  // packets: a small sphere with a soft halo and a pill label (a message, a task, a patient handoff)
+  const haloCv = document.createElement('canvas'); haloCv.width = haloCv.height = 64;
+  const hg = haloCv.getContext('2d'), rg = hg.createRadialGradient(32, 32, 0, 32, 32, 32);
+  rg.addColorStop(0, 'rgba(255,255,255,1)'); rg.addColorStop(.35, 'rgba(255,255,255,.4)'); rg.addColorStop(1, 'rgba(255,255,255,0)');
+  hg.fillStyle = rg; hg.fillRect(0, 0, 64, 64);
+  const haloTex = new T.CanvasTexture(haloCv);
+  const pktGeo = new T.SphereGeometry(0.15, 20, 14);
+  const live = new Set();
+  function removePacket(p) {
+    scene.remove(p.mesh); if (p.el.parentNode) p.el.parentNode.removeChild(p.el);
+    p.mesh.material.dispose(); p.halo.material.dispose(); live.delete(p);
+  }
+  function fly(path, text, color, o) {
+    o = o || {};
+    const y = o.y != null ? o.y : 0.9;
+    const v = path.map(p => new T.Vector3(p.x, y, p.z));
+    const mesh = new T.Mesh(pktGeo, new T.MeshStandardMaterial({color: new T.Color(color), emissive: new T.Color(color), emissiveIntensity: .35, roughness: .4}));
+    mesh.castShadow = true;
+    const halo = new T.Sprite(new T.SpriteMaterial({map: haloTex, color: new T.Color(color), depthWrite: false, transparent: true, opacity: .55}));
+    halo.scale.set(1.0, 1.0, 1.0); mesh.add(halo);
+    const el = document.createElement('div'); el.className = 'pkt'; el.style.setProperty('--c', color); el.textContent = text;
+    const lab = new T.CSS2DObject(el); lab.position.set(0, 0.45, 0); mesh.add(lab);
+    mesh.position.copy(v[0]); mesh.scale.setScalar(0.01); mesh.visible = false; scene.add(mesh);
+    const p = {mesh: mesh, halo: halo, el: el}; live.add(p);
+    let L = 0; for (let i = 1; i < v.length; i++) L += v[i].distanceTo(v[i - 1]);
+    const total = o.dur || Math.max(0.5, Math.min(2.4, L / 6));
+    const tl = gsap.timeline({onComplete: () => removePacket(p)});
+    tl.call(() => { mesh.visible = true; });
+    tl.to(mesh.scale, {x: 1, y: 1, z: 1, duration: 0.18, ease: 'back.out(2)'});
+    for (let i = 1; i < v.length; i++) { const seg = v[i].distanceTo(v[i - 1]); tl.to(mesh.position, {x: v[i].x, y: v[i].y, z: v[i].z, duration: L ? total * seg / L : 0.1, ease: 'none'}); }
+    tl.to(mesh.scale, {x: 0.01, y: 0.01, z: 0.01, duration: 0.18, ease: 'power2.in'});
+    return tl;
+  }
+  function clearPackets() { Array.from(live).forEach(removePacket); }
+
+  const active = new Set();
+  function hi(rec, color) {
+    if (!rec) return;
+    const col = color || rec.accent || rec.color || C.teal;
+    if (rec.kind === 'room') { rec.mat.color.set(col); gsap.to(rec.mat, {opacity: 0.38, duration: 0.3, overwrite: 'auto'}); }
+    else { rec.mat.emissive.set(col); gsap.to(rec.mat, {emissiveIntensity: 0.45, duration: 0.3, overwrite: 'auto'}); }
+    rec.el.classList.add('on'); rec.el.style.setProperty('--c', col); active.add(rec);
+  }
+  function clear() {
+    active.forEach(r => {
+      if (r.kind === 'room') gsap.to(r.mat, {opacity: 0, duration: 0.5, overwrite: 'auto'});
+      else gsap.to(r.mat, {emissiveIntensity: 0, duration: 0.5, overwrite: 'auto'});
+      r.el.classList.remove('on');
+    });
+    active.clear();
+  }
+  function pop(rec, big) {
+    if (!rec || RM) return;
+    if (rec.kind === 'room') gsap.fromTo(rec.g.scale, {x: big ? 1.08 : 1.04, y: 1.3, z: big ? 1.08 : 1.04}, {x: 1, y: 1, z: 1, duration: 0.65, ease: 'elastic.out(1,0.5)', overwrite: 'auto'});
+    else gsap.fromTo(rec.g.position, {y: big ? 0.6 : 0.35}, {y: 0, duration: 0.6, ease: 'bounce.out', overwrite: 'auto'});
+  }
+
+  // camera views keep the whole unit in frame on narrow screens
+  const views = opts.views || {overview: {pos: [0, 19, 15], tgt: [0, 0, 0.5], want: 1.55}};
+  function viewFor(name) {
+    const b = views[name] || views.overview;
+    const tgt = new T.Vector3(...b.tgt), pos = new T.Vector3(...b.pos);
+    const want = b.want || 1.25;
+    let f = camera.aspect < want ? Math.min(2.4, want / camera.aspect) : 1;
+    if (name === 'overview' || !views[name]) {
+      // the overview (and FIT) must show the whole floor width, also on narrow phone screens,
+      // leaving room for the zoom buttons at the right edge
+      const tanH = Math.tan(T.MathUtils.degToRad(camera.fov / 2)) * camera.aspect;
+      const need = (B.w / 2 + 0.5) / (tanH * 0.92) + B.d * 0.25;
+      f = Math.max(f, need / pos.distanceTo(tgt));
+      controls.maxDistance = Math.max(controls.maxDistance, need * 1.3);
+      if (scene.fog) { scene.fog.near = Math.max(scene.fog.near, need * 1.1); scene.fog.far = Math.max(scene.fog.far, need * 2.6); }
+    }
+    pos.sub(tgt).multiplyScalar(f).add(tgt);
+    return {pos: pos, tgt: tgt};
+  }
+  function setView(name, instant) {
+    const v = viewFor(name), d = (RM || instant) ? 0 : 1.2;
+    const k = 1 / (gsap.globalTimeline.timeScale() || 1);
+    gsap.to(camera.position, {x: v.pos.x, y: v.pos.y, z: v.pos.z, duration: d, ease: 'power2.inOut', overwrite: 'auto'}).timeScale(k);
+    gsap.to(controls.target, {x: v.tgt.x, y: v.tgt.y, z: v.tgt.z, duration: d, ease: 'power2.inOut', overwrite: 'auto'}).timeScale(k);
+  }
+  function focusOn(x, z, dist) {
+    const d = (dist || 7) * (camera.aspect < 1.2 ? Math.min(2.2, 1.25 / camera.aspect) : 1);
+    const k = 1 / (gsap.globalTimeline.timeScale() || 1);
+    gsap.to(camera.position, {x: x * 0.8, y: d * 1.15, z: z + d, duration: RM ? 0 : 1.0, ease: 'power2.inOut', overwrite: 'auto'}).timeScale(k);
+    gsap.to(controls.target, {x: x, y: 0, z: z, duration: RM ? 0 : 1.0, ease: 'power2.inOut', overwrite: 'auto'}).timeScale(k);
+  }
+
+  function resize() {
+    const w = stage.clientWidth, h = stage.clientHeight; if (!w || !h) return;
+    renderer.setSize(w, h, false); renderer.domElement.style.width = w + 'px'; renderer.domElement.style.height = h + 'px';
+    labelR.setSize(w, h);
+    camera.aspect = w / h; camera.updateProjectionMatrix();
+    stage.style.setProperty('--lab', Math.max(7, Math.min(12, w / 92)) + 'px');
+  }
+  // zoom buttons (+, -, Fit) and keys (+, -, 0): the mouse wheel and pinch still work, but buttons always do
+  function zoom(f) {
+    const t = controls.target, off = camera.position.clone().sub(t);
+    off.setLength(Math.max(controls.minDistance, Math.min(controls.maxDistance, off.length() * f)));
+    const p = t.clone().add(off), k = 1 / (gsap.globalTimeline.timeScale() || 1);
+    gsap.to(camera.position, {x: p.x, y: p.y, z: p.z, duration: RM ? 0 : 0.45, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
+  }
+  if (opts.zoomUI !== false) {
+    if (!document.getElementById('lab3d-zoom-css')) {
+      const st = document.createElement('style'); st.id = 'lab3d-zoom-css';
+      st.textContent = '.zoomctl{position:absolute;z-index:4;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:2px;padding:4px;background:rgba(255,255,255,.9);border:1px solid #D9D3C8;border-radius:10px;backdrop-filter:blur(6px);box-shadow:0 1px 2px rgba(20,35,58,.08)}' +
+        '.zoomctl button{width:38px;height:34px;border:0;border-radius:7px;background:transparent;color:#14233A;font:700 18px/1 "JetBrains Mono",ui-monospace,monospace;cursor:pointer;padding:0}' +
+        '.zoomctl button.fit{font-size:10px;letter-spacing:.06em;height:28px}.zoomctl button:hover{background:rgba(14,124,134,.12);color:#0E7C86}' +
+        '.zoomctl button:focus-visible{outline:2px solid #0E7C86;outline-offset:1px}@media(max-width:520px){.zoomctl{right:10px}.zoomctl button{width:34px;height:32px}}';
+      document.head.appendChild(st);
+    }
+    const box = document.createElement('div'); box.className = 'zoomctl'; box.setAttribute('role', 'group'); box.setAttribute('aria-label', 'Zoom');
+    box.innerHTML = '<button type="button" data-z="in" aria-label="Zoom in" title="Zoom in (+)">+</button>' +
+      '<button type="button" data-z="out" aria-label="Zoom out" title="Zoom out (-)">&minus;</button>' +
+      '<button type="button" class="fit" data-z="fit" aria-label="Show the whole unit" title="Show the whole unit (0)">FIT</button>';
+    stage.appendChild(box);
+    ['pointerdown', 'pointerup', 'wheel', 'click'].forEach(ev => box.addEventListener(ev, e => e.stopPropagation()));
+    box.addEventListener('click', e => {
+      const b = e.target.closest('button'); if (!b) return;
+      if (b.dataset.z === 'in') zoom(0.75); else if (b.dataset.z === 'out') zoom(1.33); else setView(opts.fitView || 'overview');
+    });
+    document.addEventListener('keydown', e => {
+      const t = e.target, tag = t && t.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) return;
+      if (e.key === '+' || e.key === '=') zoom(0.75);
+      else if (e.key === '-' || e.key === '_') zoom(1.33);
+      else if (e.key === '0') setView(opts.fitView || 'overview');
+    });
+  }
+  new ResizeObserver(resize).observe(stage); resize();
+  const frames = [];
+  (function loop(t) { requestAnimationFrame(loop); frames.forEach(f => f(t)); controls.update(); renderer.render(scene, camera); labelR.render(scene, camera); })(0);
+
+  // picking: click (not drag) on a room floor or a person
+  const ray = new T.Raycaster(), mouse = new T.Vector2(); let down = null, pickCb = null;
+  labelR.domElement.addEventListener('pointerdown', e => { down = [e.clientX, e.clientY]; });
+  labelR.domElement.addEventListener('pointerup', e => {
+    if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 5 || !pickCb) return;
+    const r = labelR.domElement.getBoundingClientRect();
+    mouse.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+    ray.setFromCamera(mouse, camera);
+    const hit = ray.intersectObjects(pickables, false)[0];
+    if (hit) pickCb(hit.object.userData.key);
+  });
+
+  function intro() {
+    const v = viewFor('overview'); camera.position.copy(v.pos); controls.target.copy(v.tgt);
+    if (RM) return;
+    gsap.from(camera.position, {x: v.pos.x - 4, y: v.pos.y + 12, z: v.pos.z + 10, duration: 1.8, ease: 'power3.out'});
+    const rooms = Object.values(recs).filter(r => r.kind === 'room').map(r => r.g.position);
+    const people = Object.values(recs).filter(r => r.kind === 'person').map(r => r.g.position);
+    if (rooms.length) gsap.from(rooms, {y: 2.2, duration: 0.7, ease: 'back.out(1.6)', stagger: 0.03, delay: 0.2});
+    if (people.length) gsap.from(people, {y: 3, duration: 0.6, ease: 'bounce.out', stagger: 0.08, delay: 0.7});
+  }
+
+  const labApi = {T: T, scene: scene, camera: camera, controls: controls, renderer: renderer, recs: recs, colors: C, kinds: KIND, roles: ROLE,
+    room: room, person: person, walk: walk, set: set, chip: chip, finishPins: finishPins, silkRect: silkRect, zone: zone, label: label, busMat: busMat, trace: trace, glowBus: glowBus,
+    fly: fly, clearPackets: clearPackets, hi: hi, clear: clear, pop: pop, setView: setView, focusOn: focusOn, intro: intro, zoom: zoom, refreshFloor: refreshFloor,
+    onPick: cb => { pickCb = cb; }, onFrame: f => frames.push(f), unit: unit};
+  (window.__labs = window.__labs || []).push(labApi);   // lets tests reach the camera
+  return labApi;
+}
+// LAB3D END
+
+// Any localStorage use must be wrapped in try/catch and be optional.
+const hasTHREE = typeof window.THREE !== 'undefined';
+/* ---- 3D stage helper (Three.js r147 UMD). Usage:
+   const st = make3D(document.getElementById('stage'), {camera:[6,5,8]});
+   if (st) { st.scene.add(mesh); st.onFrame(t => {...}); } else { draw the 2D fallback }
+   Labels: st.label(object3D, 'text') keeps an HTML label over a 3D object.
+   Prefer Unit3D (above) for unit-floor scenes; make3D stays for small one-off models. ---- */
+function make3D(el, opts = {}) {
+  const ok = typeof window.THREE !== 'undefined' && (() => { try { const c = document.createElement('canvas'); return !!(c.getContext('webgl') || c.getContext('experimental-webgl')); } catch (e) { return false; } })();
+  if (!ok) { el.insertAdjacentHTML('beforeend', '<div class="fallback">3D view unavailable on this device. The step-by-step view below shows the same thing.</div>'); return null; }
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  el.appendChild(renderer.domElement);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, 1.6, 0.1, 500);
+  camera.position.set(...(opts.camera || [6, 5, 8]));
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xd8dee3, 0.9));
+  const dir = new THREE.DirectionalLight(0xfff4e0, 0.8); dir.position.set(5, 10, 7); scene.add(dir);
+  let controls = null;
+  if (THREE.OrbitControls) { controls = new THREE.OrbitControls(camera, renderer.domElement); controls.enableDamping = true; controls.target.set(...(opts.target || [0, 0, 0])); }
+  const labels = []; const frames = [];
+  function label(obj, text) { const d = document.createElement('div'); d.className = 'label3d'; d.textContent = text; el.appendChild(d); labels.push({ obj, d }); return d; }
+  function resize() { const w = el.clientWidth, h = el.clientHeight || w / 1.6; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); }
+  new ResizeObserver(resize).observe(el); resize();
+  const v = new THREE.Vector3();
+  (function loop(t) {
+    frames.forEach(f => f(t)); if (controls) controls.update(); renderer.render(scene, camera);
+    labels.forEach(({ obj, d }) => { obj.getWorldPosition(v); v.project(camera); d.style.left = ((v.x + 1) / 2 * el.clientWidth) + 'px'; d.style.top = ((1 - v.y) / 2 * el.clientHeight) + 'px'; d.style.display = v.z < 1 ? '' : 'none'; });
+    requestAnimationFrame(loop);
+  })(0);
+  return { THREE, scene, camera, renderer, controls, label, onFrame: f => frames.push(f) };
+}
+
+/*W78 JS START*/
+(function () {
+const $ = s => document.querySelector(s), $$ = s => Array.from(document.querySelectorAll(s));
+const C = {teal: '#0E7C86', coral: '#D4453F', amber: '#C27A08', green: '#1F8A4C', violet: '#6A4FC8', slate: '#5B6B82'};
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+
+/* ---------------- the model ---------------- */
+const MODEL = {
+  anchoring: {name: 'Anchoring', what: 'The first number in the room pulls every later estimate toward it, even when it has nothing to do with the question.', sound: '"Last year we did it with 30 RNs, so plan on 30."', move: 'Build the estimate from the data first (census, ratio, hours), then compare with the anchor.'},
+  availability: {name: 'Availability', what: 'What comes to mind easily (recent, vivid, dramatic) feels more frequent than what the record shows.', sound: '"After that fall on Tuesday we need to focus on days."', move: 'Count the events in the file for the whole period before moving resources.'},
+  confirmation: {name: 'Confirmation bias', what: 'Looking for, noticing and remembering evidence that supports what you already believe, and skipping the rest.', sound: '"See, another complaint from nights: they do not care."', move: 'Look for the disconfirming evidence first and ask someone to argue the other side.'},
+  sunk: {name: 'Sunk cost', what: 'Continuing a course because of what was already spent, although past spending cannot be recovered and should not count.', sound: '"We paid $18,000 for the app; we cannot drop it now."', move: 'Decide on future costs and benefits only; set a stop rule with a date.'},
+  escalation: {name: 'Escalation of commitment', what: 'Putting more effort and money into a failing course of action to avoid admitting the first decision was wrong.', sound: '"We announced bedside report, so we push harder."', move: 'Separate the person from the decision: review the evidence as if the choice were new.'},
+  overconfidence: {name: 'Overconfidence', what: 'Being more certain of a forecast than the evidence allows, usually without a range or a base rate.', sound: '"Turnover will be 10% by March, I know my people."', move: 'Give a range, name the measure and the date, and compare with the base rate.'},
+  groupthink: {name: 'Groupthink', what: 'A cohesive group reaches agreement fast and avoids dissent, so alternatives and risks go unexamined (Janis).', sound: 'Eight minutes, one vendor, nobody objects, the senior nurse is silent.', move: 'Silent idea writing before discussion, a named devil\'s advocate, and an outside view before the vote.'},
+  automation: {name: 'Automation bias', what: 'Accepting a tool\'s output (here an AI assistant\'s) without checking it, because it is fluent and fast.', sound: '"The AI report says our error rate fell 30%."', move: 'Trace every number to its file and row; a figure with no source is removed, not softened.'},
+  autonomy: {name: 'Autonomy', what: 'Respect for persons: people decide for themselves with the information they were promised, and consent conditions are kept.', sound: '"Just tell me who wrote the negative comments."', move: 'Keep the promise under which the information was given; report themes, never names.'},
+  beneficence: {name: 'Beneficence', what: 'The duty to act for the good of patients and staff, not only to avoid harm.', sound: '"It is not required, so we will not do it."', move: 'Ask what the decision does for the people it touches, and choose the option that helps.'},
+  nonmaleficence: {name: 'Nonmaleficence', what: 'First, do no harm: a plan that predictably injures patients or staff is not acceptable because it is cheaper.', sound: '"Run Sunday nights with three nurses and we are within budget."', move: 'Name the harm with the data, refuse the unsafe plan, and offer the safe options with their cost.'},
+  justice: {name: 'Justice', what: 'Fair distribution of burdens and benefits, by a rule that applies to everyone, not by who asks loudest.', sound: '"Give the weekend-off slots to the two who complain most."', move: 'Set a transparent rule, publish it, and apply it to every name on the roster.'}
+};
+
+/* 10 rounds. k: the key of the correct answer; k2: a defensible second answer (2 points). moves: the best (4), the partial (1) and two wrong (0). */
+const ROUNDS = [
+  {id: 'r1', where: 'break', who: ['cno', 'mgr', 'terrence'], packet: {text: '30 RNs, like last year', from: 'cno', color: C.coral},
+   scene: '<b>Budget meeting in the 4 West break room.</b> Dr. Quintana opens: "Last year we ran 4 West with 30 RNs, so plan on 30 again and manage the gaps with overtime." Terrence nods. You have not yet opened the census file, which shows Sunday nights at 7.3 patients per RN and a vacancy of 14.3%.',
+   k: 'anchoring', k2: 'confirmation', opts: ['anchoring', 'confirmation', 'availability', 'sunk', 'justice'],
+   moves: [{t: 'Build the RN number from the census and the ratio target first (27 patients at 1 to 6 on nights, 29 at 1 to 5 on days, across 14 shifts a week), then compare it with last year\'s 30.', s: 4}, {t: 'Ask for 40 RNs so the final number lands higher.', s: 1}, {t: 'Accept 30 and add an overtime line to the budget.', s: 0}, {t: 'Postpone the discussion until the next quarter.', s: 0}],
+   why: 'The first number in the room, 30, is an anchor from last year, when vacancy was 2.9% and overtime 3.8%. The de-biasing move is an independent estimate from the data before the comparison. Asking for 40 is a counter-anchor; it fights the bias with another bias.'},
+  {id: 'r2', where: 'station', who: ['marcus', 'dalia', 'yesenia', 'beatriz', 'mgr'], packet: {text: 'vendor A, agreed', from: 'marcus', color: C.coral},
+   scene: '<b>Falls team, nurse station, 2:40 p.m.</b> Marcus proposes the first fall-mat vendor he called. In eight minutes everyone agrees. Dalia, who has seen two vendors fail on this unit, says nothing. Beatriz asks whether anyone looked at a second quote; Marcus answers "we are all on the same page" and the meeting closes.',
+   k: 'groupthink', k2: 'overconfidence', opts: ['groupthink', 'overconfidence', 'anchoring', 'escalation', 'beneficence'],
+   moves: [{t: 'Reopen the decision: each member writes two concerns in silence first, name Dalia the devil\'s advocate, and bring a second vendor\'s data before the vote.', s: 4}, {t: 'Ask Marcus to present the same vendor again with more detail.', s: 1}, {t: 'Approve vendor A; speed matters with falls at 5.78 per 1,000.', s: 0}, {t: 'Take the decision away from the team and choose yourself.', s: 0}],
+   why: 'A fast unanimous decision with a silent senior member and a dismissed question is groupthink (Janis): the group protects its harmony instead of testing the choice. Silent writing, a devil\'s advocate and an outside view are the classic preventions. Taking the decision away removes the group but not the bias.'},
+  {id: 'r3', where: 'office', who: ['mgr', 'priya'], packet: {text: '$18,000 already spent', from: 'mgr', color: C.coral},
+   scene: '<b>Your office, with Priya from HR.</b> The scheduling app bought by the previous manager cost $18,000 and nine months of setup. Staff still trade shifts on paper and the night schedule is built twice. You hear yourself say: "We have put too much into it to stop now."',
+   k: 'sunk', k2: 'escalation', opts: ['sunk', 'escalation', 'availability', 'automation', 'nonmaleficence'],
+   moves: [{t: 'Decide on the next 12 months only: what the app will cost and save from here against the alternatives, with a stop rule and a date.', s: 4}, {t: 'Give the app one more quarter with more training.', s: 1}, {t: 'Keep the app and require staff to use it or face a write-up.', s: 0}, {t: 'Drop it today and go back to paper permanently.', s: 0}],
+   why: 'The $18,000 is sunk: it is gone whatever you decide, so it cannot be a reason. Escalation of commitment is the same trap seen from the leader\'s side (defending the first decision), so it earns partial credit. The fix is a forward-looking comparison with a kill criterion; "one more quarter" without a criterion is how escalation continues.'},
+  {id: 'r4', where: 'office', who: ['mgr', 'terrence'], packet: {text: 'errors fell 30%', from: 'mgr', color: C.coral},
+   scene: '<b>Your office, 6:50 a.m.</b> An AI assistant drafted your quarterly staffing report overnight. One line reads: "4 West\'s medication error rate fell 30% this quarter, the best improvement in the division." Terrence wants the report by 8. The scorecard shows medication errors per 1,000 doses rising every month, from 2.6 in May to 3.1 in September.',
+   k: 'automation', k2: 'overconfidence', opts: ['automation', 'overconfidence', 'confirmation', 'anchoring', 'autonomy'],
+   moves: [{t: 'Trace every number in the draft to a file and a row before it goes out; remove the sentence and replace it with the scorecard\'s 2.6 to 3.1, which is a worsening.', s: 4}, {t: 'Soften the sentence to "errors improved" and send it.', s: 1}, {t: 'Send it: the AI had the data files, and Terrence is waiting.', s: 0}, {t: 'Ask the AI to double-check its own report.', s: 0}],
+   why: 'The statistic does not exist in unit_scorecard.csv; the trend runs the other way. Trusting a fluent tool without checking is automation bias. Softening a false claim keeps the falsehood, and asking the same tool to check itself is not verification. Human review with a source for every figure is the rule of this course.'},
+  {id: 'r5', where: '418', who: ['mgr', 'dalia'], packet: {text: 'that fall on Tuesday', from: 'dalia', color: C.coral},
+   scene: '<b>Outside room 418, Wednesday morning.</b> Yesterday a patient lost his balance on the scale during the morning weight (incident INC-095, minor harm). Dalia says: "Falls are a day-shift problem now; move the falls project to days." The incident file shows 27 falls in six months: 20 on Friday-to-Sunday nights and 4 on day shifts.',
+   k: 'availability', k2: 'confirmation', opts: ['availability', 'confirmation', 'anchoring', 'groupthink', 'justice'],
+   moves: [{t: 'Count the falls by shift and day of the week for the whole six months before moving anything; fix the scale routine as a small separate action.', s: 4}, {t: 'Add a day-shift item to the falls project without changing the night focus.', s: 1}, {t: 'Move the falls project to days; yesterday\'s fall proves the point.', s: 0}, {t: 'Tell Dalia that one fall is not a pattern and close the subject.', s: 0}],
+   why: 'A vivid event from yesterday feels like a trend: that is availability. The record says night weekends hold 20 of 27 falls and the ratio there is 7.0 patients per RN. The fix is counting, not arguing: the day-shift scale routine deserves its own small fix, but the project stays where the harm is.'},
+  {id: 'r6', where: 'station', who: ['mgr', 'kwame', 'yesenia'], packet: {text: '"nights do not care"', from: 'mgr', color: C.coral},
+   scene: '<b>Reading survey comments at the station.</b> You believe the night shift has stopped caring. Reading the 120 comments, you flag every negative line from nights and skip the praise. The survey file shows night teamwork at 4.00 (days 3.92) and night recognition at 2.62 (days 3.68): nights score low on what the manager gives, high on what they give each other.',
+   k: 'confirmation', k2: 'availability', opts: ['confirmation', 'availability', 'overconfidence', 'automation', 'beneficence'],
+   moves: [{t: 'Compute every item by shift before reading another comment, and ask Yesenia to make the case that nights do care, with evidence.', s: 4}, {t: 'Read the positive comments too, after the negative ones.', s: 1}, {t: 'Share the flagged comments with the CNO as proof of a culture problem.', s: 0}, {t: 'Stop reading the comments; numbers are enough.', s: 0}],
+   why: 'Selecting the evidence that fits a belief is confirmation bias. The data say the opposite of the belief: nights help each other more than days and feel less recognized. The move is to let the full table speak first and assign someone to argue the other side.'},
+  {id: 'r7', where: 'break', who: ['mgr', 'cno'], packet: {text: 'turnover 10% by March', from: 'mgr', color: C.coral},
+   scene: '<b>One-to-one with Dr. Quintana.</b> She asks what your retention plan will deliver. You say: "Turnover will be down to 10% by March. I know my people." You have no measure named, no range, and the scorecard shows RN turnover climbing every month from 11.8% to 24.4% in the past year.',
+   k: 'overconfidence', k2: 'anchoring', opts: ['overconfidence', 'anchoring', 'sunk', 'groupthink', 'justice'],
+   moves: [{t: 'Replace the promise with a range tied to a measure and a date ("from 24.4% toward 18 to 20% by September, measured monthly on the scorecard") and say what the base rate has done.', s: 4}, {t: 'Promise 15% instead of 10% to be safe.', s: 1}, {t: 'Keep the promise; confidence is what the CNO wants to see.', s: 0}, {t: 'Refuse to give any number.', s: 0}],
+   why: 'A precise forecast with no range, no measure and no base rate is overconfidence. The base rate (a year of climbing turnover) says a halving in five months is unlikely. Executives trust a range with a measurement date more than a bold number, and a promise of 15% is still a guess.'},
+  {id: 'r8', where: 'office', who: ['mgr', 'gregory', 'michelle'], packet: {text: 'weekends off for the loudest', from: 'mgr', color: C.coral},
+   scene: '<b>Your office, schedule week.</b> Two weekend-off slots open up. Two day RNs have complained loudly; you are about to give them the slots to keep the peace. The September schedule shows Gregory Hale with 63 overtime hours and Michelle Dorsey with 53, more than half of the unit\'s RN overtime between them, and neither has asked for anything.',
+   k: 'justice', k2: 'beneficence', opts: ['justice', 'beneficence', 'autonomy', 'confirmation', 'availability'],
+   moves: [{t: 'Write a transparent rule for weekend-off requests (rotation, hours carried, time since the last one), publish it, and apply it to every name.', s: 4}, {t: 'Give one slot to a complainer and one to Gregory.', s: 1}, {t: 'Give both slots to the two who complained; it settles the noise.', s: 0}, {t: 'Cancel the weekend-off slots so nobody can argue.', s: 0}],
+   why: 'Justice is a fair rule for distributing burdens and benefits. Rewarding volume rewards the behavior and punishes the quiet nurses carrying the overtime (a fairness and fatigue finding in the schedule file). Splitting the slots is kinder but still a personal favor; the rule is what makes the next decision fair too.'},
+  {id: 'r9', where: 'station', who: ['mgr', 'terrence'], packet: {text: '3 RNs for 28 patients', from: 'terrence', color: C.coral},
+   scene: '<b>Terrence calls at the station.</b> "Run Sunday nights with three RNs for 28 patients and the overtime line is back in budget." That is 9.3 patients per RN. The unit\'s own six months show 36.5 falls per 100 shifts when the ratio is above 6.5, against 2.5 per 100 at or below it.',
+   k: 'nonmaleficence', k2: 'beneficence', opts: ['nonmaleficence', 'beneficence', 'justice', 'sunk', 'anchoring'],
+   moves: [{t: 'Name the predictable harm with the unit\'s falls data, decline the unsafe staffing, and bring the costed alternatives (two hires replacing overtime and agency) to the same call.', s: 4}, {t: 'Agree to try it for one month and watch the falls.', s: 1}, {t: 'Comply; he is the director and the budget is his responsibility.', s: 0}, {t: 'Refuse without explanation and escalate to the CNO.', s: 0}],
+   why: 'Nonmaleficence is the duty not to cause predictable harm: 9.3 patients per RN on the shift type where the unit already has most of its falls is a plan to hurt patients to save money. The ethical step is the refusal with the evidence and an alternative, which is also how a leader keeps the relationship with her director.'},
+  {id: 'r10', where: 'break', who: ['mgr', 'cno', 'priya'], packet: {text: 'who wrote these?', from: 'cno', color: C.coral},
+   scene: '<b>Survey debrief with Dr. Quintana and Priya.</b> The CNO reads the harshest anonymous comments and asks: "Just tell me who wrote these so we can help them." The survey was sent with a written promise of anonymity; you know the response ids could be matched to shift and tenure.',
+   k: 'autonomy', k2: 'nonmaleficence', opts: ['autonomy', 'nonmaleficence', 'justice', 'groupthink', 'escalation'],
+   moves: [{t: 'Decline to de-anonymize: keep the promise under which the staff answered, report themes and counts by shift, and offer an open listening session for anyone who wants to talk.', s: 4}, {t: 'Give the CNO the shift and tenure band of the authors, not the names.', s: 1}, {t: 'Match the ids to the roster and share the names privately with the CNO only.', s: 0}, {t: 'Delete the comments so nobody can ask again.', s: 0}],
+   why: 'Staff gave their answers under a consent condition (anonymity). Respect for persons, the autonomy principle, means keeping it, even for a kind motive. Nonmaleficence also applies (a nurse named for a comment can be harmed), so it earns partial credit. Narrowing to shift and tenure on a 16-response night group is often enough to identify someone.'}
+];
+window.__rounds = ROUNDS;
+
+/* ---------------- the floor ---------------- */
+const FW = 30, FD = 12;
+const ROOMS = [];
+for (let i = 0; i < 16; i++) ROOMS.push({num: 401 + i, x: -13.5 + 1.5 * i, z: -3.0});
+for (let i = 0; i < 16; i++) ROOMS.push({num: 417 + i, x: -13.5 + 1.5 * i, z: 3.0});
+const SUPPORT = [{id: 'station', x: 11.6, z: 3.0, w: 2.8, d: 3.0, kind: 'station', nm: 'Nurse station'}, {id: 'med', x: 14.0, z: 3.0, w: 1.8, d: 3.0, kind: 'med', nm: 'Med room'},
+  {id: 'break', x: 11.4, z: -3.0, w: 2.2, d: 3.0, kind: 'break', nm: 'Break room'}, {id: 'office', x: 13.7, z: -3.0, w: 2.2, d: 3.0, kind: 'supply', nm: 'Manager office'}];
+const SPOTS = {station: {x: 11.6, z: 1.2, cam: [11.6, 2.4]}, break: {x: 11.4, z: -1.2, cam: [11.6, -2.4]}, office: {x: 13.6, z: -1.2, cam: [12.8, -2.4]}, '418': {x: -12.0, z: 1.2, cam: [-12, 2]}};
+const PEOPLE = {mgr: ['Manager', 'You', C.violet], cno: ['CNO', 'Dr. Quintana', C.slate], terrence: ['Director', 'Terrence', C.slate], priya: ['HR', 'Priya', C.slate], dalia: ['Charge', 'Dalia', C.violet], marcus: ['Charge', 'Marcus', C.violet],
+  yesenia: ['Charge', 'Yesenia', C.violet], kwame: ['Charge', 'Kwame', C.violet], beatriz: ['Educator', 'Beatriz', C.violet], gregory: ['RN', 'Gregory', C.teal], michelle: ['RN', 'Michelle', C.teal]};
+const PARK = {mgr: [13.2, -0.9], cno: [-6, -0.8], terrence: [-3, -0.8], priya: [0, -0.8], dalia: [3, 0.8], marcus: [6, 0.8], yesenia: [9, 0.8], kwame: [-9, 0.8], beatriz: [-6, 0.8], gregory: [-9, -0.8], michelle: [-12, -0.8]};
+function buildFloor(lab) {
+  ROOMS.forEach(r => lab.room(String(r.num), r.x, r.z, 1.35, 3.0, String(r.num), {kind: 'patient', num: r.num}));
+  SUPPORT.forEach(s => { const rec = lab.room(s.id, s.x, s.z, s.w, s.d, s.nm, {kind: s.kind, num: s.nm}); if (rec.el && rec.el.classList) rec.el.classList.add('keep'); });
+  Object.keys(PEOPLE).forEach(k => lab.person(k, PARK[k][0], PARK[k][1], PEOPLE[k][0], PEOPLE[k][2], {nm: PEOPLE[k][1]}));
+  if (lab.zone) { lab.zone('rooms 401 to 416', -2.0, -5.3, C.teal); lab.zone('rooms 417 to 432', -2.0, 5.3, C.teal); }
+}
+function Graphics3D(stage) {
+  const lab = Unit3D(stage, {floor: {w: FW, d: FD, title: '4 WEST · MED-SURG · 32 BEDS', corridors: [{z: 0, w: 3}]},
+    views: {overview: {pos: [0, 21, 16], tgt: [0, 0, 0.6], want: 1.6}}, fitView: 'overview'});
+  if (!lab) return null;
+  buildFloor(lab); lab.intro(); return lab;
+}
+function Graphics2D(stage) {
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('viewBox', '0 0 30 12'); svg.setAttribute('class', 'flat'); svg.setAttribute('role', 'img');
+  svg.setAttribute('aria-label', 'Flat floor plan of 4 West with the people of this round.');
+  stage.appendChild(svg);
+  const KF = {patient: '#CFE6E8', station: '#DCD3F4', med: '#F6DFB4', supply: '#D3DBE4', break: '#CDE8D7'};
+  const X = x => x + 15, Z = z => z + 6;
+  svg.innerHTML = '<rect x="0" y="0" width="30" height="12" fill="#ECE7DE"/><rect x="0" y="4.5" width="30" height="3" fill="#F7F4EE"/><line x1="0" y1="6" x2="30" y2="6" stroke="#0E7C86" stroke-opacity=".35" stroke-width=".06" stroke-dasharray=".5 .35"/><text x="15" y="11.4" class="zl">4 WEST · MED-SURG · 32 BEDS</text>';
+  const recs = {};
+  const el = (t, a) => { const e = document.createElementNS(NS, t); Object.keys(a).forEach(k => e.setAttribute(k, a[k])); return e; };
+  return {
+    kind: '2d', recs, colors: C,
+    room(id, x, z, w, d, lbl, o) {
+      const g = el('g', {});
+      g.appendChild(el('rect', {x: X(x - w / 2), y: Z(z - d / 2), width: w, height: d, fill: KF[o.kind] || KF.patient, stroke: '#36465E', 'stroke-width': .05}));
+      if (o.kind === 'patient') g.appendChild(el('rect', {x: X(x) - 0.32, y: Z(z) - 0.75, width: 0.64, height: 1.5, rx: .1, fill: '#fff', stroke: '#C4BCAE', 'stroke-width': .04}));
+      const hl = el('rect', {x: X(x - w / 2), y: Z(z - d / 2), width: w, height: d, fill: C.teal, opacity: 0}); g.appendChild(hl);
+      const tx = el('text', {x: X(x - w / 2) + 0.1, y: Z(z - d / 2) + 0.55, class: 'rl'}); tx.textContent = o.kind === 'patient' ? String(o.num) : lbl.split(' ')[0]; g.appendChild(tx);
+      svg.appendChild(g);
+      const rec = {key: id, kind: 'room', hl, x, z, w, d}; recs[id] = rec; return rec;
+    },
+    person(id, x, z, role, color, o) {
+      const g = el('g', {});
+      const ring = el('circle', {cx: X(x), cy: Z(z), r: 0.42, fill: color, opacity: .9, stroke: '#fff', 'stroke-width': .06});
+      const t = el('text', {x: X(x), y: Z(z) + 0.18, class: 'tk'}); t.textContent = role.slice(0, 3).toUpperCase();
+      const nm = el('text', {x: X(x), y: Z(z) + 0.85, class: 'rl', style: 'text-anchor:middle;font-size:.36px'}); nm.textContent = o.nm;
+      g.appendChild(ring); g.appendChild(t); g.appendChild(nm); svg.appendChild(g);
+      const rec = {key: id, kind: 'person', g, ring, x, z, texts: [t, nm]}; recs[id] = rec; return rec;
+    },
+    hi(rec, color) { if (!rec) return; if (rec.kind === 'room') { rec.hl.setAttribute('fill', color || C.teal); rec.hl.setAttribute('opacity', .45); } else { rec.ring.setAttribute('stroke', color || C.teal); rec.ring.setAttribute('stroke-width', .16); } },
+    clear() { Object.values(recs).forEach(r => { if (r.kind === 'room') r.hl.setAttribute('opacity', 0); else { r.ring.setAttribute('stroke', '#fff'); r.ring.setAttribute('stroke-width', .06); } }); },
+    walk(rec, path) { const p = path[path.length - 1]; rec.x = p.x; rec.z = p.z; rec.ring.setAttribute('cx', X(p.x)); rec.ring.setAttribute('cy', Z(p.z)); rec.texts.forEach((t, i) => { t.setAttribute('x', X(p.x)); t.setAttribute('y', Z(p.z) + (i ? 0.85 : 0.18)); }); return null; },
+    fly(path, text, color, o) {
+      const g = el('g', {class: 'pk'}); const c = el('circle', {cx: X(path[0].x), cy: Z(path[0].z), r: .28, fill: color, stroke: '#fff', 'stroke-width': .06});
+      const t = el('text', {x: X(path[0].x), y: Z(path[0].z) - 0.45, class: 'rl', style: 'text-anchor:middle;fill:' + color + ';font-weight:700'}); t.textContent = text;
+      g.appendChild(c); g.appendChild(t); svg.appendChild(g);
+      const end = path[path.length - 1], place = (x, z) => { c.setAttribute('cx', X(x)); c.setAttribute('cy', Z(z)); t.setAttribute('x', X(x)); t.setAttribute('y', Z(z) - 0.45); };
+      if (!hasGSAP) { place(end.x, end.z); setTimeout(() => g.remove(), 3000); return null; }
+      const pos = {x: path[0].x, z: path[0].z}, tl = gsap.timeline({onComplete: () => g.remove()});
+      for (let i = 1; i < path.length; i++) tl.to(pos, {x: path[i].x, z: path[i].z, duration: (o && o.dur || 1.4) / (path.length - 1), ease: 'none', onUpdate: () => place(pos.x, pos.z)});
+      tl.to(c, {attr: {r: 0.02}, duration: 0.2, delay: 0.6});
+      return tl;
+    },
+    clearPackets() { svg.querySelectorAll('.pk').forEach(p => p.remove()); }, focusOn() {}, setView() {}, pop() {}
+  };
+}
+let G = null;
+const stage = $('#stage');
+try { G = Graphics3D(stage); } catch (e) { console.error(e); G = null; }
+if (!G) { $('#nogl').hidden = false; G = Graphics2D(stage); buildFloor(G); }
+function setCap(t, p, color) { $('#capT').textContent = t; $('#capP').innerHTML = p; $('#cap').style.setProperty('--cap', color || C.teal); }
+
+/* ---------------- game state ---------------- */
+const shuffle = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+let order = [], idx = 0, results = [], cur = null;   // results[i] = {q1, q2}
+function start() { order = shuffle(ROUNDS); idx = 0; results = []; showRound(); }
+function placeRound(r) {
+  G.clear(); G.clearPackets();
+  const spot = SPOTS[r.where] || SPOTS.station;
+  Object.keys(PEOPLE).forEach((k, i) => { const rec = G.recs[k]; const on = r.who.indexOf(k) >= 0; const slot = r.who.indexOf(k);
+    const tgt = on ? {x: spot.x - 0.9 * (r.who.length - 1) / 2 + 0.9 * slot, z: spot.z} : {x: PARK[k][0], z: PARK[k][1]};
+    if (Math.abs(rec.x - tgt.x) > 0.01 || Math.abs(rec.z - tgt.z) > 0.01) { if (G.kind === '2d' || !hasGSAP) G.walk(rec, [tgt]); else G.walk(rec, [{x: rec.x, z: 0}, {x: tgt.x, z: 0}, tgt], {dur: 1.2}); }
+    if (on) G.hi(rec, k === 'mgr' ? C.violet : C.amber);
+  });
+  const roomRec = G.recs[r.where === '418' ? '418' : r.where]; if (roomRec) G.hi(roomRec, C.coral);
+  if (G.kind !== '2d') setTimeout(() => G.focusOn(spot.cam[0], spot.cam[1], 9), 200);
+  setTimeout(() => { const from = G.recs[r.packet.from]; if (from) G.fly([{x: from.x, z: from.z}, {x: spot.x, z: spot.z + (spot.z > 0 ? 0.6 : -0.6)}], r.packet.text, r.packet.color, {dur: 1.4}); }, 1400);
+  $('#people').innerHTML = r.who.map(k => '<span class="' + (k === 'mgr' ? 'on' : '') + '">' + esc(PEOPLE[k][1]) + ' · ' + esc(PEOPLE[k][0]) + '</span>').join('');
+}
+function showRound() {
+  cur = {r: order[idx], q1: null, q2: null, opts: shuffle(order[idx].opts), moves: shuffle(order[idx].moves)};
+  const r = cur.r;
+  renderProgress();
+  $('#round').innerHTML = '<div class="round-head"><span class="pill violet">Round ' + (idx + 1) + ' of 10</span><span class="score"><span>Score so far</span><span class="big" style="font-size:22px">' + total() + '</span></span></div>' +
+    '<p class="scene">' + r.scene + '</p>' +
+    '<div class="q">1. What is at work here?</div><div class="opts" id="q1">' + cur.opts.map((k, i) => '<button type="button" class="btn" data-i="' + i + '">' + esc(MODEL[k].name) + '</button>').join('') + '</div><div id="f1"></div>' +
+    '<div id="q2wrap" hidden><div class="q">2. What is the move?</div><div class="opts" id="q2">' + cur.moves.map((m, i) => '<button type="button" class="btn" data-i="' + i + '">' + esc(m.t) + '</button>').join('') + '</div><div id="f2"></div></div>' +
+    '<div id="nextwrap" hidden style="margin-top:12px"><button type="button" class="btn primary" id="next">' + (idx === 9 ? 'See my score' : 'Next round') + '</button></div>';
+  setCap('Round ' + (idx + 1) + ' · ' + placeName(r.where), 'The people of this round walk to the ' + placeName(r.where).toLowerCase() + '. Amber marks the people in the room, coral the claim at stake. Name what is at work, then pick the move.', C.violet);
+  placeRound(r);
+  $('#q1').addEventListener('click', e => { const b = e.target.closest('button'); if (!b || cur.q1 !== null) return; answer1(+b.dataset.i); });
+  $('#q2').addEventListener('click', e => { const b = e.target.closest('button'); if (!b || cur.q2 !== null) return; answer2(+b.dataset.i); });
+  $('#next').addEventListener('click', () => { results.push({q1: cur.q1s, q2: cur.q2s}); idx++; if (idx >= 10) finish(); else showRound(); });
+}
+function placeName(w) { return w === 'station' ? 'Nurse station' : w === 'break' ? 'Break room' : w === 'office' ? 'Manager office' : 'Room ' + w; }
+function answer1(i) {
+  const r = cur.r, k = cur.opts[i]; cur.q1 = i; cur.q1s = k === r.k ? 6 : k === r.k2 ? 2 : 0;
+  $$('#q1 .btn').forEach((b, j) => { b.disabled = true; const kk = cur.opts[j]; if (kk === r.k) b.classList.add('right'); else if (kk === r.k2) b.classList.add('part'); else if (j === i) b.classList.add('wrong'); });
+  $('#f1').innerHTML = '<div class="feedback ' + (cur.q1s === 6 ? 'ok' : cur.q1s ? 'info' : 'bad') + '">' + (cur.q1s === 6 ? '<b>Correct, 6 points.</b> ' : cur.q1s ? '<b>Defensible, 2 points.</b> The closest fit is <b>' + esc(MODEL[r.k].name) + '</b>. ' : '<b>Not this one.</b> It is <b>' + esc(MODEL[r.k].name) + '</b>. ') + esc(MODEL[r.k].what) + '</div>';
+  $('#q2wrap').hidden = false;
+  setCap('Round ' + (idx + 1) + ' · ' + MODEL[r.k].name, MODEL[r.k].what + ' Now choose the move that fixes it.', cur.q1s === 6 ? C.green : C.amber);
+}
+function answer2(i) {
+  const r = cur.r, m = cur.moves[i]; cur.q2 = i; cur.q2s = m.s;
+  $$('#q2 .btn').forEach((b, j) => { b.disabled = true; const s = cur.moves[j].s; if (s === 4) b.classList.add('right'); else if (s === 1) b.classList.add('part'); else if (j === i) b.classList.add('wrong'); });
+  const best = r.moves.find(x => x.s === 4).t;
+  $('#f2').innerHTML = '<div class="feedback ' + (m.s === 4 ? 'ok' : m.s ? 'info' : 'bad') + '">' + (m.s === 4 ? '<b>Best move, 4 points.</b> ' : m.s ? '<b>Partial, 1 point.</b> The strongest move: ' + esc(best) + ' ' : '<b>No points.</b> The strongest move: ' + esc(best) + ' ') + esc(r.why) + '</div>';
+  $('#nextwrap').hidden = false;
+  renderProgress();
+  G.clearPackets();
+  const spot = SPOTS[r.where] || SPOTS.station, st = G.recs.station;
+  G.fly([{x: st.x, z: 1.2}, {x: spot.x, z: spot.z}], m.s === 4 ? 'the data, the rule' : 'the move', m.s === 4 ? C.green : m.s ? C.amber : C.coral, {dur: 1.6});
+  setCap('Round ' + (idx + 1) + ' · ' + (m.s === 4 ? 'fixed' : m.s ? 'partly fixed' : 'not fixed'), (m.s === 4 ? 'Green: the move brings the data or the rule into the room and the bias loses its grip. ' : m.s ? 'Amber: a step in the right direction that leaves the bias standing. ' : 'Coral: the bias decides. ') + 'Round score ' + (cur.q1s + cur.q2s) + ' of 10.', m.s === 4 ? C.green : m.s ? C.amber : C.coral);
+}
+function total() { return results.reduce((a, r) => a + r.q1 + r.q2, 0) + (cur && cur.q1 !== null ? cur.q1s + (cur.q2 !== null ? cur.q2s : 0) : 0); }
+function renderProgress() { $('#progress').innerHTML = order.map((r, i) => { const res = results[i]; const cls = res ? (res.q1 + res.q2 === 10 ? 'ok' : res.q1 + res.q2 >= 5 ? 'part' : 'bad') : i === idx ? 'on' : ''; return '<i class="' + cls + '"></i>'; }).join(''); }
+function finish() {
+  const t = results.reduce((a, r) => a + r.q1 + r.q2, 0);
+  renderProgress();
+  $('#round').innerHTML = '<div class="final"><div class="eyebrow">Final score</div><div class="big" id="finalScore">' + t + '</div><p>' + (t >= 90 ? 'Executive judgment: you name the bias and bring the file into the room.' : t >= 70 ? 'Solid. Review the rounds where you chose a partial move: the fix usually needs a rule or a date.' : 'Read the course model table below and try again; the pattern is always "file before meeting".') + '</p>' +
+    '<table style="margin:14px 0"><thead><tr><th>Round</th><th>Scene</th><th class="n">Pts</th></tr></thead><tbody>' + order.map((r, i) => '<tr><td>' + (i + 1) + '</td><td style="font-family:var(--font-body);white-space:normal">' + esc(MODEL[r.k].name) + '</td><td style="text-align:right">' + (results[i].q1 + results[i].q2) + '</td></tr>').join('') + '</tbody></table>' +
+    '<button type="button" class="btn primary" id="again">Try again (shuffled)</button></div>';
+  $('#again').addEventListener('click', start);
+  setCap('Final score ' + t + ' of 100', t >= 90 ? 'The manager walks back to the station with the data in hand.' : 'Try again: the rounds and the answer order are shuffled every time.', t >= 70 ? C.green : C.amber);
+  G.clear(); G.clearPackets(); G.hi(G.recs.mgr, C.violet); if (G.kind !== '2d') G.setView('overview');
+}
+$('#modelBody').innerHTML = Object.values(MODEL).map(m => '<tr><td>' + esc(m.name) + '</td><td>' + esc(m.what) + '</td><td>' + esc(m.sound) + '</td><td>' + esc(m.move) + '</td></tr>').join('');
+window.__game = {answer1: i => answer1(i), answer2: i => answer2(i), cur: () => cur, next: () => $('#next').click(), total};
+start();
+if (!hasGSAP) $('#capP').innerHTML += ' (Animations are off because the animation library did not load; every round still works.)';
+})();
+/*W78 JS END*/
+</script>
+</body>
+</html>
