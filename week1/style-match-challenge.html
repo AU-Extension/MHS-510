@@ -233,7 +233,11 @@
   .reveal{animation:rise .7s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*80ms)}
   @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
   @media(max-width:860px){
-    .app .stage .zoomctl{top:56px;right:10px;transform:none;flex-direction:row}
+    .app .stage .zoomctl{top:50%;right:8px;transform:translateY(-50%);flex-direction:column;padding:3px;align-items:center}
+    .app .stage .zoomctl>button{width:30px!important;height:28px!important;font-size:16px}
+    .app .stage .zoomctl>button.fit{height:24px!important;font-size:9px}
+    .app .stage .zoomctl .pad{grid-template-columns:repeat(3,22px)!important;grid-template-rows:repeat(3,22px)!important;margin:2px 0;padding-top:3px}
+    .app .stage .zoomctl .pad button{width:22px!important;height:22px!important;font-size:10px}
     .app{grid-template-columns:1fr;height:auto}
     .app .stage{height:62vh;min-height:360px}
     .panel{border-left:0;border-top:1px solid var(--line);overflow:visible}
@@ -251,9 +255,44 @@
     .tag .sb{display:none}
     .scroll-x::before{content:"Swipe sideways to see the whole table";display:block;font:500 11px var(--font-mono);letter-spacing:.04em;color:var(--muted);margin:0 0 6px}
   }
+
+  /* ---- stacked layout (v2, October 30 2026): the 3D floor uses the full width of the page, instructions and controls go below it ---- */
+  .app{display:block;height:auto;min-height:0}
+  .app>.lab-head{max-width:1240px;margin:0 auto;padding:18px 16px 14px}
+  .app>.stage{width:100%;height:clamp(420px,70vh,860px);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .panel{max-width:1240px;margin:0 auto;border-left:0;overflow:visible;background:none;display:block;columns:2 420px;column-gap:28px;padding:20px 16px 28px}
+  .panel>*{break-inside:avoid;margin:0 0 22px}
+  .panel>header,.panel>footer,.panel>.guide,.panel>.span-all{column-span:all}
+  /* guide: numbered steps with the current one highlighted, plus a "do this now" line */
+  .guide{max-width:1240px;margin:0 auto;padding:18px 16px 4px;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px 26px;align-items:start}
+  .guide h2{grid-column:1/-1;margin:0;font-size:19px}
+  .guide ol.steps{list-style:none;margin:0;padding:0;display:grid;gap:8px;counter-reset:s}
+  .guide ol.steps li{counter-increment:s;position:relative;padding:9px 12px 9px 46px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);color:var(--ink);font-size:15px;line-height:1.45;box-shadow:var(--shadow-sm)}
+  .guide ol.steps li::before{content:counter(s);position:absolute;left:12px;top:9px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:700 12px var(--font-mono);background:var(--panel-2);color:var(--ink-2);border:1px solid var(--line)}
+  .guide ol.steps li.current{border-color:var(--teal);box-shadow:0 0 0 2px rgba(14,124,134,.15)}
+  .guide ol.steps li.current::before{background:var(--teal);color:#fff;border-color:var(--teal)}
+  .guide ol.steps li.done{color:var(--muted)}
+  .guide ol.steps li.done::before{content:"\2713";background:var(--green);color:#fff;border-color:var(--green)}
+  .guide ol.steps li b,.guide .now b{color:var(--teal);font-weight:700}
+  .guide .now{border-left:4px solid var(--teal);background:var(--panel);border-radius:var(--r);padding:14px 16px;font-size:16px;line-height:1.5;color:var(--ink);box-shadow:var(--shadow-sm)}
+  .guide .now .k{display:block;font:600 10.5px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:4px}
+  .guide .tips{margin:10px 0 0;padding:0;list-style:none;font-size:13.5px;color:var(--muted);display:grid;gap:4px}
+  @media(max-width:860px){.guide{grid-template-columns:1fr}.panel{columns:1}}
+  /* page mode: the 3D card on top across the full width, the round or task below */
+  .card .stage.wide{aspect-ratio:21/9;min-height:360px}
+  @media(max-width:860px){.card .stage.wide{aspect-ratio:4/3;min-height:0}}
   /* ===== end of theme ===== */
-  /* page-specific: style match challenge (page mode: the floor and the round on the left, the score and the crib sheet on the right) */
-  .stage3d{aspect-ratio:16/9}
+  /* page-specific: style match challenge (page mode, layout v2: the floor card across the top, then the guide, the round, and the score) */
+  .card .stage.wide{border:1px solid var(--line);border-radius:var(--r)}
+  /* compact zoom and pan pad on the board card at tablet and phone widths (the theme does this for app mode only) */
+  @media(max-width:860px){
+    .card .stage.wide .zoomctl{right:6px;padding:3px;align-items:center}
+    .card .stage.wide .zoomctl>button{width:30px!important;height:26px!important;font-size:16px}
+    .card .stage.wide .zoomctl>button.fit{height:22px!important;font-size:9px}
+    .card .stage.wide .zoomctl .pad{grid-template-columns:repeat(3,20px)!important;grid-template-rows:repeat(3,20px)!important;margin:2px 0;padding-top:3px}
+    .card .stage.wide .zoomctl .pad button{width:20px!important;height:20px!important;font-size:10px}
+  }
+  .round-head:first-child,.prog+.round-head{margin-top:4px}
   .round-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin:14px 0 6px}
   .round-head .rn{font:600 11px var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--violet)}
   .round-head h3{margin:0;font-size:16px}
@@ -283,7 +322,7 @@
   .final{margin-top:14px;padding:14px;border-radius:var(--r);border:1px solid var(--line);background:var(--panel-2)}
   .final .big{font:700 44px/1 var(--font-display);color:var(--ink)}
   .final table td,.final table th{font-family:var(--font-body);font-size:12.5px}
-  .legend{margin-top:8px}
+  .legend{margin-top:10px}
   @media(max-width:520px){.opts{grid-template-columns:1fr 1fr}}
 
 </style>
@@ -299,50 +338,64 @@
 </header>
 
 <main class="wrap">
-  <section class="hero reveal" style="--i:0">
-    <span class="eyebrow">Week 1 · Challenge</span>
+  <section class="hero split reveal" style="--i:0">
+    <div><span class="eyebrow">MHS 510 · Week 1 · Challenge</span>
     <h1>Style match challenge</h1>
-    <p class="lede">Ten situations from 4 West. For each one, pick the leadership style that fits best and the reason the theory gives. A defensible second choice earns partial credit. Final score out of 100.</p>
+    <p class="lede">Ten situations from 4 West. For each one, pick the leadership style that fits best and the reason the theory gives. A defensible second choice earns partial credit. Final score out of 100.</p></div>
+    <div class="spec"><div><b>10</b><span>rounds, 10 points each</span></div><div><b>6 + 4</b><span>points for the style and the reason</span></div><div><b>3</b><span>points for a defensible second style</span></div><div><b>Shuffled</b><span>rounds and options, every attempt</span></div></div>
   </section>
 
-  <details class="howto reveal" style="--i:1">
-    <summary>How to use this interactive</summary>
-    <ol>
-      <li>Read the situation. The floor shows where it happens and who is involved; orbit, zoom, or click a room or a person.</li>
-      <li>Pick one of the seven styles. The best fit earns 6 points; a defensible second choice earns 3.</li>
-      <li>Pick the reason the theory gives for that choice. The right reason earns 4 points.</li>
-      <li>Press Check, read the feedback (it uses the theory's own terms and the unit's data), then Next round.</li>
-      <li>After ten rounds you get a score out of 100 and a table of your answers. Try again reshuffles the rounds and the options.</li>
+  <section class="card reveal" style="--i:1" data-ref="RM 1 · FLOOR">
+    <h2>On the floor</h2>
+    <div class="stage wide" id="stage"><div class="nogl" id="nogl" hidden>The 3D unit floor needs WebGL and the 3D libraries, which are not available here. This flat floor plan shows the same rooms and people.</div></div>
+    <div class="legend" aria-label="Colors"><span style="--c:var(--violet)"><i></i>manager, leadership move</span><span style="--c:var(--teal)"><i></i>RN</span><span style="--c:var(--green)"><i></i>CNA</span><span style="--c:var(--amber)"><i></i>caution</span><span style="--c:var(--coral)"><i></i>risk</span></div>
+    <div class="caption" id="cap" aria-live="polite"><div class="t">On the floor</div><p id="capText">The situation of each round is marked on the floor: coral for risk, amber for caution, violet for the leadership move.</p></div>
+    <div class="stepper"><span class="score" style="margin-left:auto"><span class="big" id="scoreBoard">0</span><span>points so far, out of 100</span></span></div>
+  </section>
+
+  <section class="guide reveal" style="--i:2;padding:18px 0 16px" aria-labelledby="guideTitle">
+    <h2 id="guideTitle">How this challenge works</h2>
+    <ol class="steps" id="howSteps">
+      <li data-h="1">Read the situation in the round card below. The board above shows where it happens and who is involved: coral marks a risk, amber a caution, and violet the leadership move. Click a room or a person on the board to see its name in the box under the board.</li>
+      <li data-h="2">Under <b>Which style fits best?</b>, click one of the seven styles. The best fit earns 6 points. A defensible second choice earns 3.</li>
+      <li data-h="3">Under <b>Why? Pick the reason the theory gives.</b>, click one reason. The right reason earns 4 points.</li>
+      <li data-h="4">Press <b>Check</b>. The feedback appears under the buttons. Green marks the best style and the right reason; amber marks the defensible second choice. A violet dot on the board above carries the best style to the place of the situation.</li>
+      <li data-h="5">Press <b>Next round</b>. After round 10, press <b>See the final score</b>. Your score and a table of your answers appear under <b>Your score</b>. <b>Try again (new order)</b> shuffles the rounds and the options.</li>
     </ol>
-  </details>
+    <div>
+      <div class="now" aria-live="polite"><span class="k">Do this now</span><span id="nowText">Read round 1 below. Then click the style that fits best.</span></div>
+      <ul class="tips">
+        <li>Words to know: readiness (Hersey and Blanchard) is how able and willing a person is to do this task. R1 is unable and insecure, R2 unable but willing, R3 able but insecure or unwilling, R4 able and willing. The crib sheet at the bottom lists every style.</li>
+        <li>Drag on the board to turn it. Use <b>+</b>, <b>&minus;</b>, the arrows, and <b>FIT</b> to zoom and move. <b>FIT</b> shows the whole floor again.</li>
+      </ul>
+    </div>
+  </section>
 
-  <div class="grid two">
-    <section class="card reveal" style="--i:2" data-ref="RM 1 · FLOOR">
-      <h2>On the floor</h2>
-      <div class="stage3d" id="stage"><div class="nogl" id="nogl" hidden>The 3D unit floor needs WebGL and the 3D libraries, which are not available here. The flat floor plan shows the same rooms and people.</div></div>
-      <div class="legend" aria-label="Colors"><span style="--c:var(--violet)"><i></i>manager, leadership move</span><span style="--c:var(--teal)"><i></i>RN</span><span style="--c:var(--green)"><i></i>CNA</span><span style="--c:var(--amber)"><i></i>caution</span><span style="--c:var(--coral)"><i></i>risk</span></div>
-      <div class="round-head"><span class="rn" id="roundNo">Round 1 of 10</span><h3 id="roundTitle"></h3></div>
-      <p class="sit" id="sit"></p>
-      <div class="qlabel">Which style fits best?</div>
-      <div class="opts" id="styleOpts" role="group" aria-label="Leadership styles"></div>
-      <div class="qlabel">Why? Pick the reason the theory gives.</div>
-      <div class="opts reasons" id="reasonOpts" role="group" aria-label="Reasons"></div>
-      <div class="actions">
-        <button class="btn primary" type="button" id="check" disabled>Check</button>
-        <button class="btn" type="button" id="next" hidden>Next round ▶</button>
-        <span class="hint" id="pickHint">Pick a style and a reason.</span>
-      </div>
-      <div id="fb" class="feedback fb" hidden></div>
-      <div class="caption" id="cap" style="margin-top:12px"><div class="t">On the floor</div><p id="capText">The situation of each round is marked on the floor: coral for risk, amber for caution, violet for the leadership move.</p></div>
-    </section>
+  <section class="card reveal" style="--i:3" id="roundCard" data-ref="ROUND">
+    <div class="prog" id="prog" aria-hidden="true"></div>
+    <div class="round-head"><span class="rn" id="roundNo">Round 1 of 10</span><h3 id="roundTitle"></h3></div>
+    <p class="sit" id="sit"></p>
+    <div class="qlabel" id="qStyle">Which style fits best?</div>
+    <div class="opts" id="styleOpts" role="group" aria-labelledby="qStyle"></div>
+    <div class="qlabel" id="qReason">Why? Pick the reason the theory gives.</div>
+    <div class="opts reasons" id="reasonOpts" role="group" aria-labelledby="qReason"></div>
+    <div class="actions">
+      <button class="btn primary" type="button" id="check" disabled>Check</button>
+      <button class="btn" type="button" id="next" hidden>Next round</button>
+      <span class="hint" id="pickHint">Pick a style and a reason. Then press Check.</span>
+    </div>
+    <div id="fb" class="feedback fb" hidden aria-live="polite"></div>
+  </section>
 
-    <aside class="card reveal" style="--i:3" data-ref="STATION · SCORE">
-      <h2>Score</h2>
+  <div class="grid two" style="margin-top:16px">
+    <section class="card reveal" style="--i:4" id="scoreCard" data-ref="STATION · SCORE">
+      <h2>Your score</h2>
       <div class="score"><span>Points so far</span><span class="big" id="scoreNow">0</span><span id="scoreOf">of 100</span></div>
-      <div class="prog" id="prog" aria-hidden="true"></div>
-      <div class="regs" id="regs"></div>
+      <div class="regs" id="regs" style="margin-top:12px"></div>
       <div id="final" class="final" hidden></div>
-      <h2 style="margin-top:18px">Crib sheet</h2>
+    </section>
+    <aside class="card reveal" style="--i:5" data-ref="CRIB">
+      <h2>Crib sheet</h2>
       <div class="scroll-x"><table class="crib"><thead><tr><th>Style</th><th>Theory</th><th>Fits</th></tr></thead><tbody id="crib"></tbody></table></div>
       <p class="hint" style="margin-top:8px">Readiness (Hersey and Blanchard): R1 unable and insecure, R2 unable but willing, R3 able but insecure or unwilling, R4 able and willing. The style follows the follower, not the manager's preference.</p>
     </aside>
@@ -408,6 +461,8 @@ function Unit3D(stage, opts) {
   controls.enableDamping = true; controls.dampingFactor = 0.08;
   controls.maxPolarAngle = Math.PI * 0.46; controls.minDistance = 4; controls.maxDistance = 46;
   controls.zoomSpeed = 1.1;
+  // pan: right-drag, Ctrl or Shift plus drag, or two fingers; stays on the floor plane
+  controls.enablePan = true; controls.screenSpacePanning = false; controls.panSpeed = 0.9;
   // keep the mouse wheel inside the 3D view: zoom the floor, do not scroll the page
   stage.addEventListener('wheel', e => e.preventDefault(), {passive: false});
 
@@ -684,11 +739,25 @@ function Unit3D(stage, opts) {
     if (name === 'overview' || !views[name]) {
       // the overview (and FIT) must show the whole floor width, also on narrow phone screens,
       // leaving room for the zoom buttons at the right edge
-      const tanH = Math.tan(T.MathUtils.degToRad(camera.fov / 2)) * camera.aspect;
+      // and, on wide stages, fill the stage: the floor fits both the width and the height of the view
+      const tanV = Math.tan(T.MathUtils.degToRad(camera.fov / 2)), tanH = tanV * camera.aspect;
+      const dist0 = pos.distanceTo(tgt), sinE = Math.max(0.3, (pos.y - tgt.y) / dist0);
       const need = (B.w / 2 + 0.5) / (tanH * 0.92) + B.d * 0.25;
-      f = Math.max(f, need / pos.distanceTo(tgt));
-      controls.maxDistance = Math.max(controls.maxDistance, need * 1.3);
-      if (scene.fog) { scene.fog.near = Math.max(scene.fog.near, need * 1.1); scene.fog.far = Math.max(scene.fog.far, need * 2.6); }
+      const needD = (B.d / 2 * sinE + 0.8) / (tanV * 0.78) + B.d * 0.25;   // 0.78 leaves room for the HUD bars
+      const need2 = Math.max(need, needD);
+      f = need2 / dist0;
+      // phones: when the zoom controls are a column on the right edge, fit the floor in the space to their left
+      const zc = stage.querySelector('.zoomctl'), sw = stage.clientWidth;
+      if (zc && sw && sw < 760 && zc.offsetWidth < sw * 0.4) {
+        const m = zc.offsetWidth + 14, keep = (sw - m) / sw;
+        f = Math.max(need / keep, needD) / dist0;
+        const d = f * dist0, shift = (m / sw) * d * tanH;           // move the view so the floor centers in the free space
+        const fwd = tgt.clone().sub(pos); fwd.y = 0; fwd.normalize();
+        const right = new T.Vector3(-fwd.z, 0, fwd.x);
+        tgt.add(right.clone().multiplyScalar(shift)); pos.add(right.multiplyScalar(shift));
+      }
+      controls.maxDistance = Math.max(controls.maxDistance, need2 * 1.3);
+      if (scene.fog) { scene.fog.near = Math.max(scene.fog.near, need2 * 1.1); scene.fog.far = Math.max(scene.fog.far, need2 * 2.6); }
     }
     pos.sub(tgt).multiplyScalar(f).add(tgt);
     return {pos: pos, tgt: tgt};
@@ -720,28 +789,57 @@ function Unit3D(stage, opts) {
     const p = t.clone().add(off), k = 1 / (gsap.globalTimeline.timeScale() || 1);
     gsap.to(camera.position, {x: p.x, y: p.y, z: p.z, duration: RM ? 0 : 0.45, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
   }
+  // pan buttons (arrows) and arrow keys: slide the view across the floor, in screen directions
+  const PANLIM = {x: B.w / 2 + 1.5, z: B.d / 2 + 1.5};
+  function clampTarget(v) { v.x = Math.max(-PANLIM.x, Math.min(PANLIM.x, v.x)); v.z = Math.max(-PANLIM.z + (B.cz || 0), Math.min(PANLIM.z + (B.cz || 0), v.z)); return v; }
+  function pan(dx, dz) {   // dx: +1 right, -1 left; dz: +1 up (away), -1 down (toward the viewer)
+    const off = camera.position.clone().sub(controls.target), dist = off.length(), step = Math.max(0.6, dist * 0.12);
+    const fwd = new T.Vector3(); camera.getWorldDirection(fwd); fwd.y = 0;
+    if (fwd.lengthSq() < 1e-6) fwd.set(0, 0, -1); fwd.normalize();
+    const right = new T.Vector3(-fwd.z, 0, fwd.x);
+    const tgt = clampTarget(controls.target.clone().add(right.multiplyScalar(dx * step)).add(fwd.multiplyScalar(dz * step)));
+    const pos = tgt.clone().add(off), k = 1 / (gsap.globalTimeline.timeScale() || 1);
+    gsap.to(controls.target, {x: tgt.x, y: tgt.y, z: tgt.z, duration: RM ? 0 : 0.35, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
+    gsap.to(camera.position, {x: pos.x, y: pos.y, z: pos.z, duration: RM ? 0 : 0.35, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
+  }
+  controls.addEventListener('change', () => { const c = controls.target, x = c.x, z = c.z; clampTarget(c); if (c.x !== x || c.z !== z) camera.position.add(new T.Vector3(c.x - x, 0, c.z - z)); });
   if (opts.zoomUI !== false) {
     if (!document.getElementById('lab3d-zoom-css')) {
       const st = document.createElement('style'); st.id = 'lab3d-zoom-css';
       st.textContent = '.zoomctl{position:absolute;z-index:4;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:2px;padding:4px;background:rgba(255,255,255,.9);border:1px solid #D9D3C8;border-radius:10px;backdrop-filter:blur(6px);box-shadow:0 1px 2px rgba(20,35,58,.08)}' +
         '.zoomctl button{width:38px;height:34px;border:0;border-radius:7px;background:transparent;color:#14233A;font:700 18px/1 "JetBrains Mono",ui-monospace,monospace;cursor:pointer;padding:0}' +
         '.zoomctl button.fit{font-size:10px;letter-spacing:.06em;height:28px}.zoomctl button:hover{background:rgba(14,124,134,.12);color:#0E7C86}' +
-        '.zoomctl button:focus-visible{outline:2px solid #0E7C86;outline-offset:1px}@media(max-width:520px){.zoomctl{right:10px}.zoomctl button{width:34px;height:32px}}';
+        '.zoomctl button:focus-visible{outline:2px solid #0E7C86;outline-offset:1px}' +
+        '.zoomctl .pad{display:grid;grid-template-columns:repeat(3,26px);grid-template-rows:repeat(3,24px);gap:1px;margin:3px 0;padding-top:4px;border-top:1px solid #D9D3C8}' +
+        '.zoomctl .pad button{width:26px;height:24px;font-size:12px}.zoomctl .pad .u{grid-area:1/2}.zoomctl .pad .l{grid-area:2/1}.zoomctl .pad .c{grid-area:2/2;font-size:9px}.zoomctl .pad .r{grid-area:2/3}.zoomctl .pad .d{grid-area:3/2}' +
+        '@media(max-width:520px){.zoomctl{right:10px}.zoomctl button{width:34px;height:32px}.zoomctl .pad{grid-template-columns:repeat(3,28px);grid-template-rows:repeat(3,26px)}.zoomctl .pad button{width:28px;height:26px}}';
       document.head.appendChild(st);
     }
     const box = document.createElement('div'); box.className = 'zoomctl'; box.setAttribute('role', 'group'); box.setAttribute('aria-label', 'Zoom');
     box.innerHTML = '<button type="button" data-z="in" aria-label="Zoom in" title="Zoom in (+)">+</button>' +
       '<button type="button" data-z="out" aria-label="Zoom out" title="Zoom out (-)">&minus;</button>' +
+      '<div class="pad" role="group" aria-label="Move the view">' +
+      '<button type="button" class="u" data-p="u" aria-label="Move the view up" title="Move up (arrow up)">&#9650;</button>' +
+      '<button type="button" class="l" data-p="l" aria-label="Move the view left" title="Move left (arrow left)">&#9664;</button>' +
+      '<button type="button" class="c" data-z="fit" aria-label="Center the view" title="Center the view (0)">&#9679;</button>' +
+      '<button type="button" class="r" data-p="r" aria-label="Move the view right" title="Move right (arrow right)">&#9654;</button>' +
+      '<button type="button" class="d" data-p="d" aria-label="Move the view down" title="Move down (arrow down)">&#9660;</button></div>' +
       '<button type="button" class="fit" data-z="fit" aria-label="Show the whole unit" title="Show the whole unit (0)">FIT</button>';
     stage.appendChild(box);
     ['pointerdown', 'pointerup', 'wheel', 'click'].forEach(ev => box.addEventListener(ev, e => e.stopPropagation()));
     box.addEventListener('click', e => {
       const b = e.target.closest('button'); if (!b) return;
-      if (b.dataset.z === 'in') zoom(0.75); else if (b.dataset.z === 'out') zoom(1.33); else setView(opts.fitView || 'overview');
+      const pd = {l: [-1, 0], r: [1, 0], u: [0, 1], d: [0, -1]}[b.dataset.p];
+      if (pd) pan(pd[0], pd[1]);
+      else if (b.dataset.z === 'in') zoom(0.75); else if (b.dataset.z === 'out') zoom(1.33); else setView(opts.fitView || 'overview');
     });
+    let over = false;
+    stage.addEventListener('pointerenter', () => { over = true; }); stage.addEventListener('pointerleave', () => { over = false; });
     document.addEventListener('keydown', e => {
       const t = e.target, tag = t && t.tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) return;
+      const ak = {ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1]}[e.key];
+      if (ak) { if (over || stage.contains(e.target)) { e.preventDefault(); pan(ak[0], ak[1]); } return; }
       if (e.key === '+' || e.key === '=') zoom(0.75);
       else if (e.key === '-' || e.key === '_') zoom(1.33);
       else if (e.key === '0') setView(opts.fitView || 'overview');
@@ -775,7 +873,7 @@ function Unit3D(stage, opts) {
 
   const labApi = {T: T, scene: scene, camera: camera, controls: controls, renderer: renderer, recs: recs, colors: C, kinds: KIND, roles: ROLE,
     room: room, person: person, walk: walk, set: set, chip: chip, finishPins: finishPins, silkRect: silkRect, zone: zone, label: label, busMat: busMat, trace: trace, glowBus: glowBus,
-    fly: fly, clearPackets: clearPackets, hi: hi, clear: clear, pop: pop, setView: setView, focusOn: focusOn, intro: intro, zoom: zoom, refreshFloor: refreshFloor,
+    fly: fly, clearPackets: clearPackets, hi: hi, clear: clear, pop: pop, setView: setView, focusOn: focusOn, intro: intro, zoom: zoom, pan: pan, refreshFloor: refreshFloor,
     onPick: cb => { pickCb = cb; }, onFrame: f => frames.push(f), unit: unit};
   (window.__labs = window.__labs || []).push(labApi);   // lets tests reach the camera
   return labApi;
@@ -806,7 +904,8 @@ const KINDACC = {patient: '#0E7C86', station: '#6A4FC8', med: '#C27A08', supply:
 const CORR = {z: -2.4, x: 9};
 const atRoom = id => { const r = FLOOR.rooms.find(q => q.id === id); return r.door === 's' ? {x: r.x, z: r.z + r.d / 2 + 0.6} : r.door === 'n' ? {x: r.x, z: r.z - r.d / 2 - 0.6} : r.door === 'w' ? {x: r.x - r.w / 2 - 0.6, z: r.z} : {x: r.x + r.w / 2 + 0.6, z: r.z}; };
 // the n-th token sent to the same door stands 1.3 units to the side (along the corridor) so the tags do not overlap
-function spreadPoint(id, n) { const r = FLOOR.rooms.find(q => q.id === id), p = atRoom(id); if (!r || !n) return p; const k = (n % 2 ? 1 : -1) * Math.ceil(n / 2) * 1.3; return (r.door === 'w' || r.door === 'e') ? {x: p.x, z: p.z + k} : {x: p.x + k, z: p.z}; }
+// (layout v2) visitors at the same door stand farther apart, and on a north or south door every other one steps 0.8 into the corridor, so the name tags do not overlap in the overview
+function spreadPoint(id, n) { const r = FLOOR.rooms.find(q => q.id === id), p = atRoom(id); if (!r || !n) return p; const k = (n % 2 ? 1 : -1) * Math.ceil(n / 2) * 1.3; return (r.door === 'w' || r.door === 'e') ? {x: p.x, z: p.z + k * 1.25} : {x: p.x + k, z: p.z + (n % 2 ? (r.door === 's' ? 0.8 : -0.8) : 0)}; }
 // a corridor path from a point to a room door: along the main corridor, then down the east wing when needed
 function pathTo(from, id) {
   const to = atRoom(id), p = [];
@@ -923,6 +1022,11 @@ function Floor(stage, people, opts) {
 // FLOOR END
 
 const $ = s => document.querySelector(s), $$ = s => Array.from(document.querySelectorAll(s));
+// guide block: mark the current step (1-based) and say the single next action
+function guide(stepNo, nowHtml) {
+  document.querySelectorAll('#howSteps li').forEach(li => { const n = +li.dataset.h; li.classList.toggle('done', n < stepNo); li.classList.toggle('current', n === stepNo); });
+  if (nowHtml) document.getElementById('nowText').innerHTML = nowHtml;
+}
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
 const C = {violet: '#6A4FC8', teal: '#0E7C86', green: '#1F8A4C', amber: '#C27A08', coral: '#D4453F', slate: '#5B6B82'};
 
@@ -939,13 +1043,13 @@ const STYLE_LIST = [
 const NAME = Object.fromEntries(STYLE_LIST.map(s => [s[0], s[1]]));
 const CAST = [
   {id: 'mgr', x: 6.6, z: -2.4, role: 'MANAGER', color: C.violet, nm: 'You'},
-  {id: 'priscila', x: -9.5, z: -2.4, role: 'RN · NEW GRAD', color: C.teal, nm: 'Priscila N.'},
-  {id: 'carmen', x: -6.0, z: -2.0, role: 'RN · 21 YRS', color: C.teal, nm: 'Carmen A.'},
-  {id: 'marcus', x: -2.5, z: -2.4, role: 'CHARGE RN', color: C.teal, nm: 'Marcus R.'},
-  {id: 'yesenia', x: 1.0, z: -2.0, role: 'CHARGE RN', color: C.teal, nm: 'Yesenia C.'},
-  {id: 'naomi', x: 3.8, z: -2.4, role: 'RN · 1ST YEAR', color: C.teal, nm: 'Naomi J-B.'},
+  {id: 'priscila', x: -10.5, z: -2.4, role: 'RN · NEW GRAD', color: C.teal, nm: 'Priscila N.'},
+  {id: 'carmen', x: -7.6, z: -2.0, role: 'RN · 21 YRS', color: C.teal, nm: 'Carmen A.'},
+  {id: 'marcus', x: -1.8, z: -2.0, role: 'CHARGE RN', color: C.teal, nm: 'Marcus R.'},
+  {id: 'yesenia', x: 1.1, z: -2.4, role: 'CHARGE RN', color: C.teal, nm: 'Yesenia C.'},
+  {id: 'naomi', x: 4.0, z: -2.0, role: 'RN · 1ST YEAR', color: C.teal, nm: 'Naomi J-B.'},
   {id: 'gregory', x: 9.0, z: 1.2, role: 'RN', color: C.teal, nm: 'Gregory H.'},
-  {id: 'valeria', x: -4.2, z: -2.0, role: 'CNA', color: C.green, nm: 'Valeria M.'}
+  {id: 'valeria', x: -4.7, z: -2.4, role: 'CNA', color: C.green, nm: 'Valeria M.'}
 ];
 // Ten rounds. best earns 6 points, second earns 3; the reason marked ok earns 4. Reasons are shuffled on screen.
 const ROUNDS = [
@@ -1002,11 +1106,11 @@ window.__mhs = {ROUNDS, scoreRound, STYLE_LIST};
 let order = shuffle(ROUNDS.map((r, i) => i)), cur = 0, picked = {style: null, reason: null}, results = [], styleOrder = [], reasonOrder = [];
 const stage = $('#stage');
 let G = null;
-try { G = Floor(stage, CAST, {views: {overview: {pos: [0, 21, 16], tgt: [0, 0, 0.3], want: 1.5}}}); } catch (e) { console.error(e); G = null; }
+try { G = Floor(stage, CAST, {views: {overview: {pos: [0, 17, 18], tgt: [0, 0, 0.6], want: 1.5}}}); } catch (e) { console.error(e); G = null; }
 if (!G) G = Floor(stage, CAST);
 if (G.kind === '2d') $('#nogl').hidden = false;
 G.set('station', 'census 31', '');
-G.onPick(id => { const p = CAST.find(q => q.id === id); $('#capText').textContent = p ? p.nm + ' (' + p.role.toLowerCase() + ').' : (/^\d/.test(id) ? 'Room ' + id + '.' : id + '.'); });
+G.onPick(id => { const p = CAST.find(q => q.id === id), rm = FLOOR.rooms.find(q => q.id === id); $('#capText').textContent = p ? p.nm + ': ' + p.role.split(' ').map(w => w === '·' ? ',' : /^(RN|CNA)$/.test(w) ? w : ({YRS: 'years', '1ST': 'first', GRAD: 'graduate'})[w] || w.toLowerCase()).join(' ').replace(/ ,/g, ',') + '.' : (rm ? rm.label + '.' : id + '.'); });
 if (G.intro) G.intro();
 const HOME = {}; CAST.forEach(p => HOME[p.id] = {x: p.x, z: p.z});
 const point = t => { const r = FLOOR.rooms.find(q => q.id === t); return r ? atRoom(t) : t; };
@@ -1021,7 +1125,7 @@ function showScene(r, animate) {
   });
   (r.scene.hi || []).forEach(([id, c]) => { if (G.recs[id]) G.hi(id, C[c] || c); });
   const f = FLOOR.rooms.find(q => q.id === r.scene.focus);
-  if (G.kind === '3d' && f && stage.clientWidth > 600) G.focusOn(f.x, f.z, 9); else if (G.kind === '3d') G.setView('overview');
+  if (G.kind === '3d' && f && stage.clientWidth > 600) G.focusOn(f.x, f.z * 0.6 - 0.96, 10.5);   // aim between the room and the main corridor so the name tags stay in frame on the wide stage else if (G.kind === '3d') G.setView('overview');
   $('#capText').textContent = r.scene.cap;
 }
 function renderRound() {
@@ -1035,9 +1139,17 @@ function renderRound() {
   $$('#reasonOpts .btn').forEach(b => b.onclick = () => { picked.reason = +b.dataset.i; $$('#reasonOpts .btn').forEach(x => x.setAttribute('aria-pressed', x === b)); arm(); });
   $('#fb').hidden = true; $('#next').hidden = true; $('#check').hidden = false; $('#check').disabled = true; $('#pickHint').hidden = false;
   showScene(r, true); renderProg();
-  if (hasGSAP) gsap.from('#sit', {opacity: 0, y: 6, duration: .3});
+  if (hasGSAP) gsap.fromTo('#sit', {opacity: 0, y: 6}, {opacity: 1, y: 0, duration: .3, overwrite: true});
+  $('#pickHint').textContent = 'Pick a style and a reason. Then press Check.';
+  guide(1, 'Read the situation in round ' + (cur + 1) + ' of ' + ROUNDS.length + ' below. Then click the style that fits best under <b>Which style fits best?</b>');
 }
-function arm() { $('#check').disabled = !(picked.style && picked.reason !== null); $('#pickHint').hidden = !$('#check').disabled; }
+function arm() {
+  const ready = !!(picked.style && picked.reason !== null);
+  $('#check').disabled = !ready; $('#pickHint').hidden = ready;
+  if (ready) guide(4, 'Press <b>Check</b> to see your points and the reasons.');
+  else if (picked.style) { $('#pickHint').textContent = 'Now pick a reason under Why?'; guide(3, 'Now click the reason the theory gives under <b>Why? Pick the reason the theory gives.</b>'); }
+  else { $('#pickHint').textContent = 'Now pick a style under Which style fits best?'; guide(2, 'Now click the style that fits best under <b>Which style fits best?</b>'); }
+}
 function check() {
   const r = ROUNDS[order[cur]]; if (!picked.style || picked.reason === null) return;
   const s = scoreRound(r, picked.style, picked.reason);
@@ -1047,12 +1159,13 @@ function check() {
   const fb = $('#fb'); fb.hidden = false; fb.className = 'feedback fb ' + (s.total === 10 ? 'ok' : s.total >= 5 ? 'info' : 'bad');
   const head = picked.style === r.best ? 'Best fit: ' + NAME[r.best] + '.' : picked.style === r.second ? 'Defensible second choice: ' + NAME[r.second] + '. The best fit is ' + NAME[r.best] + '.' : 'Not the fit: you chose ' + NAME[picked.style] + '. The best fit is ' + NAME[r.best] + (r.second ? ', with ' + NAME[r.second] + ' as a defensible second.' : '.');
   fb.innerHTML = '<div class="pts">' + s.total + ' of 10 points · style ' + s.sp + ' of 6 · reason ' + s.rp + ' of 4</div><p><b>' + esc(head) + '</b> ' + (s.rp ? 'Your reason is the one the theory gives.' : 'The reason the theory gives is marked in green.') + '</p><p>' + esc(r.why) + '</p>';
-  $('#check').hidden = true; $('#next').hidden = false; $('#next').textContent = cur === ROUNDS.length - 1 ? 'See the final score ▶' : 'Next round ▶';
+  $('#check').hidden = true; $('#next').hidden = false; $('#next').textContent = cur === ROUNDS.length - 1 ? 'See the final score' : 'Next round';
+  guide(5, 'Read the feedback under the buttons and watch the violet dot on the board above. Then press <b>' + (cur === ROUNDS.length - 1 ? 'See the final score' : 'Next round') + '</b>.');
   // the leadership move on the floor: a violet packet from the manager to the focus of the round
   const f = FLOOR.rooms.find(q => q.id === r.scene.focus); if (f) { const from = G.pos('mgr'), to = atRoom(r.scene.focus); G.fly([from, to], NAME[r.best], C.violet, {dur: 1.4}); }
   renderScore(); renderProg();
 }
-function renderScore() { const t = results.reduce((a, x) => a + (x ? x.s.total : 0), 0); $('#scoreNow').textContent = t; $('#scoreOf').textContent = 'of ' + (results.filter(Boolean).length * 10) + ' so far, 100 possible'; }
+function renderScore() { const t = results.reduce((a, x) => a + (x ? x.s.total : 0), 0); $('#scoreNow').textContent = t; $('#scoreBoard').textContent = t; $('#scoreOf').textContent = 'of ' + (results.filter(Boolean).length * 10) + ' so far, 100 possible'; }
 function renderProg() { $('#prog').innerHTML = ROUNDS.map((r, i) => '<i class="' + (results[i] ? (results[i].s.total === 10 ? 'full' : results[i].s.total >= 5 ? 'half' : 'zero') : '') + (i === cur ? ' now' : '') + '"></i>').join('');
   $('#regs').innerHTML = '<div class="reg kv"><span class="rn">Rounds done</span><span class="rv">' + results.filter(Boolean).length + '</span><span class="rf">of 10</span><span class="rs"></span></div><div class="reg kv"><span class="rn">Best fits</span><span class="rv">' + results.filter(x => x && x.s.sp === 6).length + '</span><span class="rf">6 points each</span><span class="rs"></span></div><div class="reg kv"><span class="rn">Second choices</span><span class="rv">' + results.filter(x => x && x.s.sp === 3).length + '</span><span class="rf">3 points each</span><span class="rs"></span></div><div class="reg kv"><span class="rn">Reasons right</span><span class="rv">' + results.filter(x => x && x.s.rp === 4).length + '</span><span class="rf">4 points each</span><span class="rs"></span></div>'; }
 function finish() {
@@ -1062,11 +1175,15 @@ function finish() {
     '<div class="scroll-x"><table><thead><tr><th>Round</th><th>You chose</th><th>Best fit</th><th>Points</th></tr></thead><tbody>' + results.map((x, i) => '<tr><td>' + esc(x.round.title) + '</td><td>' + esc(NAME[x.style]) + '</td><td>' + esc(NAME[x.round.best]) + '</td><td>' + x.s.total + '</td></tr>').join('') + '</tbody></table></div>' +
     '<div class="actions"><button class="btn primary" type="button" id="again">Try again (new order)</button></div>';
   $('#again').onclick = restart;
-  $('#styleOpts').innerHTML = ''; $('#reasonOpts').innerHTML = ''; $('#sit').innerHTML = 'Ten rounds done. Your score is on the right. What the rounds teach:<ul style="margin:8px 0 0 18px;padding:0"><li>Six rounds turned on readiness: the follower\'s ability and willingness for this task decide between telling, selling, participating, and delegating.</li><li>Two rounds turned on the horizon: a year of engagement and a rule nobody follows need transformational leadership, not another memo.</li><li>One round needed a standard with monitoring: transactional leadership is the right tool for a safety rule.</li><li>One round was about growth: a servant leader opens the door for the CNA who wants nursing school.</li></ul>'; $('#roundTitle').textContent = 'Finished'; $('#next').hidden = true; $('#fb').hidden = true;
-  if (hasGSAP) gsap.from(f, {opacity: 0, y: 8, duration: .4});
-  if (G.kind === '3d') G.setView('overview'); G.clear();
+  $('#styleOpts').innerHTML = ''; $('#reasonOpts').innerHTML = ''; $('#sit').innerHTML = 'Ten rounds done. Your score and a table of your answers are under Your score below. What the rounds teach:<ul style="margin:8px 0 0 18px;padding:0"><li>Six rounds turned on readiness: the follower\'s ability and willingness for this task decide between telling, selling, participating, and delegating.</li><li>Two rounds turned on the horizon: a year of engagement and a rule nobody follows need transformational leadership, not another memo.</li><li>One round needed a standard with monitoring: transactional leadership is the right tool for a safety rule.</li><li>One round was about growth: a servant leader opens the door for the CNA who wants nursing school.</li></ul>'; $('#roundTitle').textContent = 'Finished'; $('#next').hidden = true; $('#fb').hidden = true;
+  if (hasGSAP) gsap.fromTo(f, {opacity: 0, y: 8}, {opacity: 1, y: 0, duration: .4, overwrite: true});
+  if (G.kind === '3d') G.setView('overview'); G.clear(); CAST.forEach(p => G.place(p.id, p.x, p.z));
+  $('#capText').textContent = 'All rounds done. Everyone is back at the start position. Drag, zoom, or click a room or a person to look around.';
+  $('#pickHint').hidden = true; $('#qStyle').hidden = true; $('#qReason').hidden = true; $('#roundNo').textContent = 'All rounds done';
+  guide(6, 'All ' + ROUNDS.length + ' rounds done: ' + t + ' of 100. Read the table under <b>Your score</b> below. Press <b>Try again (new order)</b> to play again.');
+  $('#scoreCard').scrollIntoView({behavior: 'smooth', block: 'start'});
 }
-function restart() { order = shuffle(ROUNDS.map((r, i) => i)); cur = 0; results = []; $('#final').hidden = true; renderScore(); renderRound(); }
+function restart() { order = shuffle(ROUNDS.map((r, i) => i)); cur = 0; results = []; $('#final').hidden = true; $('#qStyle').hidden = false; $('#qReason').hidden = false; renderScore(); renderRound(); $('#roundCard').scrollIntoView({behavior: 'smooth', block: 'start'}); }
 $('#check').onclick = check;
 $('#next').onclick = () => { if (cur < ROUNDS.length - 1) { cur++; renderRound(); } else finish(); };
 $('#crib').innerHTML = STYLE_LIST.map(s => '<tr><td>' + esc(s[1]) + '</td><td>' + esc(s[2]) + '</td><td>' + esc(s[3]) + '</td></tr>').join('');

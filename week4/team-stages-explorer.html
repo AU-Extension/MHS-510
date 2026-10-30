@@ -233,7 +233,11 @@
   .reveal{animation:rise .7s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*80ms)}
   @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
   @media(max-width:860px){
-    .app .stage .zoomctl{top:56px;right:10px;transform:none;flex-direction:row}
+    .app .stage .zoomctl{top:50%;right:8px;transform:translateY(-50%);flex-direction:column;padding:3px;align-items:center}
+    .app .stage .zoomctl>button{width:30px!important;height:28px!important;font-size:16px}
+    .app .stage .zoomctl>button.fit{height:24px!important;font-size:9px}
+    .app .stage .zoomctl .pad{grid-template-columns:repeat(3,22px)!important;grid-template-rows:repeat(3,22px)!important;margin:2px 0;padding-top:3px}
+    .app .stage .zoomctl .pad button{width:22px!important;height:22px!important;font-size:10px}
     .app{grid-template-columns:1fr;height:auto}
     .app .stage{height:62vh;min-height:360px}
     .panel{border-left:0;border-top:1px solid var(--line);overflow:visible}
@@ -251,6 +255,32 @@
     .tag .sb{display:none}
     .scroll-x::before{content:"Swipe sideways to see the whole table";display:block;font:500 11px var(--font-mono);letter-spacing:.04em;color:var(--muted);margin:0 0 6px}
   }
+
+  /* ---- stacked layout (v2, October 30 2026): the 3D floor uses the full width of the page, instructions and controls go below it ---- */
+  .app{display:block;height:auto;min-height:0}
+  .app>.lab-head{max-width:1240px;margin:0 auto;padding:18px 16px 14px}
+  .app>.stage{width:100%;height:clamp(420px,70vh,860px);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .panel{max-width:1240px;margin:0 auto;border-left:0;overflow:visible;background:none;display:block;columns:2 420px;column-gap:28px;padding:20px 16px 28px}
+  .panel>*{break-inside:avoid;margin:0 0 22px}
+  .panel>header,.panel>footer,.panel>.guide,.panel>.span-all{column-span:all}
+  /* guide: numbered steps with the current one highlighted, plus a "do this now" line */
+  .guide{max-width:1240px;margin:0 auto;padding:18px 16px 4px;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px 26px;align-items:start}
+  .guide h2{grid-column:1/-1;margin:0;font-size:19px}
+  .guide ol.steps{list-style:none;margin:0;padding:0;display:grid;gap:8px;counter-reset:s}
+  .guide ol.steps li{counter-increment:s;position:relative;padding:9px 12px 9px 46px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);color:var(--ink);font-size:15px;line-height:1.45;box-shadow:var(--shadow-sm)}
+  .guide ol.steps li::before{content:counter(s);position:absolute;left:12px;top:9px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:700 12px var(--font-mono);background:var(--panel-2);color:var(--ink-2);border:1px solid var(--line)}
+  .guide ol.steps li.current{border-color:var(--teal);box-shadow:0 0 0 2px rgba(14,124,134,.15)}
+  .guide ol.steps li.current::before{background:var(--teal);color:#fff;border-color:var(--teal)}
+  .guide ol.steps li.done{color:var(--muted)}
+  .guide ol.steps li.done::before{content:"\2713";background:var(--green);color:#fff;border-color:var(--green)}
+  .guide ol.steps li b,.guide .now b{color:var(--teal);font-weight:700}
+  .guide .now{border-left:4px solid var(--teal);background:var(--panel);border-radius:var(--r);padding:14px 16px;font-size:16px;line-height:1.5;color:var(--ink);box-shadow:var(--shadow-sm)}
+  .guide .now .k{display:block;font:600 10.5px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:4px}
+  .guide .tips{margin:10px 0 0;padding:0;list-style:none;font-size:13.5px;color:var(--muted);display:grid;gap:4px}
+  @media(max-width:860px){.guide{grid-template-columns:1fr}.panel{columns:1}}
+  /* page mode: the 3D card on top across the full width, the round or task below */
+  .card .stage.wide{aspect-ratio:21/9;min-height:360px}
+  @media(max-width:860px){.card .stage.wide{aspect-ratio:4/3;min-height:0}}
   /* ===== end of theme ===== */
 
   /* page-specific CSS below: light unit board, palette with meaning (see build/theme/THEME.md) */
@@ -298,6 +328,21 @@
   .built .pill{margin-right:4px}
   blockquote{font-style:italic}
   .grid.two{align-items:start}
+  /* layout v2 (October 30 2026): the board card first across the full width, the guide, then the controls */
+  .ctl{display:grid;gap:16px}
+  .ctl>*{min-width:0}
+  @media(min-width:900px){.ctl{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);align-items:start}}
+  .ctl h3{margin-top:0}
+  #msg{margin-top:10px}
+  /* phones: a square board, and the zoom buttons in one row along the bottom edge so they do not cover the unit */
+  @media(max-width:860px){
+    .card .stage.wide{aspect-ratio:1/1}
+    .card .stage.wide .zoomctl{top:auto!important;bottom:6px;right:6px!important;transform:none!important;flex-direction:row!important;align-items:center;padding:3px!important}
+    .card .stage.wide .zoomctl>button{width:32px!important;height:30px!important;font-size:16px!important}
+    .card .stage.wide .zoomctl>button.fit{width:36px!important;font-size:10px!important}
+    .card .stage.wide .zoomctl .pad{grid-template-columns:repeat(3,22px)!important;grid-template-rows:repeat(3,20px)!important;margin:0 3px!important;padding:0 0 0 4px!important;border-top:0!important;border-left:1px solid #D9D3C8}
+    .card .stage.wide .zoomctl .pad button{width:22px!important;height:20px!important;font-size:10px!important}
+  }
 
 /* PAGE CSS END */
 </style>
@@ -326,76 +371,92 @@
       <div><b>5</b><span>stages: forming, storming, norming, performing, adjourning</span></div>
     </div>
   </section>
-  <details class="howto reveal" style="--i:1">
-    <summary>How to use this interactive</summary>
-    <ol>
-      <li>Tab 1, the team: press Play or Step to see what the team does at each stage, then choose the leader's move from four options. The two meters on the board (psychological safety and productivity) respond, and the narration explains why.</li>
-      <li>Use Next stage to move on. After adjourning, read the summary: how many of your five moves were the best fit for the stage.</li>
-      <li>Tab 2, the handoff: play the 7 a.m. report for room 431 without SBAR, then with SBAR. The packets are the information that travels; the coral labels are what went missing.</li>
-      <li>Finish with the six-question self-check. Drag to orbit the floor, use + and FIT to zoom; Space steps, B steps back, R plays.</li>
+  <section class="card reveal" style="--i:1" data-ref="RM 1 · FLOOR">
+    <div class="rail" role="tablist" aria-label="Tabs" id="tabs" style="margin-top:14px">
+      <div class="on" role="tab" data-tab="team" tabindex="0" style="--c:var(--violet)">1 · The team through five stages</div>
+      <div role="tab" data-tab="handoff" tabindex="0" style="--c:var(--teal)">2 · One handoff, with and without SBAR</div>
+    </div>
+    <h2 id="stageTitle">The falls team on the floor</h2>
+    <div class="stage3d stage wide" id="stage"><div class="nogl" id="nogl" hidden>3D is not available here: this flat plan shows the same rooms, people, and meters, and every step still works.</div></div>
+    <div class="caption" id="cap" aria-live="polite"><div class="t">Forming</div><p>Loading the floor.</p></div>
+    <div class="stepper" id="player">
+      <button class="btn" type="button" data-a="reset" title="Play this stage or this handoff again from step 1">Replay</button>
+      <button class="btn" type="button" data-a="back">◀ Step back</button>
+      <button class="btn go" type="button" data-a="play" aria-pressed="false">▶ Play</button>
+      <button class="btn" type="button" data-a="next">Step ▶</button>
+    </div>
+    <div class="legend" aria-label="Colors">
+      <span style="--c:var(--violet)"><i></i>charge nurses, manager, leadership moves</span>
+      <span style="--c:var(--teal)"><i></i>RN, and information that arrived</span>
+      <span style="--c:var(--green)"><i></i>CNA, and a meter that rises</span>
+      <span style="--c:var(--slate)"><i></i>pharmacist and physical therapist</span>
+      <span style="--c:var(--coral)"><i></i>conflict, and information that went missing</span>
+    </div>
+    <div class="views" role="group" aria-label="Camera views">
+      <button type="button" class="btn on" data-view="overview">Whole unit</button>
+      <button type="button" class="btn" data-view="west">The team</button>
+      <button type="button" class="btn" data-view="board">The meters</button>
+      <button type="button" class="btn" data-view="r431">Room 431</button>
+    </div>
+  </section>
+  <section class="guide reveal" style="--i:2;padding:18px 0 16px" aria-labelledby="guideTitle">
+    <h2 id="guideTitle">How to use this explorer</h2>
+    <ol class="steps" id="howSteps">
+      <li data-h="1">Press <b>▶ Play</b> under the board, or <b>Step ▶</b>, to see what the team does in this stage. Read the narration in the box under the board. The stage names run across the top of <b>The leader's move</b> card below.</li>
+      <li data-h="2">Click one of the four moves in <b>The leader's move</b> card below. Feedback appears under the moves: green is the best fit for the stage, coral is a weaker move, and the best move is named.</li>
+      <li data-h="3">Watch the two meters on the board above, psychological safety and productivity (0 to 10). They rise or fall with your move, and the box under the board explains why. Then press <b>Next stage ▶</b>.</li>
+      <li data-h="4">Repeat steps 1 to 3 for all five stages. After adjourning, press <b>See the summary ▶</b>: it counts how many of your five moves were the best fit. <b>Start over</b> lets you try other moves.</li>
+      <li data-h="5">Click the tab <b>2 · One handoff, with and without SBAR</b> above the board. Press <b>▶ Play</b> for <b>Without SBAR</b>, then click <b>With SBAR</b> and play it. Compare the two reports in the table below.</li>
+      <li data-h="6">Answer the six questions in the <b>Self-check</b> at the bottom of the page. Each answer tells you why it is right or wrong.</li>
     </ol>
-  </details>
-  <div class="rail" role="tablist" aria-label="Tabs" id="tabs">
-    <div class="on" role="tab" data-tab="team" tabindex="0" style="--c:var(--violet)">1 · The team through five stages</div>
-    <div role="tab" data-tab="handoff" tabindex="0" style="--c:var(--teal)">2 · One handoff, with and without SBAR</div>
-  </div>
-  <div class="grid two">
-    <section class="card reveal" style="--i:2" data-ref="RM 1 · FLOOR">
-      <h2 id="stageTitle">The falls team on the floor</h2>
-      <div class="stage3d" id="stage"><div class="nogl" id="nogl" hidden>3D is not available here: this flat plan shows the same rooms, people, and meters, and every step still works.</div></div>
-      <div class="caption" id="cap"><div class="t">Forming</div><p>Loading the floor.</p></div>
-      <div class="stepper" id="player">
-        <button class="btn" type="button" data-a="reset" title="Replay this stage">Replay</button>
-        <button class="btn" type="button" data-a="back">◀ Step back</button>
-        <button class="btn go" type="button" data-a="play" aria-pressed="false">▶ Play</button>
-        <button class="btn" type="button" data-a="next">Step ▶</button>
-      </div>
-      <div class="legend" aria-label="Colors">
-        <span style="--c:var(--violet)"><i></i>charge nurses, manager, leadership moves</span>
-        <span style="--c:var(--teal)"><i></i>RN, and information that arrived</span>
-        <span style="--c:var(--green)"><i></i>CNA, and a meter that rises</span>
-        <span style="--c:var(--slate)"><i></i>pharmacist and physical therapist</span>
-        <span style="--c:var(--coral)"><i></i>conflict, and information that went missing</span>
-      </div>
-      <div class="views" role="group" aria-label="Camera views">
-        <button type="button" class="btn on" data-view="overview">Whole unit</button>
-        <button type="button" class="btn" data-view="west">The team</button>
-        <button type="button" class="btn" data-view="board">The meters</button>
-        <button type="button" class="btn" data-view="r431">Room 431</button>
-      </div>
-    </section>
-    <aside class="card reveal" style="--i:3" data-ref="STATION · YOUR MOVES">
-      <div id="teamPanel">
-        <div class="rail" id="stageRail" aria-label="Stages"></div>
-        <div class="regs">
-          <div class="reg kv"><span class="rn">Psychological safety</span><span class="rv" id="mSafe">3</span><span class="rf">Edmondson: can people speak up without fear?</span><span class="rs">of 10</span></div>
-          <div class="reg kv"><span class="rn">Productivity</span><span class="rv" id="mProd">3</span><span class="rf">work the team gets done on falls</span><span class="rs">of 10</span></div>
+    <div>
+      <div class="now" aria-live="polite"><span class="k">Do this now</span><span id="nowText">Press <b>▶ Play</b> under the board to watch the team in forming, stage 1 of 5.</span></div>
+      <ul class="tips">
+        <li>Words to know: psychological safety (Amy Edmondson) is a shared belief that it is safe to speak up, ask, or disagree on the team. SBAR stands for Situation, Background, Assessment, Recommendation. In closed-loop communication the receiver repeats the message and the sender confirms it.</li>
+        <li>On the handoff tab, the packets that travel on the board are the information that was said; the coral labels are what went missing.</li>
+        <li>Drag on the board to turn it. Use <b>+</b>, <b>&minus;</b>, the arrows, and <b>FIT</b> on the board to look closer; <b>FIT</b> shows the whole unit again. Click a person or a room to read who or what it is.</li>
+        <li>Keys: Space steps forward, B steps back, R plays or pauses.</li>
+      </ul>
+    </div>
+  </section>
+  <section class="card reveal" style="--i:3" id="panelCard" data-ref="STATION · YOUR MOVES">
+    <div id="teamPanel">
+      <h2 id="moveTitle">The leader's move</h2>
+      <div class="rail" id="stageRail" aria-label="Stages"></div>
+      <div class="ctl">
+        <div>
+          <p class="hint" id="moveHint" style="margin:0 0 8px">Watch the stage on the board first. Then click one of the four moves.</p>
+          <div class="picker" id="moves" style="grid-template-columns:1fr"></div>
+          <div id="moveFb" hidden></div>
+          <div class="stepper"><button class="btn primary" type="button" id="nextStage" disabled>Next stage ▶</button><button class="btn" type="button" id="restart">Start over</button></div>
         </div>
-        <h2 style="margin-top:14px" id="moveTitle">The leader's move</h2>
-        <p class="hint" id="moveHint">Watch the stage first, then pick one of four moves.</p>
-        <div class="picker" id="moves" style="grid-template-columns:1fr"></div>
-        <div id="moveFb" hidden></div>
-        <div class="stepper"><button class="btn primary" type="button" id="nextStage" disabled>Next stage ▶</button><button class="btn" type="button" id="restart">Start over</button></div>
-      </div>
-      <div id="handoffPanel" hidden>
-        <h2>Room 431, 7:05 a.m.</h2>
-        <p style="margin:0 0 10px;font-size:14.5px">From incidents.csv, INC-012: "At the 7 a.m. handoff the night RN did not mention the new fall-risk order for room 431; the day CNA found it at 10 a.m." Naomi Jean-Baptiste (night RN, 9 months on the unit) reports to Stephanie Dubois (day RN, 5 months). Play both versions.</p>
-        <div class="picker" style="grid-template-columns:1fr 1fr">
-          <button type="button" class="btn pick on" data-mode="without"><span>Without SBAR</span><span class="pm"><span class="pill coral">as it happened</span></span></button>
-          <button type="button" class="btn pick" data-mode="with"><span>With SBAR</span><span class="pm"><span class="pill green">the rebuilt report</span></span></button>
+        <div>
+          <h3>The team meters <small>also shown on the board above</small></h3>
+          <div class="regs">
+            <div class="reg kv"><span class="rn">Psychological safety</span><span class="rv" id="mSafe">3</span><span class="rf">Edmondson: can people speak up without fear?</span><span class="rs">of 10</span></div>
+            <div class="reg kv"><span class="rn">Productivity</span><span class="rv" id="mProd">3</span><span class="rf">work the team gets done on falls</span><span class="rs">of 10</span></div>
+          </div>
         </div>
-        <div class="scroll-x" style="margin-top:12px"><table class="data" id="sbarTable"><thead><tr><th>Element</th><th>Without SBAR</th><th>With SBAR</th></tr></thead><tbody>
-          <tr><td><b>S</b> Situation</td><td>"431 slept most of the night."</td><td>"431, Mr. Delgado, 74, day 2 of a heart failure admission, unsteady walking to the bathroom at 3 a.m."</td></tr>
-          <tr><td><b>B</b> Background</td><td>"Family came by at 9."</td><td>"On furosemide and a new sleep aid since last night; no falls before this admission; lives alone."</td></tr>
-          <tr><td><b>A</b> Assessment</td><td class="down">missing</td><td>"High fall risk. A fall-risk order was written at 3:20 a.m."</td></tr>
-          <tr><td><b>R</b> Recommendation</td><td class="down">missing</td><td>"Bed alarm on, assist of one to the bathroom, ask pharmacy about the sleep aid." Stephanie repeats the two actions; Naomi confirms (closed loop).</td></tr>
-          <tr><td>Time</td><td>40 seconds, in the corridor, during an admission</td><td>About 90 seconds, from the printed sheet, admission call taken by the charge nurse</td></tr>
-          <tr><td>Result</td><td class="down">Fall risk unflagged for 3 hours</td><td class="up">Bed alarm on at 7:07 a.m.</td></tr>
-        </tbody></table></div>
-        <p class="hint" style="margin-top:8px">SBAR: Situation, Background, Assessment, Recommendation. Closed-loop communication: the receiver repeats the message back and the sender confirms it. In incidents.csv, 13 of the 15 handoff misses happened between 6:30 and 7:30 or 18:30 and 19:30; night handoffs score 2.62 on the survey.</p>
       </div>
-    </aside>
-  </div>
+    </div>
+    <div id="handoffPanel" hidden>
+      <h2>Room 431, 7:05 a.m.</h2>
+      <p style="margin:0 0 10px;font-size:14.5px">From incidents.csv, INC-012: "At the 7 a.m. handoff the night RN did not mention the new fall-risk order for room 431; the day CNA found it at 10 a.m." Naomi Jean-Baptiste (night RN, 9 months on the unit) reports to Stephanie Dubois (day RN, 5 months). Click a version, then press ▶ Play under the board.</p>
+      <div class="picker" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
+        <button type="button" class="btn pick on" data-mode="without"><span>Without SBAR</span><span class="pm"><span class="pill coral">as it happened</span></span></button>
+        <button type="button" class="btn pick" data-mode="with"><span>With SBAR</span><span class="pm"><span class="pill green">the rebuilt report</span></span></button>
+      </div>
+      <div class="scroll-x" style="margin-top:12px"><table class="data" id="sbarTable"><thead><tr><th>Element</th><th>Without SBAR</th><th>With SBAR</th></tr></thead><tbody>
+        <tr><td><b>S</b> Situation</td><td>"431 slept most of the night."</td><td>"431, Mr. Delgado, 74, day 2 of a heart failure admission, unsteady walking to the bathroom at 3 a.m."</td></tr>
+        <tr><td><b>B</b> Background</td><td>"Family came by at 9."</td><td>"On furosemide and a new sleep aid since last night; no falls before this admission; lives alone."</td></tr>
+        <tr><td><b>A</b> Assessment</td><td class="down">missing</td><td>"High fall risk. A fall-risk order was written at 3:20 a.m."</td></tr>
+        <tr><td><b>R</b> Recommendation</td><td class="down">missing</td><td>"Bed alarm on, assist of one to the bathroom, ask pharmacy about the sleep aid." Stephanie repeats the two actions; Naomi confirms (closed loop).</td></tr>
+        <tr><td>Time</td><td>40 seconds, in the corridor, during an admission</td><td>About 90 seconds, from the printed sheet, admission call taken by the charge nurse</td></tr>
+        <tr><td>Result</td><td class="down">Fall risk unflagged for 3 hours</td><td class="up">Bed alarm on at 7:07 a.m.</td></tr>
+      </tbody></table></div>
+      <p class="hint" style="margin-top:8px">SBAR: Situation, Background, Assessment, Recommendation. Closed-loop communication: the receiver repeats the message back and the sender confirms it. In incidents.csv, 13 of the 15 handoff misses happened between 6:30 and 7:30 or 18:30 and 19:30; night handoffs score 2.62 on the survey.</p>
+    </div>
+  </section>
   <section class="card reveal" style="--i:4;margin-top:16px" data-ref="BOARD · WHAT A LEADER DOES IN EACH STAGE">
     <h2>Tuckman's five stages and the leader's job</h2>
     <div class="scroll-x"><table class="data kv-table"><thead><tr><th>Stage</th><th>What you see on the team</th><th>What the leader does</th><th>What psychological safety needs</th></tr></thead><tbody>
@@ -471,6 +532,8 @@ function Unit3D(stage, opts) {
   controls.enableDamping = true; controls.dampingFactor = 0.08;
   controls.maxPolarAngle = Math.PI * 0.46; controls.minDistance = 4; controls.maxDistance = 46;
   controls.zoomSpeed = 1.1;
+  // pan: right-drag, Ctrl or Shift plus drag, or two fingers; stays on the floor plane
+  controls.enablePan = true; controls.screenSpacePanning = false; controls.panSpeed = 0.9;
   // keep the mouse wheel inside the 3D view: zoom the floor, do not scroll the page
   stage.addEventListener('wheel', e => e.preventDefault(), {passive: false});
 
@@ -747,11 +810,25 @@ function Unit3D(stage, opts) {
     if (name === 'overview' || !views[name]) {
       // the overview (and FIT) must show the whole floor width, also on narrow phone screens,
       // leaving room for the zoom buttons at the right edge
-      const tanH = Math.tan(T.MathUtils.degToRad(camera.fov / 2)) * camera.aspect;
+      // and, on wide stages, fill the stage: the floor fits both the width and the height of the view
+      const tanV = Math.tan(T.MathUtils.degToRad(camera.fov / 2)), tanH = tanV * camera.aspect;
+      const dist0 = pos.distanceTo(tgt), sinE = Math.max(0.3, (pos.y - tgt.y) / dist0);
       const need = (B.w / 2 + 0.5) / (tanH * 0.92) + B.d * 0.25;
-      f = Math.max(f, need / pos.distanceTo(tgt));
-      controls.maxDistance = Math.max(controls.maxDistance, need * 1.3);
-      if (scene.fog) { scene.fog.near = Math.max(scene.fog.near, need * 1.1); scene.fog.far = Math.max(scene.fog.far, need * 2.6); }
+      const needD = (B.d / 2 * sinE + 0.8) / (tanV * 0.78) + B.d * 0.25;   // 0.78 leaves room for the HUD bars
+      const need2 = Math.max(need, needD);
+      f = need2 / dist0;
+      // phones: when the zoom controls are a column on the right edge, fit the floor in the space to their left
+      const zc = stage.querySelector('.zoomctl'), sw = stage.clientWidth;
+      if (zc && sw && sw < 760 && zc.offsetWidth < sw * 0.4) {
+        const m = zc.offsetWidth + 14, keep = (sw - m) / sw;
+        f = Math.max(need / keep, needD) / dist0;
+        const d = f * dist0, shift = (m / sw) * d * tanH;           // move the view so the floor centers in the free space
+        const fwd = tgt.clone().sub(pos); fwd.y = 0; fwd.normalize();
+        const right = new T.Vector3(-fwd.z, 0, fwd.x);
+        tgt.add(right.clone().multiplyScalar(shift)); pos.add(right.multiplyScalar(shift));
+      }
+      controls.maxDistance = Math.max(controls.maxDistance, need2 * 1.3);
+      if (scene.fog) { scene.fog.near = Math.max(scene.fog.near, need2 * 1.1); scene.fog.far = Math.max(scene.fog.far, need2 * 2.6); }
     }
     pos.sub(tgt).multiplyScalar(f).add(tgt);
     return {pos: pos, tgt: tgt};
@@ -783,28 +860,57 @@ function Unit3D(stage, opts) {
     const p = t.clone().add(off), k = 1 / (gsap.globalTimeline.timeScale() || 1);
     gsap.to(camera.position, {x: p.x, y: p.y, z: p.z, duration: RM ? 0 : 0.45, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
   }
+  // pan buttons (arrows) and arrow keys: slide the view across the floor, in screen directions
+  const PANLIM = {x: B.w / 2 + 1.5, z: B.d / 2 + 1.5};
+  function clampTarget(v) { v.x = Math.max(-PANLIM.x, Math.min(PANLIM.x, v.x)); v.z = Math.max(-PANLIM.z + (B.cz || 0), Math.min(PANLIM.z + (B.cz || 0), v.z)); return v; }
+  function pan(dx, dz) {   // dx: +1 right, -1 left; dz: +1 up (away), -1 down (toward the viewer)
+    const off = camera.position.clone().sub(controls.target), dist = off.length(), step = Math.max(0.6, dist * 0.12);
+    const fwd = new T.Vector3(); camera.getWorldDirection(fwd); fwd.y = 0;
+    if (fwd.lengthSq() < 1e-6) fwd.set(0, 0, -1); fwd.normalize();
+    const right = new T.Vector3(-fwd.z, 0, fwd.x);
+    const tgt = clampTarget(controls.target.clone().add(right.multiplyScalar(dx * step)).add(fwd.multiplyScalar(dz * step)));
+    const pos = tgt.clone().add(off), k = 1 / (gsap.globalTimeline.timeScale() || 1);
+    gsap.to(controls.target, {x: tgt.x, y: tgt.y, z: tgt.z, duration: RM ? 0 : 0.35, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
+    gsap.to(camera.position, {x: pos.x, y: pos.y, z: pos.z, duration: RM ? 0 : 0.35, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
+  }
+  controls.addEventListener('change', () => { const c = controls.target, x = c.x, z = c.z; clampTarget(c); if (c.x !== x || c.z !== z) camera.position.add(new T.Vector3(c.x - x, 0, c.z - z)); });
   if (opts.zoomUI !== false) {
     if (!document.getElementById('lab3d-zoom-css')) {
       const st = document.createElement('style'); st.id = 'lab3d-zoom-css';
       st.textContent = '.zoomctl{position:absolute;z-index:4;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:2px;padding:4px;background:rgba(255,255,255,.9);border:1px solid #D9D3C8;border-radius:10px;backdrop-filter:blur(6px);box-shadow:0 1px 2px rgba(20,35,58,.08)}' +
         '.zoomctl button{width:38px;height:34px;border:0;border-radius:7px;background:transparent;color:#14233A;font:700 18px/1 "JetBrains Mono",ui-monospace,monospace;cursor:pointer;padding:0}' +
         '.zoomctl button.fit{font-size:10px;letter-spacing:.06em;height:28px}.zoomctl button:hover{background:rgba(14,124,134,.12);color:#0E7C86}' +
-        '.zoomctl button:focus-visible{outline:2px solid #0E7C86;outline-offset:1px}@media(max-width:520px){.zoomctl{right:10px}.zoomctl button{width:34px;height:32px}}';
+        '.zoomctl button:focus-visible{outline:2px solid #0E7C86;outline-offset:1px}' +
+        '.zoomctl .pad{display:grid;grid-template-columns:repeat(3,26px);grid-template-rows:repeat(3,24px);gap:1px;margin:3px 0;padding-top:4px;border-top:1px solid #D9D3C8}' +
+        '.zoomctl .pad button{width:26px;height:24px;font-size:12px}.zoomctl .pad .u{grid-area:1/2}.zoomctl .pad .l{grid-area:2/1}.zoomctl .pad .c{grid-area:2/2;font-size:9px}.zoomctl .pad .r{grid-area:2/3}.zoomctl .pad .d{grid-area:3/2}' +
+        '@media(max-width:520px){.zoomctl{right:10px}.zoomctl button{width:34px;height:32px}.zoomctl .pad{grid-template-columns:repeat(3,28px);grid-template-rows:repeat(3,26px)}.zoomctl .pad button{width:28px;height:26px}}';
       document.head.appendChild(st);
     }
     const box = document.createElement('div'); box.className = 'zoomctl'; box.setAttribute('role', 'group'); box.setAttribute('aria-label', 'Zoom');
     box.innerHTML = '<button type="button" data-z="in" aria-label="Zoom in" title="Zoom in (+)">+</button>' +
       '<button type="button" data-z="out" aria-label="Zoom out" title="Zoom out (-)">&minus;</button>' +
+      '<div class="pad" role="group" aria-label="Move the view">' +
+      '<button type="button" class="u" data-p="u" aria-label="Move the view up" title="Move up (arrow up)">&#9650;</button>' +
+      '<button type="button" class="l" data-p="l" aria-label="Move the view left" title="Move left (arrow left)">&#9664;</button>' +
+      '<button type="button" class="c" data-z="fit" aria-label="Center the view" title="Center the view (0)">&#9679;</button>' +
+      '<button type="button" class="r" data-p="r" aria-label="Move the view right" title="Move right (arrow right)">&#9654;</button>' +
+      '<button type="button" class="d" data-p="d" aria-label="Move the view down" title="Move down (arrow down)">&#9660;</button></div>' +
       '<button type="button" class="fit" data-z="fit" aria-label="Show the whole unit" title="Show the whole unit (0)">FIT</button>';
     stage.appendChild(box);
     ['pointerdown', 'pointerup', 'wheel', 'click'].forEach(ev => box.addEventListener(ev, e => e.stopPropagation()));
     box.addEventListener('click', e => {
       const b = e.target.closest('button'); if (!b) return;
-      if (b.dataset.z === 'in') zoom(0.75); else if (b.dataset.z === 'out') zoom(1.33); else setView(opts.fitView || 'overview');
+      const pd = {l: [-1, 0], r: [1, 0], u: [0, 1], d: [0, -1]}[b.dataset.p];
+      if (pd) pan(pd[0], pd[1]);
+      else if (b.dataset.z === 'in') zoom(0.75); else if (b.dataset.z === 'out') zoom(1.33); else setView(opts.fitView || 'overview');
     });
+    let over = false;
+    stage.addEventListener('pointerenter', () => { over = true; }); stage.addEventListener('pointerleave', () => { over = false; });
     document.addEventListener('keydown', e => {
       const t = e.target, tag = t && t.tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) return;
+      const ak = {ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1]}[e.key];
+      if (ak) { if (over || stage.contains(e.target)) { e.preventDefault(); pan(ak[0], ak[1]); } return; }
       if (e.key === '+' || e.key === '=') zoom(0.75);
       else if (e.key === '-' || e.key === '_') zoom(1.33);
       else if (e.key === '0') setView(opts.fitView || 'overview');
@@ -838,7 +944,7 @@ function Unit3D(stage, opts) {
 
   const labApi = {T: T, scene: scene, camera: camera, controls: controls, renderer: renderer, recs: recs, colors: C, kinds: KIND, roles: ROLE,
     room: room, person: person, walk: walk, set: set, chip: chip, finishPins: finishPins, silkRect: silkRect, zone: zone, label: label, busMat: busMat, trace: trace, glowBus: glowBus,
-    fly: fly, clearPackets: clearPackets, hi: hi, clear: clear, pop: pop, setView: setView, focusOn: focusOn, intro: intro, zoom: zoom, refreshFloor: refreshFloor,
+    fly: fly, clearPackets: clearPackets, hi: hi, clear: clear, pop: pop, setView: setView, focusOn: focusOn, intro: intro, zoom: zoom, pan: pan, refreshFloor: refreshFloor,
     onPick: cb => { pickCb = cb; }, onFrame: f => frames.push(f), unit: unit};
   (window.__labs = window.__labs || []).push(labApi);   // lets tests reach the camera
   return labApi;
@@ -883,6 +989,11 @@ function make3D(el, opts = {}) {
 // PAGE SCRIPT START
 /* ---- 4 West floor: one layout for the 3D kit (Unit3D) and the flat SVG fallback, with the same verbs ---- */
 const $ = s => document.querySelector(s), $$ = s => Array.from(document.querySelectorAll(s));
+// guide block: mark the current step (1-based; a number past the last step marks every step done) and say the single next action
+function guide(stepNo, nowHtml) {
+  document.querySelectorAll('#howSteps li').forEach(li => { const n = +li.dataset.h; li.classList.toggle('done', n < stepNo); li.classList.toggle('current', n === stepNo); });
+  if (nowHtml) document.getElementById('nowText').innerHTML = nowHtml;
+}
 const cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const COL = {teal: cssv('--teal'), coral: cssv('--coral'), amber: cssv('--amber'), green: cssv('--green'), violet: cssv('--violet'), slate: cssv('--slate'), ink: cssv('--ink')};
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
@@ -915,7 +1026,7 @@ function corridorPath(a, b) {
 function Graphics3D(stage, people, opts) {
   opts = opts || {};
   const lab = Unit3D(stage, {floor: FLOOR, views: Object.assign({
-    overview: {pos: [0, 26, 21], tgt: [0, 0, -0.5], want: 1.6},
+    overview: {pos: [0, 20, 23], tgt: [0, 0, -0.5], want: 1.6},
     station: {pos: [8, 11, 9], tgt: [9.5, 0, 1.2], want: 1.4},
     board: {pos: [0, 7, -0.5], tgt: [0, 0.8, -6.4], want: 1.5},
     west: {pos: [-6, 12, 7], tgt: [-6, 0, -1.5], want: 1.4}
@@ -1118,7 +1229,7 @@ function makePlayer(root, opts) {
 }
 
 /* ---- self-check: 6 questions with one correct answer each, feedback after every answer, a running score ---- */
-function renderQuiz(root, QUIZ) {
+function renderQuiz(root, QUIZ, onDone) {
   let answered = 0, right = 0;
   root.innerHTML = QUIZ.map((q, qi) => '<div class="q" data-q="' + qi + '"><p class="qt"><b>' + (qi + 1) + '.</b> ' + q.q + '</p><div class="opts">' +
     q.a.map((a, ai) => '<button type="button" class="btn opt" data-q="' + qi + '" data-a="' + ai + '">' + esc(a) + '</button>').join('') + '</div><div class="feedback" hidden></div></div>').join('') +
@@ -1132,8 +1243,9 @@ function renderQuiz(root, QUIZ) {
     const fb = box.querySelector('.feedback'); fb.hidden = false; fb.className = 'feedback ' + (ok ? 'ok' : 'bad');
     fb.innerHTML = (ok ? '<b>Correct.</b> ' : '<b>Not quite.</b> The answer is "' + esc(q.a[q.c]) + '". ') + q.why;
     root.querySelector('#quizScore .big').textContent = right;
+    if (onDone && answered === QUIZ.length) onDone(right, QUIZ.length);
   }));
-  root.querySelector('#quizReset').addEventListener('click', () => renderQuiz(root, QUIZ));
+  root.querySelector('#quizReset').addEventListener('click', () => renderQuiz(root, QUIZ, onDone));
 }
 
 (function () {
@@ -1199,7 +1311,7 @@ const TEAM = ['dal', 'mar', 'yes', 'die', 'gla', 'sha', 'pri', 'lui'];
 const FULL = {you: 'You, the nurse manager', dal: 'Dalia Fernández, day charge nurse, 14 years on 4 West, resists change', mar: 'Marcus Reid, day charge nurse, 6 years, data-minded', yes: 'Yesenia Castro, night charge nurse, 4 years, well liked and overloaded', die: 'Diego Salcedo, night RN, hired February 2026', gla: 'Gladys Peñaranda, day CNA, 10 years on 4 West', sha: 'Shanice Brown, night CNA', pri: 'Priyanka Nair, PharmD, clinical pharmacist', lui: 'Luis Carvajal, physical therapist', nao: 'Naomi Jean-Baptiste, night RN, 9 months on the unit', ste: 'Stephanie Dubois, day RN, 5 months on the unit'};
 Object.assign(BOARD, {x0: -1.0, step: 2.0});
 const stage = $('#stage');
-const G = makeGraphics(stage, PEOPLE, {boardTitle: 'TEAM METERS · 0 TO 10', barFmt: v => Math.round(v * 2) + ' of 10', views: {r431: {pos: [7.5, 8, 9.5], tgt: [9.3, 0, 3.8], want: 1.4}}});
+const G = makeGraphics(stage, PEOPLE, {boardTitle: 'TEAM METERS · 0 TO 10', barFmt: v => Math.round(v * 2) + ' of 10', views: {r431: {pos: [7.5, 8, 9.5], tgt: [9.3, 0, 3.8], want: 1.4}, board: {pos: [0, 4.6, -1.2], tgt: [0, 1.2, -6.4], want: 1.6}}});
 G.makeBars([{s: 'Psychological safety'}, {s: 'Productivity'}]);
 const R = G.recs, P = id => ({x: R[id].x, z: R[id].z});
 let meters = {s: 3, p: 3}, prevMeters = {s: 3, p: 3}, si = 0, picks = [], tab = 'team', lastSteps = null;
@@ -1208,7 +1320,16 @@ function setMeters(m, from) {
   $('#mSafe').textContent = m.s; $('#mProd').textContent = m.p;
   $('#mSafe').style.color = m.s > from.s ? COL.green : m.s < from.s ? COL.coral : ''; $('#mProd').style.color = m.p > from.p ? COL.green : m.p < from.p ? COL.coral : '';
 }
-const player = makePlayer(stage.parentElement, {gap: 6000, onReset: () => { if (lastSteps) player.load(lastSteps); }});
+let gview = 'stage', handoffSeen = false;   // what the player holds: 'stage' (before a move), 'result' (after a move), 'summary', or 'handoff'
+const isPlaying = () => $('#player [data-a=play]').getAttribute('aria-pressed') === 'true';
+const readOn = (i, n) => isPlaying() ? 'Watch the board above. Read step ' + (i + 1) + ' of ' + n + ' in the box under the board as it plays.' : 'Read step ' + (i + 1) + ' of ' + n + ' in the box under the board. Then press <b>Step ▶</b> for the next one.';
+function resultGuide() { if (si < STAGES.length - 1) guide(3, 'Look at the two meters on the board above and read why they moved. Then press <b>Next stage ▶</b> under the moves.'); else guide(4, 'That was the last stage. Press <b>See the summary ▶</b> under the moves.'); }
+const player = makePlayer(stage.parentElement, {gap: 6000, onReset: () => { if (lastSteps) player.load(lastSteps); },
+  onStep: i => {
+    if (gview === 'stage') { if (i === 0) guide(1, isPlaying() ? 'Watch the team on the board above. Read what it does in the box under the board.' : 'Read what the team does in the box under the board. Then press <b>Step ▶</b>.'); else guide(2, 'Click one of the four moves in <b>The leader\'s move</b> card below.'); }
+    else if (gview === 'result') { if (i < 2) guide(2, readOn(i, 3)); else resultGuide(); }
+    else if (gview === 'handoff') { if (i < 3) guide(5, readOn(i, 4)); else if (mode === 'without') guide(5, 'Now click <b>With SBAR</b> in the handoff card below and play it.'); else { handoffSeen = true; guide(6, 'Compare the two reports in the table in the handoff card. Then answer the six questions in the <b>Self-check</b> at the bottom of the page.'); } }
+  }});
 function goHome() { TEAM.concat(['you']).forEach(id => G.put(R[id], HOME[id].x, HOME[id].z)); }
 function toLine(instant) { TEAM.forEach((id, k) => { const tgt = {x: LINE[id], z: CORR}; if (instant) G.put(R[id], tgt.x, tgt.z); else { const tl = G.walk(R[id], corridorPath(P(id), tgt), {dur: 2.2}); if (tl) tl.delay(k * 0.15); } }); if (instant) G.put(R.you, 0.5, CORR); else G.walk(R.you, [{x: 0.5, z: CORR}], {dur: 2}); }
 function resetFloor() { G.clear(); G.clearPackets(); TEAM.concat(['you']).forEach(id => G.set(R[id], '', '')); ['403', '418', '426', 'break', 'station', 'med'].forEach(id => G.set(R[id], '', '')); }
@@ -1223,7 +1344,7 @@ function stageSteps(i) {
   const st = STAGES[i];
   const steps = [
     {tag: st.name + ' · what the team does', color: COL.violet, text: '<b>' + st.name + '.</b> ' + esc(st.behaviors), apply() { FLOOR[st.k](); setMeters(meters, meters); }},
-    {tag: st.name + ' · your move', color: COL.teal, text: '<b>Your move.</b> Choose one of the four moves on the right. The meters start this stage at safety ' + meters.s + ' and productivity ' + meters.p + (st.drift.s || st.drift.p ? '; the stage itself moves them by ' + (st.drift.s >= 0 ? '+' : '') + st.drift.s + ' and ' + (st.drift.p >= 0 ? '+' : '') + st.drift.p + ' before your move.' : '.'), apply() { setMeters(meters, meters); }}
+    {tag: st.name + ' · your move', color: COL.teal, text: '<b>Your move.</b> Click one of the four moves in The leader\'s move card, below the guide. The meters start this stage at safety ' + meters.s + ' and productivity ' + meters.p + (st.drift.s || st.drift.p ? '; the stage itself moves them by ' + (st.drift.s >= 0 ? '+' : '') + st.drift.s + ' and ' + (st.drift.p >= 0 ? '+' : '') + st.drift.p + ' before your move.' : '.'), apply() { setMeters(meters, meters); }}
   ];
   return steps;
 }
@@ -1231,11 +1352,12 @@ function loadStage(i) {
   si = i; const st = STAGES[i];
   $('#stageRail').innerHTML = STAGES.map((s, k) => '<div class="' + (k === i ? 'on' : k < i ? 'done' : '') + '" style="--c:var(--violet)">' + s.name + '</div>').join('');
   $('#moveTitle').textContent = 'The leader\'s move: ' + st.name.toLowerCase();
-  $('#moveHint').textContent = 'Watch the stage first, then pick one of four moves.';
+  $('#moveHint').textContent = 'Watch the stage on the board first. Then click one of the four moves.';
   $('#moves').innerHTML = st.options.map((o, k) => '<button type="button" class="btn pick" data-o="' + k + '"><span>' + esc(o.t) + '</span></button>').join('');
   $$('#moves .pick').forEach(b => b.addEventListener('click', () => choose(+b.dataset.o)));
   $('#moveFb').hidden = true; $('#nextStage').disabled = true; $('#nextStage').textContent = i < STAGES.length - 1 ? 'Next stage ▶' : 'See the summary ▶';
-  lastSteps = stageSteps(i); player.load(lastSteps);
+  gview = 'stage'; lastSteps = stageSteps(i); player.load(lastSteps);
+  guide(1, 'Press <b>▶ Play</b> under the board to watch the team in ' + st.name.toLowerCase() + ', stage ' + (i + 1) + ' of ' + STAGES.length + '.');
 }
 function choose(k) {
   if (picks.length > si) return;
@@ -1246,7 +1368,7 @@ function choose(k) {
   $('#nextStage').disabled = false;
   const result = {tag: st.name + ' · the result', color: o.best ? COL.green : COL.coral, text: '<b>' + (o.best ? 'The team responds.' : 'The team notices.') + '</b> ' + esc(o.why) + ' Safety ' + prevMeters.s + ' to ' + meters.s + ', productivity ' + prevMeters.p + ' to ' + meters.p + '.',
     apply() { FLOOR[st.k](); setMeters(meters, prevMeters); TEAM.forEach(id => G.hi(R[id], o.best ? COL.green : COL.coral)); if (!o.best) { G.set(R.die, 'withdraws'); G.set(R.sha, 'withdraws'); } G.setView('board'); }};
-  lastSteps = stageSteps(si).concat([result]); player.load(lastSteps, false); player.show(2);
+  gview = 'result'; lastSteps = stageSteps(si).concat([result]); player.load(lastSteps, false); player.show(2);
 }
 function summary() {
   const best = picks.filter((k, i) => STAGES[i].options[k].best).length;
@@ -1254,8 +1376,10 @@ function summary() {
   $('#moveTitle').textContent = 'Summary'; $('#moveHint').textContent = ''; $('#moves').innerHTML = '';
   $('#moveFb').hidden = false; $('#moveFb').innerHTML = '<div class="feedback info"><span class="score"><span class="big">' + best + '</span><span>of 5 moves were the best fit</span></span><p style="margin:8px 0 0">Final meters: psychological safety ' + meters.s + ' of 10, productivity ' + meters.p + ' of 10. ' + (best === 5 ? 'Every move matched the stage: structure in forming, curiosity in storming, ownership in norming, support in performing, closure in adjourning.' : 'The best path reaches 10 and 10. Press Start over and try the moves you did not pick; the explanations tell you what each stage needs.') + '</p><div class="scroll-x"><table class="data" style="margin-top:8px"><thead><tr><th>Stage</th><th>Your move</th><th>Fit</th></tr></thead><tbody>' + STAGES.map((s, i) => '<tr><td>' + s.name + '</td><td style="font-family:var(--font-body)">' + esc(s.options[picks[i]].t) + '</td><td class="' + (s.options[picks[i]].best ? 'up' : 'down') + '">' + (s.options[picks[i]].best ? 'best' : 'weaker') + '</td></tr>').join('') + '</tbody></table></div></div>';
   $('#nextStage').disabled = true;
-  lastSteps = [{tag: 'Summary', color: COL.violet, text: '<b>' + best + ' of 5 best-fit moves.</b> Safety ' + meters.s + ', productivity ' + meters.p + '. A team is not a group: it has a shared purpose, interdependent work, and norms it owns. The leader\'s job changes at every stage.', apply() { resetFloor(); toLine(true); setMeters(meters, {s: 3, p: 3}); G.setView('board'); }}];
+  gview = 'summary'; lastSteps = [{tag: 'Summary', color: COL.violet, text: '<b>' + best + ' of 5 best-fit moves.</b> Safety ' + meters.s + ', productivity ' + meters.p + '. A team is not a group: it has a shared purpose, interdependent work, and norms it owns. The leader\'s job changes at every stage.', apply() { resetFloor(); toLine(true); setMeters(meters, {s: 3, p: 3}); G.setView('board'); }}];
   player.load(lastSteps);
+  if (handoffSeen) guide(6, 'Answer the six questions in the <b>Self-check</b> at the bottom of the page.');
+  else guide(5, 'Read your summary in the card below. Then click the tab <b>2 · One handoff, with and without SBAR</b> above the board.');
 }
 $('#nextStage').addEventListener('click', () => { if (si < STAGES.length - 1) loadStage(si + 1); else summary(); });
 $('#restart').addEventListener('click', () => { meters = {s: 3, p: 3}; prevMeters = meters; picks = []; loadStage(0); });
@@ -1276,7 +1400,7 @@ const HAND = {
   ]
 };
 let mode = 'without';
-function loadHandoff() { lastSteps = HAND[mode]; player.load(lastSteps); }
+function loadHandoff() { gview = 'handoff'; lastSteps = HAND[mode]; player.load(lastSteps); guide(5, 'Press <b>▶ Play</b> under the board to watch the report ' + (mode === 'without' ? 'without' : 'with') + ' SBAR.'); }
 $$('[data-mode]').forEach(b => b.addEventListener('click', () => { mode = b.dataset.mode; $$('[data-mode]').forEach(x => x.classList.toggle('on', x === b)); loadHandoff(); }));
 function setTab(t) {
   tab = t;
@@ -1285,7 +1409,7 @@ function setTab(t) {
   $('#stageTitle').textContent = t === 'team' ? 'The falls team on the floor' : 'Room 431, the 7 a.m. handoff';
   TEAM.concat(['you']).forEach(id => G.show(R[id], t === 'team')); ['nao', 'ste'].forEach(id => G.show(R[id], t === 'handoff'));
   G.clear(); G.clearPackets(); ['403', '418', '426', '431', 'break', 'station', 'med'].forEach(id => G.set(R[id], '', ''));
-  if (t === 'team') loadStage(si); else loadHandoff();
+  if (t === 'team') { if (picks.length === STAGES.length) summary(); else loadStage(si); } else loadHandoff();
 }
 $$('#tabs [data-tab]').forEach(d => { d.addEventListener('click', () => setTab(d.dataset.tab)); d.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setTab(d.dataset.tab); } }); });
 $$('[data-view]').forEach(b => b.addEventListener('click', () => { $$('[data-view]').forEach(x => x.classList.toggle('on', x === b)); G.setView(b.dataset.view); }));
@@ -1306,7 +1430,7 @@ renderQuiz($('#quiz'), [
     why: 'Thirteen of the fifteen handoff misses fall in the shift-change windows, when admissions, call lights, and report compete. That is why the fix is structure (a printed SBAR sheet, a quiet zone, the charge nurse taking the interruptions), not a reminder to try harder.'},
   {q: 'The falls team is performing: it runs its own 7:15 p.m. huddle and falls are down. The leader\'s best move now is to:', a: ['Attend every huddle and approve each decision', 'Step back, remove the obstacles the team names, and recognize results by name', 'Assign the team a second project the same week', 'Stop meeting with the team because it works'], c: 1,
     why: 'A performing team needs resources, obstacles removed, and recognition. Micromanagement signals distrust; disappearing signals indifference; a second project before the first result is secured dilutes both.'}
-]);
+], (right, n) => guide(7, 'Done: ' + right + ' of ' + n + ' correct. Press <b>Start over</b> in the moves card to try other moves, or in the Self-check to answer again.'));
 })();
 
 // PAGE SCRIPT END

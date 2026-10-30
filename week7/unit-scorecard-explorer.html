@@ -233,7 +233,11 @@
   .reveal{animation:rise .7s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*80ms)}
   @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
   @media(max-width:860px){
-    .app .stage .zoomctl{top:56px;right:10px;transform:none;flex-direction:row}
+    .app .stage .zoomctl{top:50%;right:8px;transform:translateY(-50%);flex-direction:column;padding:3px;align-items:center}
+    .app .stage .zoomctl>button{width:30px!important;height:28px!important;font-size:16px}
+    .app .stage .zoomctl>button.fit{height:24px!important;font-size:9px}
+    .app .stage .zoomctl .pad{grid-template-columns:repeat(3,22px)!important;grid-template-rows:repeat(3,22px)!important;margin:2px 0;padding-top:3px}
+    .app .stage .zoomctl .pad button{width:22px!important;height:22px!important;font-size:10px}
     .app{grid-template-columns:1fr;height:auto}
     .app .stage{height:62vh;min-height:360px}
     .panel{border-left:0;border-top:1px solid var(--line);overflow:visible}
@@ -251,6 +255,32 @@
     .tag .sb{display:none}
     .scroll-x::before{content:"Swipe sideways to see the whole table";display:block;font:500 11px var(--font-mono);letter-spacing:.04em;color:var(--muted);margin:0 0 6px}
   }
+
+  /* ---- stacked layout (v2, October 30 2026): the 3D floor uses the full width of the page, instructions and controls go below it ---- */
+  .app{display:block;height:auto;min-height:0}
+  .app>.lab-head{max-width:1240px;margin:0 auto;padding:18px 16px 14px}
+  .app>.stage{width:100%;height:clamp(420px,70vh,860px);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .panel{max-width:1240px;margin:0 auto;border-left:0;overflow:visible;background:none;display:block;columns:2 420px;column-gap:28px;padding:20px 16px 28px}
+  .panel>*{break-inside:avoid;margin:0 0 22px}
+  .panel>header,.panel>footer,.panel>.guide,.panel>.span-all{column-span:all}
+  /* guide: numbered steps with the current one highlighted, plus a "do this now" line */
+  .guide{max-width:1240px;margin:0 auto;padding:18px 16px 4px;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px 26px;align-items:start}
+  .guide h2{grid-column:1/-1;margin:0;font-size:19px}
+  .guide ol.steps{list-style:none;margin:0;padding:0;display:grid;gap:8px;counter-reset:s}
+  .guide ol.steps li{counter-increment:s;position:relative;padding:9px 12px 9px 46px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);color:var(--ink);font-size:15px;line-height:1.45;box-shadow:var(--shadow-sm)}
+  .guide ol.steps li::before{content:counter(s);position:absolute;left:12px;top:9px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:700 12px var(--font-mono);background:var(--panel-2);color:var(--ink-2);border:1px solid var(--line)}
+  .guide ol.steps li.current{border-color:var(--teal);box-shadow:0 0 0 2px rgba(14,124,134,.15)}
+  .guide ol.steps li.current::before{background:var(--teal);color:#fff;border-color:var(--teal)}
+  .guide ol.steps li.done{color:var(--muted)}
+  .guide ol.steps li.done::before{content:"\2713";background:var(--green);color:#fff;border-color:var(--green)}
+  .guide ol.steps li b,.guide .now b{color:var(--teal);font-weight:700}
+  .guide .now{border-left:4px solid var(--teal);background:var(--panel);border-radius:var(--r);padding:14px 16px;font-size:16px;line-height:1.5;color:var(--ink);box-shadow:var(--shadow-sm)}
+  .guide .now .k{display:block;font:600 10.5px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:4px}
+  .guide .tips{margin:10px 0 0;padding:0;list-style:none;font-size:13.5px;color:var(--muted);display:grid;gap:4px}
+  @media(max-width:860px){.guide{grid-template-columns:1fr}.panel{columns:1}}
+  /* page mode: the 3D card on top across the full width, the round or task below */
+  .card .stage.wide{aspect-ratio:21/9;min-height:360px}
+  @media(max-width:860px){.card .stage.wide{aspect-ratio:4/3;min-height:0}}
   /* ===== end of theme ===== */
 
   /* page-specific CSS below: light unit board, palette with meaning (see build/theme/THEME.md) */
@@ -294,6 +324,13 @@
   .flat .rl{font:600 .42px var(--font-mono);fill:#36465E;text-anchor:start;pointer-events:none}
   .flat .zl{font:700 .55px var(--font-mono);fill:#5B6B82;text-anchor:middle;letter-spacing:.05px}
   @media(max-width:860px){.calc{grid-template-columns:1fr}}
+  #player .controls{grid-template-columns:repeat(4,minmax(0,1fr))}
+  @media(max-width:520px){#player .controls{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  /* phones: the zoom buttons as one row just below the floor, so they do not cover the station end in Overview */
+  @media(max-width:520px){
+    .app>.stage .zoomctl{top:calc(50% + 64px);transform:none;flex-direction:row}
+    .app>.stage .zoomctl .pad{margin:0 2px;padding:0 0 0 3px;border-top:0;border-left:1px solid #D9D3C8}
+  }
 /*W78 CSS END*/
 </style>
 </head>
@@ -309,6 +346,11 @@
 
 <!--W78 BODY START-->
 <div class="app">
+  <header class="lab-head">
+    <p class="eyebrow">MHS 510 · Week 7 · Explorer</p>
+    <h1>Unit scorecard explorer</h1>
+    <p class="lede">The 4 West floor as a live dashboard. Pick a shift, move one lever at a time, and watch patients per RN, hours per patient day, the yearly cost, and the predicted falls and patient ratings recompute from the unit's own files. Every formula is shown.</p>
+  </header>
   <section class="stage" id="stage" aria-label="3D model of the 4 West floor: 32 rooms along one corridor, the nurse station, the med room, the break room and the supply room. Drag to orbit, use the zoom buttons, click a nurse to see her patients.">
     <div class="hud hud-top">
       <ol class="phases" id="phases" aria-label="Explanation steps"><li class="on">Census</li><li>RNs</li><li>Ratio</li><li>Target</li><li>HPPD</li><li>Money</li><li>Scorecard</li></ol>
@@ -329,18 +371,31 @@
         <button type="button" data-view="rooms">Rooms</button>
       </div>
     </div>
-    <div class="nogl" id="nogl" hidden>The 3D unit floor needs WebGL and the 3D libraries, which are not available here. The flat floor plan shows the same rooms, nurses and steps, and the panel has every value.</div>
+    <div class="nogl" id="nogl" hidden>The 3D unit floor needs WebGL and the 3D libraries, which are not available here. The flat floor plan shows the same rooms, nurses and steps, and the panel below has every value.</div>
+  </section>
+
+  <section class="guide" aria-labelledby="guideTitle">
+    <h2 id="guideTitle">How to use this explorer</h2>
+    <ol class="steps" id="howSteps">
+      <li data-h="1">Under <b>Pick a shift</b> below, press <b>Day 7a to 7p</b> or <b>Night 7p to 7a</b>, then a day from <b>Mon</b> to <b>Sun</b>. The floor above fills with that shift's patients and nurses. The page opens on Night, Sunday.</li>
+      <li data-h="2">Press <b>Explain</b> under <b>Walk through the numbers</b>. It narrates the seven numbers one at a time, every few seconds. <b>Step</b> and <b>Step back</b> go at your own pace. The bar at the top of the board shows which number you are on.</li>
+      <li data-h="3">Change one lever under <b>Move one lever</b>: census, hires, overtime, agency, or the ratio target. Read the tiles in <b>The board</b> and the formula box under them. A coral tile is worse than the target or the benchmark; a green tile meets it.</li>
+      <li data-h="4">Click a nurse on the floor above (an RN token). The narration lists the rooms she covers. Coral means she has more than 6.5 patients.</li>
+      <li data-h="5">Under <b>Cost of one resignation</b>, change <b>Days vacant</b>, <b>Hours covered per week</b>, or <b>Covered with</b>, and read the cost. Then compare the months in <b>The scorecard, 12 months</b> table.</li>
+      <li data-h="6">Answer the six questions in <b>Self-check</b>. Use the levers and the table to find each answer. A score of 6 of 6 means you can read the unit's numbers.</li>
+    </ol>
+    <div>
+      <div class="now" aria-live="polite"><span class="k">Do this now</span><span id="nowText">Choose a shift and a day under <b>Pick a shift</b> below. Night, Sunday is already chosen, so you may go straight to <b>Explain</b>.</span></div>
+      <ul class="tips">
+        <li>HPPD means hours per patient day: all caregiver hours divided by the number of patients.</li>
+        <li>Drag on the floor to turn it. Use <b>+</b>, <b>&minus;</b>, the arrows, and <b>FIT</b> to zoom and move. <b>Station</b> and <b>Rooms</b> jump to those parts of the unit. Keyboard: Space steps, B steps back, R plays or pauses Explain.</li>
+      </ul>
+    </div>
   </section>
 
   <aside class="panel">
-    <header>
-      <p class="eyebrow">MHS 510 · Week 7 · Explorer</p>
-      <h1>Unit scorecard explorer</h1>
-      <p class="lede">The 4 West floor as a live dashboard. Pick a shift, move one lever at a time, and watch patients per RN, hours per patient day, the yearly cost and the predicted falls and patient ratings recompute from the unit's own files, with every formula shown.</p>
-    </header>
-
     <section aria-labelledby="h-shift">
-      <h2 id="h-shift">1. Pick a shift</h2>
+      <h2 id="h-shift">Pick a shift</h2>
       <div class="seg" id="shiftSeg" role="group" aria-label="Shift">
         <button type="button" class="btn" data-shift="Day">Day 7a to 7p</button>
         <button type="button" class="btn on" data-shift="Night" aria-pressed="true">Night 7p to 7a</button>
@@ -349,8 +404,24 @@
       <p class="mini" id="profileLine"></p>
     </section>
 
+    <section id="player" aria-labelledby="h-walk">
+      <h2 id="h-walk">Walk through the numbers</h2>
+      <div class="narr" aria-live="polite">
+        <div class="narr-head"><span class="ptag" id="ptag">Ready</span><span data-a="count">Step 0 of 7</span></div>
+        <p id="narration">Press Explain to walk through the seven numbers on the board with the current levers, one formula at a time.</p>
+      </div>
+      <div class="controls">
+        <button type="button" class="btn primary" data-a="play">Explain</button>
+        <button type="button" class="btn" data-a="next">Step</button>
+        <button type="button" class="btn" data-a="back">Step back</button>
+        <button type="button" class="btn" data-a="reset">Reset steps</button>
+      </div>
+      <div class="speed"><label for="speed">Speed</label><input type="range" id="speed" min="0.5" max="3" step="0.25" value="1"><output id="speedOut" for="speed">1x</output></div>
+      <p class="hint">Explain moves to the next number every 5 seconds at speed 1x. Press it again to pause.</p>
+    </section>
+
     <section aria-labelledby="h-lev">
-      <h2 id="h-lev">2. Move one lever</h2>
+      <h2 id="h-lev">Move one lever</h2>
       <div class="lever" id="lvCensus">
         <label for="census">Census on this shift</label><output id="censusOut">27</output>
         <input type="range" id="census" min="22" max="32" step="1" value="27">
@@ -361,7 +432,7 @@
         <div class="seg" id="hireSeg" role="group" aria-label="Number of RNs to hire"><button type="button" class="btn on" data-h="0" aria-pressed="true">0</button><button type="button" class="btn" data-h="1">1</button><button type="button" class="btn" data-h="2">2</button><button type="button" class="btn" data-h="3">3</button></div>
         <span class="ln">Use the new hours to</span><span></span>
         <div class="seg" id="useSeg" role="group" aria-label="How the new hours are used"><button type="button" class="btn on" data-use="add" aria-pressed="true">Add coverage on Fri, Sat, Sun nights</button><button type="button" class="btn" data-use="replace">Replace overtime and agency shifts</button></div>
-        <span class="sub">Each hire is 1.0 FTE: 2,080 paid hours a year, about 156 twelve-hour shifts (three a week) plus paid leave. Cost $109,158 with 28% benefits.</span>
+        <span class="sub">Each hire is 1.0 FTE (full-time equivalent): 2,080 paid hours a year, about 156 twelve-hour shifts (three a week) plus paid leave. Cost $109,158 with 28% benefits.</span>
       </div>
       <div class="lever" id="lvOT">
         <span class="ln">Stop filling this shift with overtime</span><button type="button" class="btn" id="cutOT" aria-pressed="false">Off</button>
@@ -375,20 +446,21 @@
       <div class="lever" id="lvTarget">
         <span class="ln">Ratio target (patients per RN)</span><span class="lv" id="targetOut">1 : 6</span>
         <div class="seg" id="targetSeg" role="group" aria-label="Ratio target"><button type="button" class="btn" data-t="4">1 : 4</button><button type="button" class="btn" data-t="5">1 : 5</button><button type="button" class="btn on" data-t="6" aria-pressed="true">1 : 6</button></div>
-        <span class="sub">4 West targets 1 RN to 5 patients on days and 1 to 6 on nights. The charge nurse is outside the ratio.</span>
+        <span class="sub">4 West targets 1 RN to 5 patients on days and 1 to 6 on nights. The charge nurse is not counted in the ratio.</span>
       </div>
       <button type="button" class="btn" id="resetLevers">Reset the levers</button>
     </section>
 
     <section aria-labelledby="h-board">
-      <h2 id="h-board">3. The board <small>live</small></h2>
+      <h2 id="h-board">The board <small>live</small></h2>
+      <p class="mini">Each tile updates as soon as you change a shift or a lever.</p>
       <div class="regs" id="regs" aria-live="polite">
         <div class="reg kv" id="rCensus"><span class="rn">Census</span><span class="rv" id="vCensus">27</span><span class="rf">patients in 32 beds</span><span class="rs" id="sCensus"></span></div>
         <div class="reg kv" id="rRN"><span class="rn">Bedside RNs</span><span class="rv" id="vRN">3.85</span><span class="rf">charge nurse not counted</span><span class="rs" id="sRN"></span></div>
         <div class="reg kv" id="rPpr"><span class="rn">Patients per RN</span><span class="rv" id="vPpr">7.0</span><span class="rf">census / RNs</span><span class="rs" id="sPpr"></span></div>
         <div class="reg kv" id="rGap"><span class="rn">RNs needed for target</span><span class="rv" id="vNeed">5</span><span class="rf" id="fNeed">ceil(27 / 6)</span><span class="rs" id="sGap"></span></div>
-        <div class="reg kv" id="rHppd"><span class="rn">Hours per patient day</span><span class="rv" id="vHppd">2.7</span><span class="rf">12 x (RN + CNA + LPN) / census</span><span class="rs" id="sHppd"></span></div>
-        <div class="reg kv" id="rFalls"><span class="rn">Falls per 100 shifts</span><span class="rv" id="vFalls">36.5</span><span class="rf">from 366 shifts and 27 falls</span><span class="rs" id="sFalls"></span></div>
+        <div class="reg kv wide" id="rHppd"><span class="rn">Hours per patient day</span><span class="rv" id="vHppd">2.7</span><span class="rf">12 x (RN + CNA + LPN) / census</span><span class="rs" id="sHppd"></span></div>
+        <div class="reg kv wide" id="rFalls"><span class="rn">Falls per 100 shifts</span><span class="rv" id="vFalls">36.5</span><span class="rf">from 366 shifts and 27 falls</span><span class="rs" id="sFalls"></span></div>
         <div class="reg kv wide" id="rCost"><span class="rn">Yearly cost of your levers</span><span class="rv" id="vCost">$0</span><span class="rf" id="fCost">compared with today</span><span class="rs" id="sCost"></span></div>
         <div class="reg kv" id="rOT"><span class="rn">Overtime, % of paid hours</span><span class="rv" id="vOT">7.5%</span><span class="rf">unit, 4-week schedule</span><span class="rs" id="sOT"></span></div>
         <div class="reg kv" id="rHcahps"><span class="rn">Predicted HCAHPS</span><span class="rv" id="vHcahps">66</span><span class="rf">nurse communication top-box</span><span class="rs" id="sHcahps"></span></div>
@@ -397,24 +469,15 @@
       <div class="formula" id="formula" aria-live="polite"></div>
     </section>
 
-    <div id="player">
-      <section class="narr" aria-live="polite">
-        <div class="narr-head"><span class="ptag" id="ptag">Ready</span><span data-a="count">Step 0 of 7</span></div>
-        <p id="narration">Press Explain to walk through the seven numbers on the board with the current levers, one formula at a time.</p>
-      </section>
-      <div class="controls" style="margin-top:12px">
-        <button type="button" class="btn primary" data-a="play">Explain</button>
-        <button type="button" class="btn" data-a="next">Step</button>
-        <button type="button" class="btn" data-a="back">Step back</button>
-        <button type="button" class="btn" data-a="reset">Reset</button>
-      </div>
-      <div class="speed" style="margin-top:10px"><label for="speed">Speed</label><input type="range" id="speed" min="0.5" max="3" step="0.25" value="1"><output id="speedOut" for="speed">1x</output></div>
-      <p class="hint">Explain plays the steps every few seconds; Step and Step back go at your pace. Click a nurse on the floor to see her patients. Keyboard: Space steps, B steps back, R plays or pauses.</p>
-    </div>
+    <section class="span-all" aria-labelledby="h-sc">
+      <h2 id="h-sc">The scorecard, 12 months</h2>
+      <p class="mini">From unit_scorecard.csv. Coral marks a month worse than the hospital benchmark (falls 2.5 per 1,000 patient days, nurse communication 78%). HCAHPS is the national patient survey; "comm %" is the share of patients who rated nurse communication at the top of the scale.</p>
+      <div class="scroll-x"><table id="scTable"><thead><tr><th>Month</th><th class="n">Falls /1,000</th><th class="n">HCAHPS comm %</th><th class="n">Turnover %</th><th class="n">Vacancy %</th><th class="n">Overtime %</th><th class="n">Agency h</th></tr></thead><tbody></tbody></table></div>
+    </section>
 
     <section aria-labelledby="h-res">
-      <h2 id="h-res">4. Cost of one resignation</h2>
-      <p class="mini">Eight RNs left 4 West in the last 12 months. Recruiting and onboarding one RN costs about $62,000; the coverage while the position is vacant is on top of that.</p>
+      <h2 id="h-res">Cost of one resignation</h2>
+      <p class="mini">Eight RNs left 4 West in the last 12 months. Recruiting and onboarding one RN costs about $62,000. The coverage while the position is vacant comes on top of that.</p>
       <div class="calc">
         <label>Days vacant<input type="number" id="vacDays" min="14" max="365" step="1" value="90"></label>
         <label>Hours covered per week<input type="number" id="vacHours" min="12" max="48" step="12" value="36"></label>
@@ -423,15 +486,9 @@
       </div>
     </section>
 
-    <section aria-labelledby="h-sc">
-      <h2 id="h-sc">5. The scorecard, 12 months</h2>
-      <p class="mini">From unit_scorecard.csv. Coral marks a month worse than the hospital benchmark (falls 2.5 per 1,000 patient days, nurse communication 78%).</p>
-      <div class="scroll-x"><table id="scTable"><thead><tr><th>Month</th><th class="n">Falls /1,000</th><th class="n">HCAHPS comm %</th><th class="n">Turnover %</th><th class="n">Vacancy %</th><th class="n">Overtime %</th><th class="n">Agency h</th></tr></thead><tbody></tbody></table></div>
-    </section>
-
     <section aria-labelledby="h-qz">
-      <h2 id="h-qz">6. Self-check</h2>
-      <p class="hint">Six questions with the unit's real numbers. Use the levers and the table above to answer.</p>
+      <h2 id="h-qz">Self-check</h2>
+      <p class="hint">Six questions with the unit's real numbers. Press one answer per question; the feedback explains the math. Use the levers and the scorecard table to find each answer.</p>
       <div class="qbar" id="qbar" aria-hidden="true"></div>
       <div id="quiz"></div>
       <div class="score" id="qscore"></div>
@@ -447,17 +504,6 @@
         <li>One resignation costs more than half of a new RN's yearly pay before a single vacant shift is covered.</li>
       </ul>
     </section>
-
-    <details>
-      <summary>How to use this interactive</summary>
-      <ol class="notice" style="margin:4px 12px 12px;padding-left:20px">
-        <li>Pick a shift and a day of the week. The board loads that shift's averages from six months of daily_census.csv.</li>
-        <li>Move one lever at a time (census, hires, overtime, agency, target) and read the board and the formula box.</li>
-        <li>Press Explain to hear the seven steps narrated on the floor, or Step through them.</li>
-        <li>Click a nurse token to see the rooms she covers; coral means her load is above 6.5 patients.</li>
-        <li>Use the resignation calculator and the scorecard table, then take the six-question self-check.</li>
-      </ol>
-    </details>
 
     <details>
       <summary>Where every number comes from</summary>
@@ -532,6 +578,8 @@ function Unit3D(stage, opts) {
   controls.enableDamping = true; controls.dampingFactor = 0.08;
   controls.maxPolarAngle = Math.PI * 0.46; controls.minDistance = 4; controls.maxDistance = 46;
   controls.zoomSpeed = 1.1;
+  // pan: right-drag, Ctrl or Shift plus drag, or two fingers; stays on the floor plane
+  controls.enablePan = true; controls.screenSpacePanning = false; controls.panSpeed = 0.9;
   // keep the mouse wheel inside the 3D view: zoom the floor, do not scroll the page
   stage.addEventListener('wheel', e => e.preventDefault(), {passive: false});
 
@@ -808,11 +856,25 @@ function Unit3D(stage, opts) {
     if (name === 'overview' || !views[name]) {
       // the overview (and FIT) must show the whole floor width, also on narrow phone screens,
       // leaving room for the zoom buttons at the right edge
-      const tanH = Math.tan(T.MathUtils.degToRad(camera.fov / 2)) * camera.aspect;
+      // and, on wide stages, fill the stage: the floor fits both the width and the height of the view
+      const tanV = Math.tan(T.MathUtils.degToRad(camera.fov / 2)), tanH = tanV * camera.aspect;
+      const dist0 = pos.distanceTo(tgt), sinE = Math.max(0.3, (pos.y - tgt.y) / dist0);
       const need = (B.w / 2 + 0.5) / (tanH * 0.92) + B.d * 0.25;
-      f = Math.max(f, need / pos.distanceTo(tgt));
-      controls.maxDistance = Math.max(controls.maxDistance, need * 1.3);
-      if (scene.fog) { scene.fog.near = Math.max(scene.fog.near, need * 1.1); scene.fog.far = Math.max(scene.fog.far, need * 2.6); }
+      const needD = (B.d / 2 * sinE + 0.8) / (tanV * 0.78) + B.d * 0.25;   // 0.78 leaves room for the HUD bars
+      const need2 = Math.max(need, needD);
+      f = need2 / dist0;
+      // phones: when the zoom controls are a column on the right edge, fit the floor in the space to their left
+      const zc = stage.querySelector('.zoomctl'), sw = stage.clientWidth;
+      if (zc && sw && sw < 760 && zc.offsetWidth < sw * 0.4) {
+        const m = zc.offsetWidth + 14, keep = (sw - m) / sw;
+        f = Math.max(need / keep, needD) / dist0;
+        const d = f * dist0, shift = (m / sw) * d * tanH;           // move the view so the floor centers in the free space
+        const fwd = tgt.clone().sub(pos); fwd.y = 0; fwd.normalize();
+        const right = new T.Vector3(-fwd.z, 0, fwd.x);
+        tgt.add(right.clone().multiplyScalar(shift)); pos.add(right.multiplyScalar(shift));
+      }
+      controls.maxDistance = Math.max(controls.maxDistance, need2 * 1.3);
+      if (scene.fog) { scene.fog.near = Math.max(scene.fog.near, need2 * 1.1); scene.fog.far = Math.max(scene.fog.far, need2 * 2.6); }
     }
     pos.sub(tgt).multiplyScalar(f).add(tgt);
     return {pos: pos, tgt: tgt};
@@ -844,28 +906,57 @@ function Unit3D(stage, opts) {
     const p = t.clone().add(off), k = 1 / (gsap.globalTimeline.timeScale() || 1);
     gsap.to(camera.position, {x: p.x, y: p.y, z: p.z, duration: RM ? 0 : 0.45, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
   }
+  // pan buttons (arrows) and arrow keys: slide the view across the floor, in screen directions
+  const PANLIM = {x: B.w / 2 + 1.5, z: B.d / 2 + 1.5};
+  function clampTarget(v) { v.x = Math.max(-PANLIM.x, Math.min(PANLIM.x, v.x)); v.z = Math.max(-PANLIM.z + (B.cz || 0), Math.min(PANLIM.z + (B.cz || 0), v.z)); return v; }
+  function pan(dx, dz) {   // dx: +1 right, -1 left; dz: +1 up (away), -1 down (toward the viewer)
+    const off = camera.position.clone().sub(controls.target), dist = off.length(), step = Math.max(0.6, dist * 0.12);
+    const fwd = new T.Vector3(); camera.getWorldDirection(fwd); fwd.y = 0;
+    if (fwd.lengthSq() < 1e-6) fwd.set(0, 0, -1); fwd.normalize();
+    const right = new T.Vector3(-fwd.z, 0, fwd.x);
+    const tgt = clampTarget(controls.target.clone().add(right.multiplyScalar(dx * step)).add(fwd.multiplyScalar(dz * step)));
+    const pos = tgt.clone().add(off), k = 1 / (gsap.globalTimeline.timeScale() || 1);
+    gsap.to(controls.target, {x: tgt.x, y: tgt.y, z: tgt.z, duration: RM ? 0 : 0.35, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
+    gsap.to(camera.position, {x: pos.x, y: pos.y, z: pos.z, duration: RM ? 0 : 0.35, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
+  }
+  controls.addEventListener('change', () => { const c = controls.target, x = c.x, z = c.z; clampTarget(c); if (c.x !== x || c.z !== z) camera.position.add(new T.Vector3(c.x - x, 0, c.z - z)); });
   if (opts.zoomUI !== false) {
     if (!document.getElementById('lab3d-zoom-css')) {
       const st = document.createElement('style'); st.id = 'lab3d-zoom-css';
       st.textContent = '.zoomctl{position:absolute;z-index:4;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:2px;padding:4px;background:rgba(255,255,255,.9);border:1px solid #D9D3C8;border-radius:10px;backdrop-filter:blur(6px);box-shadow:0 1px 2px rgba(20,35,58,.08)}' +
         '.zoomctl button{width:38px;height:34px;border:0;border-radius:7px;background:transparent;color:#14233A;font:700 18px/1 "JetBrains Mono",ui-monospace,monospace;cursor:pointer;padding:0}' +
         '.zoomctl button.fit{font-size:10px;letter-spacing:.06em;height:28px}.zoomctl button:hover{background:rgba(14,124,134,.12);color:#0E7C86}' +
-        '.zoomctl button:focus-visible{outline:2px solid #0E7C86;outline-offset:1px}@media(max-width:520px){.zoomctl{right:10px}.zoomctl button{width:34px;height:32px}}';
+        '.zoomctl button:focus-visible{outline:2px solid #0E7C86;outline-offset:1px}' +
+        '.zoomctl .pad{display:grid;grid-template-columns:repeat(3,26px);grid-template-rows:repeat(3,24px);gap:1px;margin:3px 0;padding-top:4px;border-top:1px solid #D9D3C8}' +
+        '.zoomctl .pad button{width:26px;height:24px;font-size:12px}.zoomctl .pad .u{grid-area:1/2}.zoomctl .pad .l{grid-area:2/1}.zoomctl .pad .c{grid-area:2/2;font-size:9px}.zoomctl .pad .r{grid-area:2/3}.zoomctl .pad .d{grid-area:3/2}' +
+        '@media(max-width:520px){.zoomctl{right:10px}.zoomctl button{width:34px;height:32px}.zoomctl .pad{grid-template-columns:repeat(3,28px);grid-template-rows:repeat(3,26px)}.zoomctl .pad button{width:28px;height:26px}}';
       document.head.appendChild(st);
     }
     const box = document.createElement('div'); box.className = 'zoomctl'; box.setAttribute('role', 'group'); box.setAttribute('aria-label', 'Zoom');
     box.innerHTML = '<button type="button" data-z="in" aria-label="Zoom in" title="Zoom in (+)">+</button>' +
       '<button type="button" data-z="out" aria-label="Zoom out" title="Zoom out (-)">&minus;</button>' +
+      '<div class="pad" role="group" aria-label="Move the view">' +
+      '<button type="button" class="u" data-p="u" aria-label="Move the view up" title="Move up (arrow up)">&#9650;</button>' +
+      '<button type="button" class="l" data-p="l" aria-label="Move the view left" title="Move left (arrow left)">&#9664;</button>' +
+      '<button type="button" class="c" data-z="fit" aria-label="Center the view" title="Center the view (0)">&#9679;</button>' +
+      '<button type="button" class="r" data-p="r" aria-label="Move the view right" title="Move right (arrow right)">&#9654;</button>' +
+      '<button type="button" class="d" data-p="d" aria-label="Move the view down" title="Move down (arrow down)">&#9660;</button></div>' +
       '<button type="button" class="fit" data-z="fit" aria-label="Show the whole unit" title="Show the whole unit (0)">FIT</button>';
     stage.appendChild(box);
     ['pointerdown', 'pointerup', 'wheel', 'click'].forEach(ev => box.addEventListener(ev, e => e.stopPropagation()));
     box.addEventListener('click', e => {
       const b = e.target.closest('button'); if (!b) return;
-      if (b.dataset.z === 'in') zoom(0.75); else if (b.dataset.z === 'out') zoom(1.33); else setView(opts.fitView || 'overview');
+      const pd = {l: [-1, 0], r: [1, 0], u: [0, 1], d: [0, -1]}[b.dataset.p];
+      if (pd) pan(pd[0], pd[1]);
+      else if (b.dataset.z === 'in') zoom(0.75); else if (b.dataset.z === 'out') zoom(1.33); else setView(opts.fitView || 'overview');
     });
+    let over = false;
+    stage.addEventListener('pointerenter', () => { over = true; }); stage.addEventListener('pointerleave', () => { over = false; });
     document.addEventListener('keydown', e => {
       const t = e.target, tag = t && t.tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) return;
+      const ak = {ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1]}[e.key];
+      if (ak) { if (over || stage.contains(e.target)) { e.preventDefault(); pan(ak[0], ak[1]); } return; }
       if (e.key === '+' || e.key === '=') zoom(0.75);
       else if (e.key === '-' || e.key === '_') zoom(1.33);
       else if (e.key === '0') setView(opts.fitView || 'overview');
@@ -899,7 +990,7 @@ function Unit3D(stage, opts) {
 
   const labApi = {T: T, scene: scene, camera: camera, controls: controls, renderer: renderer, recs: recs, colors: C, kinds: KIND, roles: ROLE,
     room: room, person: person, walk: walk, set: set, chip: chip, finishPins: finishPins, silkRect: silkRect, zone: zone, label: label, busMat: busMat, trace: trace, glowBus: glowBus,
-    fly: fly, clearPackets: clearPackets, hi: hi, clear: clear, pop: pop, setView: setView, focusOn: focusOn, intro: intro, zoom: zoom, refreshFloor: refreshFloor,
+    fly: fly, clearPackets: clearPackets, hi: hi, clear: clear, pop: pop, setView: setView, focusOn: focusOn, intro: intro, zoom: zoom, pan: pan, refreshFloor: refreshFloor,
     onPick: cb => { pickCb = cb; }, onFrame: f => frames.push(f), unit: unit};
   (window.__labs = window.__labs || []).push(labApi);   // lets tests reach the camera
   return labApi;
@@ -954,6 +1045,24 @@ const fmt$ = n => (n < 0 ? '-$' : '$') + Math.abs(Math.round(n)).toLocaleString(
 const f1 = n => (Math.round(n * 10) / 10).toFixed(1), f2 = n => (Math.round(n * 100) / 100).toFixed(2);
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
 let speed = 1;
+// guide block: mark the current step (1-based) and say the single next action
+function guide(stepNo, nowHtml) {
+  $$('#howSteps li').forEach(li => { const n = +li.dataset.h; li.classList.toggle('done', n < stepNo); li.classList.toggle('current', n === stepNo); });
+  if (nowHtml) $('#nowText').innerHTML = nowHtml;
+}
+const GD = {shift: false, explained: false, lever: false, nurse: false, vac: false};   // which guide steps the learner has done
+function nextGuide(lead) {
+  const L = lead ? lead + ' ' : '';
+  if (!GD.shift) return guide(1, L + 'Choose a shift and a day under <b>Pick a shift</b> below. Night, Sunday is already chosen, so you may go straight to <b>Explain</b>.');
+  if (!GD.explained) return guide(2, L + 'Press <b>Explain</b> under <b>Walk through the numbers</b> to hear the seven numbers for ' + S.shift + ', ' + S.dow + '.');
+  if (!GD.lever) return guide(3, L + 'Change one lever under <b>Move one lever</b>. For example, press <b>2</b> next to <b>Hire RNs for the weekend night line</b>, then read the tiles in <b>The board</b>.');
+  if (!GD.nurse) return guide(4, L + 'Click a nurse token (RN) on the floor above to see the rooms she covers.');
+  if (!GD.vac) return guide(5, L + 'Change <b>Days vacant</b> under <b>Cost of one resignation</b> below and read the new cost.');
+  const q = QUIZ.findIndex((x, qi) => qDone[qi] === undefined);
+  if (q >= 0) return guide(6, L + 'Answer question ' + (q + 1) + ' of ' + QUIZ.length + ' under <b>Self-check</b> below.');
+  const right = Object.entries(qDone).filter(([qi, li]) => QUIZ[qi].a === li).length;
+  guide(7, L + 'Self-check done: ' + right + ' of ' + QUIZ.length + ' right. Press <b>Try again</b> under Self-check to retake it, or test your own proposal with the levers.');
+}
 
 /* ---------------- the model (plain functions, tested with node in build/) ---------------- */
 const S = {shift: 'Night', dow: 'Sunday', census: 27, hires: 0, use: 'add', cutOT: false, agency: 0, target: 6};
@@ -1022,9 +1131,10 @@ function buildFloor(lab) {
 
 /* 3D scene with the Unit3D kit */
 function Graphics3D(stage) {
+  const nx = stage.clientWidth < 700 ? 0 : 1;   // on wide stages aim a little right of center so the zoom buttons at the right edge do not cover the station end
   const lab = Unit3D(stage, {
     floor: {w: FW, d: FD, title: '4 WEST · MED-SURG · 32 BEDS', corridors: [{z: 0, w: 3}]},
-    views: {overview: {pos: [0, 21, 16], tgt: [0, 0, 0.6], want: 1.6}, station: {pos: [9, 7, 8], tgt: [11, 0, 1.2], want: 1.2}, rooms: {pos: [-8, 8, 7], tgt: [-6, 0, -1], want: 1.2}},
+    views: {overview: {pos: [nx, 21, 16], tgt: [nx, 0, 0.6], want: 1.6}, station: {pos: [9, 8.5, 9.5], tgt: [11, 0, 0.8], want: 1.2}, rooms: {pos: [-8, 9.5, 8.5], tgt: [-6, 0, -0.6], want: 1.2}},
     fitView: 'overview'
   });
   if (!lab) return null;
@@ -1139,10 +1249,11 @@ function showNurse(i) {
   const nm = NAMES[S.shift][i].split(' ')[0];
   setCap('Nurse ' + nm, nm + ' covers ' + rooms.length + ' patients tonight: rooms ' + rooms.join(', ') + '. ' + (over ? 'That is above 6.5, the line where the unit\'s falls jump from 2.5 to 36.5 per 100 shifts. Coral marks risk.' : 'That is within the target of 1 to ' + S.target + '. Teal marks the student\'s own staff and patients.'));
   if (rooms.length) G.focusOn(G.recs[String(rooms[0])].x + 2, 0, 11);
+  GD.nurse = true; nextGuide(nm + ' covers ' + rooms.length + ' patients' + (over ? ', above 6.5.' : '.'));
 }
 function showRoom(key) {
   const i = assign.findIndex(a => a.indexOf(+key) >= 0);
-  if (i < 0) { setCap('Room ' + key, 'Room ' + key + ' is empty on this shift (census ' + S.census + ' of 32 beds).'); return; }
+  if (i < 0) { setCap('Room ' + key, 'Room ' + key + ' is empty on this shift (census ' + S.census + ' of 32 beds). Click a room with a patient (a filled bed) or a nurse token.'); return; }
   showNurse(i);
 }
 
@@ -1224,15 +1335,22 @@ function makePlayer(root) {
     $$('#phases li').forEach((li, k) => li.classList.toggle('on', k === i));
     regOn(s.reg, s.reg === '#rPpr' && calc(S).ppr > 6.5 ? 'bad' : 'on');
     G.clear(); G.clearPackets(); s.run();
+    afterStep(i, list.length, s.t);
+  }
+  function afterStep(k, n, name) {
+    GD.shift = true;
+    if (k >= n - 1) { GD.explained = true; nextGuide('All ' + n + ' numbers explained.'); return; }
+    if (play.textContent === 'Pause') guide(2, 'Explain is playing number ' + (k + 1) + ' of ' + n + ': ' + name + '. Watch the floor above and read the narration. Press <b>Pause</b> to stop.');
+    else guide(2, 'Number ' + (k + 1) + ' of ' + n + ': ' + name + '. Read the narration, then press <b>Step</b> for the next number.');
   }
   function stop() { if (timer) { hasGSAP ? timer.kill() : clearTimeout(timer); timer = null; } play.textContent = 'Explain'; }
   function tick() { if (i >= 6) { stop(); return; } go(i + 1); if (i >= 6) { timer = null; stop(); return; } timer = hasGSAP ? gsap.delayedCall(5 / speed, tick) : setTimeout(tick, 5000 / speed); }
-  play.onclick = () => { if (timer) { stop(); return; } if (i >= 6) { i = -1; hist = []; } play.textContent = 'Pause'; tick(); };
+  play.onclick = () => { if (timer) { stop(); if (i < 6) guide(2, 'Paused at number ' + (i + 1) + ' of 7. Press <b>Explain</b> to continue, or <b>Step</b> to go one number at a time.'); return; } if (i >= 6) { i = -1; hist = []; } play.textContent = 'Pause'; tick(); };
   root.querySelector('[data-a=next]').onclick = () => { stop(); go(i + 1); };
   back.onclick = () => { stop(); if (hist.length) go(hist.pop(), false); else go(i - 1, false); };
   root.querySelector('[data-a=reset]').onclick = () => api.reset();
   const api = {go, stop, get index() { return i; }, step: () => { stop(); go(i + 1); }, back: () => back.click(), toggle: () => play.click(),
-    reset() { stop(); i = -1; hist = []; setCap('Ready', 'Press Explain to walk through the seven numbers on the board with the current levers, one formula at a time.'); cnt.textContent = 'Step 0 of 7'; back.disabled = true; $$('#phases li').forEach(li => li.classList.remove('on')); regOn(null); G.clear(); G.clearPackets(); G.setView('overview'); }};
+    reset() { stop(); i = -1; hist = []; setCap('Ready', 'Press Explain to walk through the seven numbers on the board with the current levers, one formula at a time.'); cnt.textContent = 'Step 0 of 7'; back.disabled = true; $$('#phases li').forEach(li => li.classList.remove('on')); regOn(null); G.clear(); G.clearPackets(); G.setView('overview'); nextGuide('The steps are reset.'); }};
   return api;
 }
 const player = makePlayer($('#player'));
@@ -1240,10 +1358,12 @@ window.__player = player;
 
 /* ---------------- levers ---------------- */
 function setSeg(sel, attr, val) { $$(sel + ' .btn').forEach(b => { const on = b.dataset[attr] === String(val); b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); }); }
-function change() { player.stop(); render(); $$('.lever').forEach(l => l.classList.remove('on')); if (S.hires) $('#lvHire').classList.add('on'); if (S.cutOT) $('#lvOT').classList.add('on'); if (S.agency) $('#lvAg').classList.add('on'); if (S.census !== Math.round(profile(S).census)) $('#lvCensus').classList.add('on'); }
+function change(kind) { player.stop(); render(); const R = calc(S);
+  if (kind === 'shift') { GD.shift = true; nextGuide(S.shift + ', ' + S.dow + ' is loaded: ' + f1(R.ppr) + ' patients per RN.'); } else { GD.lever = true; nextGuide('The board is updated: ' + f1(R.ppr) + ' patients per RN, ' + (R.net > 0 ? '+' : '') + fmt$(R.net) + ' a year.'); }
+  $$('.lever').forEach(l => l.classList.remove('on')); if (S.hires) $('#lvHire').classList.add('on'); if (S.cutOT) $('#lvOT').classList.add('on'); if (S.agency) $('#lvAg').classList.add('on'); if (S.census !== Math.round(profile(S).census)) $('#lvCensus').classList.add('on'); }
 $('#dowSeg').innerHTML = DOW.map(d => '<button type="button" class="btn" data-dow="' + d + '">' + d.slice(0, 3) + '</button>').join('');
-$('#shiftSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S.shift = b.dataset.shift; S.target = S.shift === 'Day' ? 5 : 6; setSeg('#shiftSeg', 'shift', S.shift); setSeg('#targetSeg', 't', S.target); $('#targetOut').textContent = '1 : ' + S.target; S.census = Math.round(profile(S).census); $('#census').value = S.census; $('#censusOut').textContent = S.census; change(); });
-$('#dowSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S.dow = b.dataset.dow; setSeg('#dowSeg', 'dow', S.dow); S.census = Math.round(profile(S).census); $('#census').value = S.census; $('#censusOut').textContent = S.census; change(); });
+$('#shiftSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S.shift = b.dataset.shift; S.target = S.shift === 'Day' ? 5 : 6; setSeg('#shiftSeg', 'shift', S.shift); setSeg('#targetSeg', 't', S.target); $('#targetOut').textContent = '1 : ' + S.target; S.census = Math.round(profile(S).census); $('#census').value = S.census; $('#censusOut').textContent = S.census; change('shift'); });
+$('#dowSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S.dow = b.dataset.dow; setSeg('#dowSeg', 'dow', S.dow); S.census = Math.round(profile(S).census); $('#census').value = S.census; $('#censusOut').textContent = S.census; change('shift'); });
 $('#census').addEventListener('input', () => { S.census = +$('#census').value; $('#censusOut').textContent = S.census; change(); });
 $('#hireSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S.hires = +b.dataset.h; setSeg('#hireSeg', 'h', S.hires); $('#hireOut').textContent = S.hires; change(); });
 $('#useSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S.use = b.dataset.use; setSeg('#useSeg', 'use', S.use); change(); });
@@ -1262,7 +1382,7 @@ function renderVac() {
   const line = how === 'agency' ? 'premium per hour = $95 agency - $52.48 loaded base ($41 x 1.28) = $42.52' : how === 'ot' ? 'premium per hour = $61.50 overtime - $41 base = $20.50' : 'premium per hour = $0 (the hours are not covered: the ratio takes the hit instead)';
   $('#vacOut').textContent = 'hours to cover = ' + days + ' / 7 x ' + hpw + ' = ' + f1(r.hoursExact) + ' h (about ' + r.hours + ')\n' + line + '\ncoverage premium = ' + r.hours + ' x ' + fmt$(r.prem) + ' = ' + fmt$(r.coverage) + '\ncost of one resignation = $62,000 + ' + fmt$(r.coverage) + ' = ' + fmt$(r.total) + '\n8 RN exits in 12 months x $62,000 = $496,000 before coverage';
 }
-['#vacDays', '#vacHours', '#vacHow'].forEach(s => $(s).addEventListener('input', renderVac));
+['#vacDays', '#vacHours', '#vacHow'].forEach(s => $(s).addEventListener('input', () => { renderVac(); GD.vac = true; const days = Math.max(1, +$('#vacDays').value || 90), hpw = Math.max(0, +$('#vacHours').value || 36); nextGuide('One resignation now costs ' + fmt$(resignation(days, hpw, $('#vacHow').value).total) + '.'); }));
 
 /* ---------------- scorecard table ---------------- */
 $('#scTable tbody').innerHTML = D.scorecard.map(r => '<tr><td>' + r.month + '</td><td class="n"><span class="bench' + (r.fpk <= D.benchFalls ? ' ok' : '') + '">' + f2(r.fpk) + '</span></td><td class="n"><span class="bench' + (r.hcahps >= D.benchHcahps ? ' ok' : '') + '">' + r.hcahps + '</span></td><td class="n">' + f1(r.turnover) + '</td><td class="n">' + f1(r.vacancy) + '</td><td class="n">' + f1(r.ot) + '</td><td class="n">' + r.agency + '</td></tr>').join('');
@@ -1286,7 +1406,7 @@ function renderQuiz() {
     item.o.forEach((opt, li) => {
       const b = document.createElement('button'); b.className = 'btn'; b.type = 'button'; b.textContent = opt;
       if (qDone[qi] !== undefined) { b.disabled = true; if (li === item.a) b.classList.add('right'); else if (li === qDone[qi]) b.classList.add('wrong'); }
-      b.onclick = () => { qDone[qi] = li; renderQuiz(); };
+      b.onclick = () => { qDone[qi] = li; renderQuiz(); nextGuide(li === item.a ? 'Question ' + (qi + 1) + ' is right.' : 'Question ' + (qi + 1) + ': read the feedback for the math.'); };
       o.appendChild(b);
     });
     d.appendChild(o);
@@ -1296,12 +1416,12 @@ function renderQuiz() {
   const n = Object.keys(qDone).length, right = Object.entries(qDone).filter(([qi, li]) => QUIZ[qi].a === li).length;
   $('#qbar').innerHTML = QUIZ.map((q, qi) => '<i class="' + (qDone[qi] === undefined ? '' : qDone[qi] === q.a ? 'ok' : 'bad') + '"></i>').join('');
   $('#qscore').innerHTML = n ? '<span>Score</span><span class="big">' + right + ' / ' + QUIZ.length + '</span>' + (n === QUIZ.length ? '<button class="btn" id="qreset" type="button">Try again</button>' : '<span>' + n + ' of ' + QUIZ.length + ' answered</span>') : '';
-  const r = document.getElementById('qreset'); if (r) r.onclick = () => { qDone = {}; renderQuiz(); };
+  const r = document.getElementById('qreset'); if (r) r.onclick = () => { qDone = {}; renderQuiz(); nextGuide('The self-check is cleared.'); };
 }
 
 /* ---------------- start ---------------- */
 setSeg('#dowSeg', 'dow', S.dow);
-render(); renderVac(); renderQuiz();
+render(); renderVac(); renderQuiz(); nextGuide();
 if (!hasGSAP) $('#narration').innerHTML += ' (Animations are off because the animation library did not load; every step still works.)';
 })();
 /*W78 JS END*/

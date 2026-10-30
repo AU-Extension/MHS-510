@@ -233,7 +233,11 @@
   .reveal{animation:rise .7s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*80ms)}
   @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
   @media(max-width:860px){
-    .app .stage .zoomctl{top:56px;right:10px;transform:none;flex-direction:row}
+    .app .stage .zoomctl{top:50%;right:8px;transform:translateY(-50%);flex-direction:column;padding:3px;align-items:center}
+    .app .stage .zoomctl>button{width:30px!important;height:28px!important;font-size:16px}
+    .app .stage .zoomctl>button.fit{height:24px!important;font-size:9px}
+    .app .stage .zoomctl .pad{grid-template-columns:repeat(3,22px)!important;grid-template-rows:repeat(3,22px)!important;margin:2px 0;padding-top:3px}
+    .app .stage .zoomctl .pad button{width:22px!important;height:22px!important;font-size:10px}
     .app{grid-template-columns:1fr;height:auto}
     .app .stage{height:62vh;min-height:360px}
     .panel{border-left:0;border-top:1px solid var(--line);overflow:visible}
@@ -251,8 +255,34 @@
     .tag .sb{display:none}
     .scroll-x::before{content:"Swipe sideways to see the whole table";display:block;font:500 11px var(--font-mono);letter-spacing:.04em;color:var(--muted);margin:0 0 6px}
   }
+
+  /* ---- stacked layout (v2, October 30 2026): the 3D floor uses the full width of the page, instructions and controls go below it ---- */
+  .app{display:block;height:auto;min-height:0}
+  .app>.lab-head{max-width:1240px;margin:0 auto;padding:18px 16px 14px}
+  .app>.stage{width:100%;height:clamp(420px,70vh,860px);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .panel{max-width:1240px;margin:0 auto;border-left:0;overflow:visible;background:none;display:block;columns:2 420px;column-gap:28px;padding:20px 16px 28px}
+  .panel>*{break-inside:avoid;margin:0 0 22px}
+  .panel>header,.panel>footer,.panel>.guide,.panel>.span-all{column-span:all}
+  /* guide: numbered steps with the current one highlighted, plus a "do this now" line */
+  .guide{max-width:1240px;margin:0 auto;padding:18px 16px 4px;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px 26px;align-items:start}
+  .guide h2{grid-column:1/-1;margin:0;font-size:19px}
+  .guide ol.steps{list-style:none;margin:0;padding:0;display:grid;gap:8px;counter-reset:s}
+  .guide ol.steps li{counter-increment:s;position:relative;padding:9px 12px 9px 46px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);color:var(--ink);font-size:15px;line-height:1.45;box-shadow:var(--shadow-sm)}
+  .guide ol.steps li::before{content:counter(s);position:absolute;left:12px;top:9px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:700 12px var(--font-mono);background:var(--panel-2);color:var(--ink-2);border:1px solid var(--line)}
+  .guide ol.steps li.current{border-color:var(--teal);box-shadow:0 0 0 2px rgba(14,124,134,.15)}
+  .guide ol.steps li.current::before{background:var(--teal);color:#fff;border-color:var(--teal)}
+  .guide ol.steps li.done{color:var(--muted)}
+  .guide ol.steps li.done::before{content:"\2713";background:var(--green);color:#fff;border-color:var(--green)}
+  .guide ol.steps li b,.guide .now b{color:var(--teal);font-weight:700}
+  .guide .now{border-left:4px solid var(--teal);background:var(--panel);border-radius:var(--r);padding:14px 16px;font-size:16px;line-height:1.5;color:var(--ink);box-shadow:var(--shadow-sm)}
+  .guide .now .k{display:block;font:600 10.5px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:4px}
+  .guide .tips{margin:10px 0 0;padding:0;list-style:none;font-size:13.5px;color:var(--muted);display:grid;gap:4px}
+  @media(max-width:860px){.guide{grid-template-columns:1fr}.panel{columns:1}}
+  /* page mode: the 3D card on top across the full width, the round or task below */
+  .card .stage.wide{aspect-ratio:21/9;min-height:360px}
+  @media(max-width:860px){.card .stage.wide{aspect-ratio:4/3;min-height:0}}
   /* ===== end of theme ===== */
-  /* page-specific: leadership styles explorer (app mode: the 4 West floor on the left, the control rail on the right) */
+  /* page-specific: leadership styles explorer (app mode, layout v2: the 4 West floor across the top, the guide and the panel below) */
   .controls{grid-template-columns:repeat(4,minmax(0,1fr))}
   @media(max-width:520px){.controls{grid-template-columns:repeat(2,minmax(0,1fr))}}
   .styles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
@@ -287,7 +317,11 @@
   .qbar i.ok{background:var(--green);border-color:var(--green)}
   .qbar i.bad{background:var(--coral);border-color:var(--coral)}
   .panel footer{font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}
-  .panel details table{margin:0 0 12px;width:calc(100% - 28px)}
+  .panel details table{margin:0;width:100%}
+  .panel>.span-all{margin-top:10px}
+  .panel details .scroll-x{margin-bottom:12px}
+  #quiz{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:28px}
+  @media(max-width:860px){#quiz{grid-template-columns:1fr}}
   .panel details td,.panel details th{font-family:var(--font-body);font-size:12.5px;vertical-align:top}
   .facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
   .facts .reg{padding:7px 10px}
@@ -297,6 +331,9 @@
   .phases li{cursor:default}
   @media(max-width:520px){.styles{grid-template-columns:repeat(2,minmax(0,1fr))}.meter{grid-template-columns:96px 1fr 34px}}
   @media(max-width:600px){.stage:has(.nogl:not([hidden])) .hud-top{top:86px}.stage:has(.nogl:not([hidden])) .flat{top:74px;height:calc(100% - 74px)}}
+  /* flat plan fallback on the wide stage: keep the plan between the top HUD and the legend so no room number hides under them */
+  .app>.stage:has(.nogl:not([hidden])) .flat{top:100px;height:calc(100% - 152px)}
+  @media(max-width:600px){.app>.stage:has(.nogl:not([hidden])) .flat{top:215px;height:calc(100% - 300px)}}
 
 </style>
 </head>
@@ -311,6 +348,11 @@
 </header>
 
 <div class="app">
+  <header class="lab-head">
+    <p class="eyebrow">MHS 510 · Week 1 · Explorer</p>
+    <h1>Leadership styles explorer</h1>
+    <p class="lede">Friday, 7 p.m. on 4 West: a nurse called out, almost every bed is full, and a daughter is waiting at room 418. Pick a leadership style and the nurse you lead tonight. Then watch the same hour play out on the floor, with the theory behind every move.</p>
+  </header>
   <section class="stage" id="stage" aria-label="3D model of the 4 West floor on a Friday evening. Drag to orbit, scroll or pinch to zoom, click a room or a person to read about it.">
     <div class="hud hud-top">
       <ol class="phases" id="phases" aria-label="Step"></ol>
@@ -332,34 +374,42 @@
         <button type="button" id="follow" class="on" aria-pressed="true" title="Move the camera to each step">Follow</button>
       </div>
     </div>
-    <div class="nogl" id="nogl" hidden>The 3D unit floor needs WebGL and the 3D libraries, which are not available here. The flat floor plan shows the same rooms, people, and steps, and the panel has every value.</div>
+    <div class="nogl" id="nogl" hidden>The 3D unit floor needs WebGL and the 3D libraries, which are not available here. This flat floor plan shows the same rooms, people, and steps, and the panel below has every value.</div>
+  </section>
+
+  <section class="guide" aria-labelledby="guideTitle">
+    <h2 id="guideTitle">How to use this explorer</h2>
+    <ol class="steps" id="howSteps">
+      <li data-h="1">Look at the 4 West floor on the board above. Amber marks the nurse station and room 418, where the daughter is waiting. Click any room or person on the board. Who they are tonight appears in the white box under <b>Play the hour</b> below.</li>
+      <li data-h="2">Under <b>Pick a leadership style</b> below, click one of the six styles. Under <b>Who do you lead tonight?</b>, click <b>Naomi, new nurse</b> or <b>Yesenia, charge nurse</b>. The page starts with Directive and Naomi.</li>
+      <li data-h="3">Press <b>Step</b> to play one moment of the hour. There are six steps, from 7:02 to 9 p.m. Read the narration under <b>Play the hour</b> and watch the people move on the board above. <b>Step back</b> goes back one step. <b>Run</b> plays every step for you.</li>
+      <li data-h="4">At the last step (Result), read the four meters under <b>Predicted effect by 9 p.m.</b> Then click the other nurse and play the same style again. You are done with this step when you can say why the same moves end differently for Naomi and Yesenia.</li>
+      <li data-h="5">Answer the six questions under <b>Self-check: which style is this?</b> near the bottom of the page. Click the style each sentence describes. The feedback tells you the right style and why.</li>
+    </ol>
+    <div>
+      <div class="now" aria-live="polite"><span class="k">Do this now</span><span id="nowText">Click <b>Room 418</b> on the board above to read who is waiting there.</span></div>
+      <ul class="tips">
+        <li>Words to know: readiness is how able and willing a person is to do this task tonight. R1 is unable and insecure; R4 is able and willing. S1 to S4 are the four situational styles of Hersey and Blanchard.</li>
+        <li>Drag on the board to turn it. Use <b>+</b>, <b>&minus;</b>, the arrows, and <b>FIT</b> to zoom and move. <b>Station</b> and <b>West rooms</b> jump to those parts of the floor. <b>Follow</b> moves the camera to each step.</li>
+        <li>Keyboard: Space steps forward, B steps back, R runs or pauses.</li>
+      </ul>
+    </div>
   </section>
 
   <aside class="panel">
-    <header>
-      <p class="eyebrow">MHS 510 · Week 1 · Explorer</p>
-      <h1>Leadership styles explorer</h1>
-      <p class="lede">Friday, 7 p.m. on 4 West: a call-out, a full census, and a daughter waiting at room 418. Pick a style, choose who you lead tonight, and watch the same hour play out with the theory behind every move.</p>
-    </header>
-
-    <section aria-labelledby="sit">
-      <h2 id="sit">The hour you inherit</h2>
-      <div class="facts" id="facts"></div>
-      <p class="hint" style="margin-top:8px">Numbers from the course files: the night Friday mean is 4.23 bedside RNs for 28.8 patients, and 20 of the 27 falls in six months happened on Friday, Saturday, or Sunday nights. Tonight is one of those nights.</p>
-    </section>
-
     <section aria-labelledby="pick">
-      <h2 id="pick">1. Pick a leadership style</h2>
+      <h2 id="pick">Pick a leadership style</h2>
       <div class="styles" id="styles" role="group" aria-label="Leadership styles"></div>
-      <h3 style="margin-top:12px">2. Who do you lead tonight?</h3>
+      <h3 style="margin-top:12px">Who do you lead tonight?</h3>
       <div class="who" id="who" role="group" aria-label="Follower readiness"></div>
     </section>
 
-    <div id="player">
-      <section class="narr" aria-live="polite">
+    <section id="player" aria-labelledby="playH">
+      <h2 id="playH">Play the hour</h2>
+      <div class="narr" aria-live="polite">
         <div class="narr-head"><span class="ptag" id="ptag">Ready</span><span data-a="count"></span></div>
         <p id="narration"></p>
-      </section>
+      </div>
       <div class="controls" style="margin-top:12px">
         <button type="button" class="btn primary" data-a="play">Run</button>
         <button type="button" class="btn" data-a="next">Step</button>
@@ -367,24 +417,22 @@
         <button type="button" class="btn" data-a="reset">Reset</button>
       </div>
       <div class="speed" style="margin-top:12px"><label for="speed">Speed</label><input type="range" id="speed" min="0.5" max="3" step="0.25" value="1"><output id="speedOut" for="speed">1×</output></div>
-      <p class="hint" style="margin-top:8px">Run plays the six steps of the hour. Violet marks the manager and every leadership move; teal is an RN, green a CNA, amber the family and anything needing caution, coral a risk. Keyboard: Space steps, B steps back, R runs or pauses.</p>
-    </div>
+      <p class="hint" style="margin-top:8px"><b>Step</b> shows the next moment. <b>Run</b> plays all six steps, about one every five seconds at 1× speed. <b>Reset</b> goes back to the start of the hour. Colors on the board: violet is you, the manager, and every leadership move. Teal is an RN, green a CNA, amber the family or anything that needs caution, and coral a risk.</p>
+      <div class="info" id="info" style="margin-top:12px">Click a room or a person on the board above to read who they are tonight.</div>
+    </section>
 
     <section aria-labelledby="met">
       <h2 id="met">Predicted effect by 9 p.m. <small>live</small></h2>
       <div class="meters" id="meters" aria-live="polite"></div>
-      <p class="hint" style="margin-top:8px">The meters start from the same point for every style (task 25, stress 72, learning 15, trust 50) and move with each step. They are a teaching model of the theory's predictions, not a measurement.</p>
+      <p class="hint" style="margin-top:8px">The meters start from the same point for every style (task 25, stress 72, learning 15, trust 50) and move with each step. Higher is better for task, learning, and trust. Lower is better for stress. They are a teaching model of what the theory predicts, not a measurement.</p>
     </section>
 
     <div class="theory" id="theory" aria-live="polite"></div>
-    <div class="info" id="info">Click a room or a person on the floor to read who they are tonight.</div>
 
-    <section aria-labelledby="qz">
-      <h2 id="qz">3. Self-check: which style is this?</h2>
-      <p class="hint" style="font-size:13.5px">Each sentence describes a manager's move on 4 West. Pick the style it belongs to.</p>
-      <div class="qbar" id="qbar" aria-hidden="true"></div>
-      <div id="quiz"></div>
-      <div class="score" id="qscore" style="margin-top:10px"></div>
+    <section aria-labelledby="sit">
+      <h2 id="sit">The hour you inherit</h2>
+      <div class="facts" id="facts"></div>
+      <p class="hint" style="margin-top:8px">Numbers from the course files: the night Friday mean is 4.23 bedside RNs for 28.8 patients, and 20 of the 27 falls in six months happened on Friday, Saturday, or Sunday nights. Tonight is one of those nights.</p>
     </section>
 
     <section>
@@ -398,20 +446,17 @@
       </ul>
     </section>
 
-    <details>
-      <summary>How to use this interactive</summary>
-      <ol class="notice" style="margin:4px 12px 12px;padding-left:20px">
-        <li>Read the hour you inherit: the census, the call-out, the ratio, and the family at room 418.</li>
-        <li>Pick one of the six leadership styles and choose who you lead tonight: Naomi, a nurse in her first year, or Yesenia, the night charge nurse.</li>
-        <li>Press Run, or Step through the six moments of the hour. Watch the tokens move on the floor and the four meters respond; the narration names the theory behind each move.</li>
-        <li>Switch the follower and run the same style again. Then try the other styles.</li>
-        <li>Answer the six self-check questions at the bottom.</li>
-      </ol>
-    </details>
+    <section class="span-all" aria-labelledby="qz">
+      <h2 id="qz">Self-check: which style is this?</h2>
+      <p class="hint" style="font-size:13.5px">Each sentence describes a manager's move on 4 West. Click the style it belongs to. You get one try per question; press <b>Try again</b> at the end to answer them all again.</p>
+      <div class="qbar" id="qbar" aria-hidden="true"></div>
+      <div id="quiz"></div>
+      <div class="score" id="qscore" style="margin-top:10px"></div>
+    </section>
 
-    <details>
+    <details class="span-all">
       <summary>The six styles at a glance</summary>
-      <table><thead><tr><th>Style</th><th>Theory</th><th>What the leader does</th><th>Fits</th></tr></thead><tbody id="glance"></tbody></table>
+      <div class="scroll-x"><table><thead><tr><th>Style</th><th>Theory</th><th>What the leader does</th><th>Fits</th></tr></thead><tbody id="glance"></tbody></table></div>
     </details>
 
     <footer>Atlantis University · School of Health · MHS 510 Leadership and Organizational Behavior<div class="byline">By Professor De Leon</div></footer>
@@ -475,6 +520,8 @@ function Unit3D(stage, opts) {
   controls.enableDamping = true; controls.dampingFactor = 0.08;
   controls.maxPolarAngle = Math.PI * 0.46; controls.minDistance = 4; controls.maxDistance = 46;
   controls.zoomSpeed = 1.1;
+  // pan: right-drag, Ctrl or Shift plus drag, or two fingers; stays on the floor plane
+  controls.enablePan = true; controls.screenSpacePanning = false; controls.panSpeed = 0.9;
   // keep the mouse wheel inside the 3D view: zoom the floor, do not scroll the page
   stage.addEventListener('wheel', e => e.preventDefault(), {passive: false});
 
@@ -751,11 +798,25 @@ function Unit3D(stage, opts) {
     if (name === 'overview' || !views[name]) {
       // the overview (and FIT) must show the whole floor width, also on narrow phone screens,
       // leaving room for the zoom buttons at the right edge
-      const tanH = Math.tan(T.MathUtils.degToRad(camera.fov / 2)) * camera.aspect;
+      // and, on wide stages, fill the stage: the floor fits both the width and the height of the view
+      const tanV = Math.tan(T.MathUtils.degToRad(camera.fov / 2)), tanH = tanV * camera.aspect;
+      const dist0 = pos.distanceTo(tgt), sinE = Math.max(0.3, (pos.y - tgt.y) / dist0);
       const need = (B.w / 2 + 0.5) / (tanH * 0.92) + B.d * 0.25;
-      f = Math.max(f, need / pos.distanceTo(tgt));
-      controls.maxDistance = Math.max(controls.maxDistance, need * 1.3);
-      if (scene.fog) { scene.fog.near = Math.max(scene.fog.near, need * 1.1); scene.fog.far = Math.max(scene.fog.far, need * 2.6); }
+      const needD = (B.d / 2 * sinE + 0.8) / (tanV * 0.78) + B.d * 0.25;   // 0.78 leaves room for the HUD bars
+      const need2 = Math.max(need, needD);
+      f = need2 / dist0;
+      // phones: when the zoom controls are a column on the right edge, fit the floor in the space to their left
+      const zc = stage.querySelector('.zoomctl'), sw = stage.clientWidth;
+      if (zc && sw && sw < 760 && zc.offsetWidth < sw * 0.4) {
+        const m = zc.offsetWidth + 14, keep = (sw - m) / sw;
+        f = Math.max(need / keep, needD) / dist0;
+        const d = f * dist0, shift = (m / sw) * d * tanH;           // move the view so the floor centers in the free space
+        const fwd = tgt.clone().sub(pos); fwd.y = 0; fwd.normalize();
+        const right = new T.Vector3(-fwd.z, 0, fwd.x);
+        tgt.add(right.clone().multiplyScalar(shift)); pos.add(right.multiplyScalar(shift));
+      }
+      controls.maxDistance = Math.max(controls.maxDistance, need2 * 1.3);
+      if (scene.fog) { scene.fog.near = Math.max(scene.fog.near, need2 * 1.1); scene.fog.far = Math.max(scene.fog.far, need2 * 2.6); }
     }
     pos.sub(tgt).multiplyScalar(f).add(tgt);
     return {pos: pos, tgt: tgt};
@@ -787,28 +848,57 @@ function Unit3D(stage, opts) {
     const p = t.clone().add(off), k = 1 / (gsap.globalTimeline.timeScale() || 1);
     gsap.to(camera.position, {x: p.x, y: p.y, z: p.z, duration: RM ? 0 : 0.45, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
   }
+  // pan buttons (arrows) and arrow keys: slide the view across the floor, in screen directions
+  const PANLIM = {x: B.w / 2 + 1.5, z: B.d / 2 + 1.5};
+  function clampTarget(v) { v.x = Math.max(-PANLIM.x, Math.min(PANLIM.x, v.x)); v.z = Math.max(-PANLIM.z + (B.cz || 0), Math.min(PANLIM.z + (B.cz || 0), v.z)); return v; }
+  function pan(dx, dz) {   // dx: +1 right, -1 left; dz: +1 up (away), -1 down (toward the viewer)
+    const off = camera.position.clone().sub(controls.target), dist = off.length(), step = Math.max(0.6, dist * 0.12);
+    const fwd = new T.Vector3(); camera.getWorldDirection(fwd); fwd.y = 0;
+    if (fwd.lengthSq() < 1e-6) fwd.set(0, 0, -1); fwd.normalize();
+    const right = new T.Vector3(-fwd.z, 0, fwd.x);
+    const tgt = clampTarget(controls.target.clone().add(right.multiplyScalar(dx * step)).add(fwd.multiplyScalar(dz * step)));
+    const pos = tgt.clone().add(off), k = 1 / (gsap.globalTimeline.timeScale() || 1);
+    gsap.to(controls.target, {x: tgt.x, y: tgt.y, z: tgt.z, duration: RM ? 0 : 0.35, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
+    gsap.to(camera.position, {x: pos.x, y: pos.y, z: pos.z, duration: RM ? 0 : 0.35, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
+  }
+  controls.addEventListener('change', () => { const c = controls.target, x = c.x, z = c.z; clampTarget(c); if (c.x !== x || c.z !== z) camera.position.add(new T.Vector3(c.x - x, 0, c.z - z)); });
   if (opts.zoomUI !== false) {
     if (!document.getElementById('lab3d-zoom-css')) {
       const st = document.createElement('style'); st.id = 'lab3d-zoom-css';
       st.textContent = '.zoomctl{position:absolute;z-index:4;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:2px;padding:4px;background:rgba(255,255,255,.9);border:1px solid #D9D3C8;border-radius:10px;backdrop-filter:blur(6px);box-shadow:0 1px 2px rgba(20,35,58,.08)}' +
         '.zoomctl button{width:38px;height:34px;border:0;border-radius:7px;background:transparent;color:#14233A;font:700 18px/1 "JetBrains Mono",ui-monospace,monospace;cursor:pointer;padding:0}' +
         '.zoomctl button.fit{font-size:10px;letter-spacing:.06em;height:28px}.zoomctl button:hover{background:rgba(14,124,134,.12);color:#0E7C86}' +
-        '.zoomctl button:focus-visible{outline:2px solid #0E7C86;outline-offset:1px}@media(max-width:520px){.zoomctl{right:10px}.zoomctl button{width:34px;height:32px}}';
+        '.zoomctl button:focus-visible{outline:2px solid #0E7C86;outline-offset:1px}' +
+        '.zoomctl .pad{display:grid;grid-template-columns:repeat(3,26px);grid-template-rows:repeat(3,24px);gap:1px;margin:3px 0;padding-top:4px;border-top:1px solid #D9D3C8}' +
+        '.zoomctl .pad button{width:26px;height:24px;font-size:12px}.zoomctl .pad .u{grid-area:1/2}.zoomctl .pad .l{grid-area:2/1}.zoomctl .pad .c{grid-area:2/2;font-size:9px}.zoomctl .pad .r{grid-area:2/3}.zoomctl .pad .d{grid-area:3/2}' +
+        '@media(max-width:520px){.zoomctl{right:10px}.zoomctl button{width:34px;height:32px}.zoomctl .pad{grid-template-columns:repeat(3,28px);grid-template-rows:repeat(3,26px)}.zoomctl .pad button{width:28px;height:26px}}';
       document.head.appendChild(st);
     }
     const box = document.createElement('div'); box.className = 'zoomctl'; box.setAttribute('role', 'group'); box.setAttribute('aria-label', 'Zoom');
     box.innerHTML = '<button type="button" data-z="in" aria-label="Zoom in" title="Zoom in (+)">+</button>' +
       '<button type="button" data-z="out" aria-label="Zoom out" title="Zoom out (-)">&minus;</button>' +
+      '<div class="pad" role="group" aria-label="Move the view">' +
+      '<button type="button" class="u" data-p="u" aria-label="Move the view up" title="Move up (arrow up)">&#9650;</button>' +
+      '<button type="button" class="l" data-p="l" aria-label="Move the view left" title="Move left (arrow left)">&#9664;</button>' +
+      '<button type="button" class="c" data-z="fit" aria-label="Center the view" title="Center the view (0)">&#9679;</button>' +
+      '<button type="button" class="r" data-p="r" aria-label="Move the view right" title="Move right (arrow right)">&#9654;</button>' +
+      '<button type="button" class="d" data-p="d" aria-label="Move the view down" title="Move down (arrow down)">&#9660;</button></div>' +
       '<button type="button" class="fit" data-z="fit" aria-label="Show the whole unit" title="Show the whole unit (0)">FIT</button>';
     stage.appendChild(box);
     ['pointerdown', 'pointerup', 'wheel', 'click'].forEach(ev => box.addEventListener(ev, e => e.stopPropagation()));
     box.addEventListener('click', e => {
       const b = e.target.closest('button'); if (!b) return;
-      if (b.dataset.z === 'in') zoom(0.75); else if (b.dataset.z === 'out') zoom(1.33); else setView(opts.fitView || 'overview');
+      const pd = {l: [-1, 0], r: [1, 0], u: [0, 1], d: [0, -1]}[b.dataset.p];
+      if (pd) pan(pd[0], pd[1]);
+      else if (b.dataset.z === 'in') zoom(0.75); else if (b.dataset.z === 'out') zoom(1.33); else setView(opts.fitView || 'overview');
     });
+    let over = false;
+    stage.addEventListener('pointerenter', () => { over = true; }); stage.addEventListener('pointerleave', () => { over = false; });
     document.addEventListener('keydown', e => {
       const t = e.target, tag = t && t.tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) return;
+      const ak = {ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1]}[e.key];
+      if (ak) { if (over || stage.contains(e.target)) { e.preventDefault(); pan(ak[0], ak[1]); } return; }
       if (e.key === '+' || e.key === '=') zoom(0.75);
       else if (e.key === '-' || e.key === '_') zoom(1.33);
       else if (e.key === '0') setView(opts.fitView || 'overview');
@@ -842,7 +932,7 @@ function Unit3D(stage, opts) {
 
   const labApi = {T: T, scene: scene, camera: camera, controls: controls, renderer: renderer, recs: recs, colors: C, kinds: KIND, roles: ROLE,
     room: room, person: person, walk: walk, set: set, chip: chip, finishPins: finishPins, silkRect: silkRect, zone: zone, label: label, busMat: busMat, trace: trace, glowBus: glowBus,
-    fly: fly, clearPackets: clearPackets, hi: hi, clear: clear, pop: pop, setView: setView, focusOn: focusOn, intro: intro, zoom: zoom, refreshFloor: refreshFloor,
+    fly: fly, clearPackets: clearPackets, hi: hi, clear: clear, pop: pop, setView: setView, focusOn: focusOn, intro: intro, zoom: zoom, pan: pan, refreshFloor: refreshFloor,
     onPick: cb => { pickCb = cb; }, onFrame: f => frames.push(f), unit: unit};
   (window.__labs = window.__labs || []).push(labApi);   // lets tests reach the camera
   return labApi;
@@ -873,7 +963,8 @@ const KINDACC = {patient: '#0E7C86', station: '#6A4FC8', med: '#C27A08', supply:
 const CORR = {z: -2.4, x: 9};
 const atRoom = id => { const r = FLOOR.rooms.find(q => q.id === id); return r.door === 's' ? {x: r.x, z: r.z + r.d / 2 + 0.6} : r.door === 'n' ? {x: r.x, z: r.z - r.d / 2 - 0.6} : r.door === 'w' ? {x: r.x - r.w / 2 - 0.6, z: r.z} : {x: r.x + r.w / 2 + 0.6, z: r.z}; };
 // the n-th token sent to the same door stands 1.3 units to the side (along the corridor) so the tags do not overlap
-function spreadPoint(id, n) { const r = FLOOR.rooms.find(q => q.id === id), p = atRoom(id); if (!r || !n) return p; const k = (n % 2 ? 1 : -1) * Math.ceil(n / 2) * 1.3; return (r.door === 'w' || r.door === 'e') ? {x: p.x, z: p.z + k} : {x: p.x + k, z: p.z}; }
+// (layout v2) visitors at the same door stand farther apart, and on a north or south door every other one steps 0.8 into the corridor, so the name tags do not overlap in the overview
+function spreadPoint(id, n) { const r = FLOOR.rooms.find(q => q.id === id), p = atRoom(id); if (!r || !n) return p; const k = (n % 2 ? 1 : -1) * Math.ceil(n / 2) * 1.3; return (r.door === 'w' || r.door === 'e') ? {x: p.x, z: p.z + k * 1.25} : {x: p.x + k, z: p.z + (n % 2 ? (r.door === 's' ? 0.8 : -0.8) : 0)}; }
 // a corridor path from a point to a room door: along the main corridor, then down the east wing when needed
 function pathTo(from, id) {
   const to = atRoom(id), p = [];
@@ -990,6 +1081,11 @@ function Floor(stage, people, opts) {
 // FLOOR END
 
 const $ = s => document.querySelector(s), $$ = s => Array.from(document.querySelectorAll(s));
+// guide block: mark the current step (1-based) and say the single next action
+function guide(stepNo, nowHtml) {
+  document.querySelectorAll('#howSteps li').forEach(li => { const n = +li.dataset.h; li.classList.toggle('done', n < stepNo); li.classList.toggle('current', n === stepNo); });
+  if (nowHtml) document.getElementById('nowText').innerHTML = nowHtml;
+}
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const VIOLET = css('--violet') || '#6A4FC8', TEAL = css('--teal') || '#0E7C86', GREEN = css('--green') || '#1F8A4C', AMBER = css('--amber') || '#C27A08', CORAL = css('--coral') || '#D4453F', SLATE = css('--slate') || '#5B6B82';
@@ -1101,9 +1197,12 @@ function finals(style, who) {
 window.__mhs = {STYLES, START, finals, QUIZ};
 
 let style = 'directive', who = 'low', speed = 1, follow = true, qDone = {};
+let started = false, picked = false, playing = false; const played = {};
 const stage = $('#stage');
 let G = null;
-try { G = Floor(stage, PEOPLE); } catch (e) { console.error(e); G = null; }
+// layout v2: the stage is wide now, so the close views sit a little higher and farther back to keep the name tags in frame
+const VIEWS = {station: {pos: [7, 12.5, 8.5], tgt: [9.3, 0, -1.6], want: 1.5}, west: {pos: [-6, 13, 9], tgt: [-6, 0, -2.6], want: 1.5}};
+try { G = Floor(stage, PEOPLE, {views: VIEWS}); } catch (e) { console.error(e); G = null; }
 if (!G || G.kind === '2d') { $('#nogl').hidden = false; $$('.views button[data-view]').forEach(b => b.hidden = true); }
 if (!G) G = Floor(stage, PEOPLE);
 if (stage.clientWidth < 700) { follow = false; $('#follow').classList.remove('on'); $('#follow').setAttribute('aria-pressed', 'false'); }
@@ -1111,7 +1210,10 @@ const HOME = {}; PEOPLE.forEach(p => HOME[p.id] = {x: p.x, z: p.z});
 G.set('station', '31 / 32', 'call-out: J. Thermidor');
 G.set('418', 'family', 'waiting 20 min');
 G.set('405', 'bed alarm', ''); G.set('414', 'bed alarm', ''); G.set('409', 'admission', '6:30 p.m.');
-G.onPick(id => { const p = PEOPLE.find(q => q.id === id); const t = p ? p.who : ROOMS_INFO[id]; if (t) $('#info').innerHTML = '<b>' + esc(p ? p.nm : (G.recs[id] && id.match(/^\d/) ? 'Room ' + id : id)) + '.</b> ' + esc(t); });
+G.onPick(id => { const p = PEOPLE.find(q => q.id === id); const t = p ? p.who : ROOMS_INFO[id]; const rm = FLOOR.rooms.find(q => q.id === id), nm = p ? p.nm : rm ? rm.label : id;
+  const body = t ? (t.indexOf(nm + ': ') === 0 ? t.slice(nm.length + 2) : t.indexOf(nm + '.') === 0 ? t.slice(nm.length + 1).trim() : t) : '';
+  if (t) $('#info').innerHTML = '<b>' + esc(nm) + '</b>' + (body ? '<br>' + esc(body.charAt(0).toUpperCase() + body.slice(1)) : '');
+  if (t && !started && !picked) guide(2, 'Press <b>Step</b> to start the hour with <b>Directive</b> and <b>Naomi</b>. To try another style or nurse first, click it under <b>Pick a leadership style</b> below.'); });
 if (G.intro) G.intro();
 
 function resetScene() {
@@ -1134,7 +1236,7 @@ function applyStep(k, animate) {
   resetScene();
   for (let j = 1; j <= k; j++) {
     const s = steps[j], last = j === k && animate;
-    const used = {};
+    const used = {'418': 1};   // the daughter already stands at the 418 door, so the first visitor stands beside her
     (s.moves || []).forEach(([id, target]) => { id = resolve(id); let path = pathFor(id, target); if (typeof target === 'string' && FLOOR.rooms.find(q => q.id === target)) { const n = used[target] || 0; used[target] = n + 1; path = path.slice(0, -1).concat([spreadPoint(target, n)]); } const tl = G.walk(id, path, {instant: !last}); if (tl && hasGSAP) tl.timeScale(speed); });
     if (j === k) {
       G.clear(); (s.hi || []).forEach(([id, c]) => G.hi(resolve(id), COL[c] || c));
@@ -1144,7 +1246,7 @@ function applyStep(k, animate) {
   if (k === 0) { G.hi('418', CORAL); G.hi('station', AMBER); }
   const foc = k === 0 ? 'overview' : steps[k].focus;
   if (follow && G.kind === '3d') {
-    if (foc === 'overview') G.setView('overview'); else if (foc === 'station') G.focusOn(9.5, -2.5, 9); else if (foc === 'alcove') G.focusOn(3, 1.5, 9); else { const r = FLOOR.rooms.find(q => q.id === foc); if (r) G.focusOn(r.x, r.z, 8); }
+    if (foc === 'overview') G.setView('overview'); else if (foc === 'station') G.focusOn(9.3, -1.5, 11.5); else if (foc === 'alcove') G.focusOn(3, 1.5, 11); else { const r = FLOOR.rooms.find(q => q.id === foc); if (r) G.focusOn(r.x - 1, r.z - 0.5, 10.5); }
   }
   $('#hudClock').textContent = CLOCK[k];
   $$('#phases li').forEach((li, i) => li.classList.toggle('on', i === k));
@@ -1177,16 +1279,16 @@ function renderTheory() {
 }
 function renderPickers() {
   const sb = $('#styles'); sb.innerHTML = '';
-  Object.keys(STYLES).forEach(k => { const b = document.createElement('button'); b.className = 'btn'; b.type = 'button'; b.setAttribute('aria-pressed', k === style); b.innerHTML = '<span>' + esc(STYLES[k].name) + '</span><small>' + esc(STYLES[k].sub) + '</small>'; b.onclick = () => { style = k; restart(); }; sb.appendChild(b); });
+  Object.keys(STYLES).forEach(k => { const b = document.createElement('button'); b.className = 'btn'; b.type = 'button'; b.setAttribute('aria-pressed', k === style); b.innerHTML = '<span>' + esc(STYLES[k].name) + '</span><small>' + esc(STYLES[k].sub) + '</small>'; b.onclick = () => { style = k; picked = true; restart(); }; sb.appendChild(b); });
   const wb = $('#who'); wb.innerHTML = '';
-  Object.keys(WHO).forEach(k => { const b = document.createElement('button'); b.className = 'btn'; b.type = 'button'; b.setAttribute('aria-pressed', k === who); b.innerHTML = '<span>' + esc(WHO[k].btn) + '</span><small>' + esc(WHO[k].sub) + '</small>'; b.onclick = () => { who = k; restart(); }; wb.appendChild(b); });
+  Object.keys(WHO).forEach(k => { const b = document.createElement('button'); b.className = 'btn'; b.type = 'button'; b.setAttribute('aria-pressed', k === who); b.innerHTML = '<span>' + esc(WHO[k].btn) + '</span><small>' + esc(WHO[k].sub) + '</small>'; b.onclick = () => { who = k; picked = true; restart(); }; wb.appendChild(b); });
 }
 function renderQuiz() {
   const box = $('#quiz'); box.innerHTML = '';
   QUIZ.forEach((item, qi) => {
     const d = document.createElement('div'); d.className = 'quiz-q'; d.innerHTML = '<p>' + (qi + 1) + '. ' + esc(item.q) + '</p>';
     const o = document.createElement('div'); o.className = 'opts';
-    Object.keys(STYLES).forEach(k => { const b = document.createElement('button'); b.className = 'btn'; b.type = 'button'; b.textContent = STYLES[k].name; if (qDone[qi] !== undefined) { b.disabled = true; if (k === item.a) b.classList.add('right'); else if (k === qDone[qi]) b.classList.add('wrong'); } b.onclick = () => { qDone[qi] = k; renderQuiz(); }; o.appendChild(b); });
+    Object.keys(STYLES).forEach(k => { const b = document.createElement('button'); b.className = 'btn'; b.type = 'button'; b.textContent = STYLES[k].name; if (qDone[qi] !== undefined) { b.disabled = true; if (k === item.a) b.classList.add('right'); else if (k === qDone[qi]) b.classList.add('wrong'); } b.onclick = () => { qDone[qi] = k; renderQuiz(); quizGuide(); }; o.appendChild(b); });
     d.appendChild(o);
     if (qDone[qi] !== undefined) { const f = document.createElement('div'); f.className = 'feedback ' + (qDone[qi] === item.a ? 'ok' : 'bad'); f.style.marginTop = '8px'; f.textContent = (qDone[qi] === item.a ? 'Correct. ' : 'Not quite: the answer is ' + STYLES[item.a].name + '. ') + item.why; d.appendChild(f); }
     box.appendChild(d);
@@ -1194,7 +1296,27 @@ function renderQuiz() {
   const n = Object.keys(qDone).length, right = Object.entries(qDone).filter(([qi, k]) => QUIZ[qi].a === k).length;
   $('#qbar').innerHTML = QUIZ.map((q, qi) => '<i class="' + (qDone[qi] === undefined ? '' : qDone[qi] === q.a ? 'ok' : 'bad') + '"></i>').join('');
   $('#qscore').innerHTML = n ? '<span>Score</span><span class="big">' + right + ' / ' + QUIZ.length + '</span>' + (n === QUIZ.length ? '<button class="btn" id="qreset" type="button">Try again</button>' : '<span>' + n + ' of ' + QUIZ.length + ' answered</span>') : '';
-  const r = document.getElementById('qreset'); if (r) r.onclick = () => { qDone = {}; renderQuiz(); };
+  const r = document.getElementById('qreset'); if (r) r.onclick = () => { qDone = {}; renderQuiz(); quizGuide(); };
+}
+function quizGuide() {
+  const n = Object.keys(qDone).length, right = Object.entries(qDone).filter(([qi, k]) => QUIZ[qi].a === k).length;
+  if (n < QUIZ.length) { const next = QUIZ.findIndex((q, qi) => qDone[qi] === undefined); guide(5, 'Answer question ' + (next + 1) + ' of ' + QUIZ.length + ' under <b>Self-check</b> below: click the style the sentence describes.'); }
+  else guide(6, 'Done: ' + right + ' of ' + QUIZ.length + ' correct. Read the feedback under each question. Press <b>Try again</b> under the questions to answer them again.');
+}
+// "Do this now" for the hour player: called after every step, run, pause, and reset
+function hourGuide(i, total) {
+  const S = STYLES[style], nm = WHO[who].nm, other = who === 'low' ? 'high' : 'low';
+  if (i < 0) { guide(started || picked ? 3 : 2, 'Press <b>Step</b> to start the hour with <b>' + esc(S.name) + '</b> and <b>' + esc(nm) + '</b>.'); return; }
+  if (i < total - 1) {
+    guide(3, playing ? 'Watch the board above and read the narration under <b>Play the hour</b>. The next step comes in a few seconds. Press <b>Pause</b> to stop.'
+      : 'Read the narration under <b>Play the hour</b>. Then press <b>Step</b> for step ' + (i + 2) + ' of ' + total + '.');
+    return;
+  }
+  played[style + '|' + who] = true;
+  if (!played[style + '|' + other]) { guide(4, 'Read the four meters under <b>Predicted effect by 9 p.m.</b> Then click <b>' + esc(WHO[other].btn) + '</b> under <b>Who do you lead tonight?</b> to play the same style with ' + esc(WHO[other].nm) + '.'); return; }
+  const next = Object.keys(STYLES).find(k => !(played[k + '|low'] && played[k + '|high']));
+  if (next) guide(4, 'Compare the meters with your last run. Then click <b>' + esc(STYLES[next].name) + '</b> under <b>Pick a leadership style</b> and play the hour again.');
+  else quizGuide();
 }
 function stepsNow() { const S = STYLES[style]; return [STEP0].concat(S.steps).map((s, i) => ({tag: s.tag, text: i === 0 ? s.t : s.t[who]})); }
 function makePlayer(root) {
@@ -1206,16 +1328,16 @@ function makePlayer(root) {
     i = n; const s = steps[i];
     tag.style.setProperty('--pc', i === 0 ? AMBER : i === steps.length - 1 ? GREEN : VIOLET); tag.textContent = s.tag;
     cap.textContent = s.text; cnt.textContent = 'Step ' + (i + 1) + ' of ' + steps.length; back.disabled = !hist.length && i <= 0;
-    applyStep(i, true);
+    started = true; applyStep(i, true); hourGuide(i, steps.length);
   }
-  function stop() { if (timer) { hasGSAP ? timer.kill() : clearTimeout(timer); timer = null; } play.textContent = 'Run'; }
+  function stop() { const was = playing; if (timer) { hasGSAP ? timer.kill() : clearTimeout(timer); timer = null; } playing = false; play.textContent = 'Run'; if (was && i >= 0) hourGuide(i, steps.length); }
   function tick() { if (i >= steps.length - 1) { stop(); return; } go(i + 1); if (i >= steps.length - 1) { timer = null; stop(); return; } timer = hasGSAP ? gsap.delayedCall(5.2 / speed, tick) : setTimeout(tick, 5200 / speed); }
-  play.onclick = () => { if (timer) { stop(); return; } if (i >= steps.length - 1) { i = -1; hist = []; } play.textContent = 'Pause'; tick(); };
+  play.onclick = () => { if (timer) { stop(); return; } if (i >= steps.length - 1) { i = -1; hist = []; } play.textContent = 'Pause'; playing = true; tick(); };
   root.querySelector('[data-a=next]').onclick = () => { stop(); go(i + 1); };
   back.onclick = () => { stop(); if (hist.length) go(hist.pop(), false); else go(i - 1, false); };
   root.querySelector('[data-a=reset]').onclick = () => restart();
   const api = {go, stop, get index() { return i; }, back: () => back.click(), toggle: () => play.click(), step: () => { stop(); go(i + 1); },
-    reset() { stop(); steps = stepsNow(); i = -1; hist = []; tag.style.setProperty('--pc', 'var(--muted)'); tag.textContent = 'Ready: ' + STYLES[style].name + ' with ' + WHO[who].nm; cap.textContent = 'Press Run to play the hour, or Step to go one moment at a time. The first step is the situation itself.'; cnt.textContent = 'Step 0 of ' + steps.length; back.disabled = true; }};
+    reset() { stop(); steps = stepsNow(); i = -1; hist = []; tag.style.setProperty('--pc', 'var(--muted)'); tag.textContent = 'Ready: ' + STYLES[style].name + ' with ' + WHO[who].nm; cap.textContent = 'Press Step to see the first moment: the situation at 7:02 p.m. Or press Run to play all six steps.'; cnt.textContent = 'Step 0 of ' + steps.length; back.disabled = true; if (started || picked) hourGuide(-1, steps.length); }};
   api.reset(); return api;
 }
 const player = makePlayer($('#player'));
@@ -1229,6 +1351,7 @@ const sp = $('#speed'); sp.addEventListener('input', () => { speed = parseFloat(
 document.addEventListener('keydown', e => { const t = e.target, tg = t && t.tagName; if (tg === 'INPUT' || tg === 'SELECT' || tg === 'TEXTAREA' || tg === 'BUTTON' || tg === 'SUMMARY') return; if (e.key === ' ') { e.preventDefault(); player.step(); } else if (e.key === 'r' || e.key === 'R') player.toggle(); else if (e.key === 'b' || e.key === 'B') player.back(); });
 renderQuiz(); restart();
 if (!hasGSAP) $('#narration').textContent += ' (Animations are off because the animation library did not load; every step still works.)';
+guide(1, 'Click <b>Room 418</b> on the board above to read who is waiting there.');
 window.__page = {player, applyStep, setStyle: k => { style = k; restart(); }, setWho: k => { who = k; restart(); }, get G() { return G; }};
 })();
 </script>

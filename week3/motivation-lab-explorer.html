@@ -233,7 +233,11 @@
   .reveal{animation:rise .7s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*80ms)}
   @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
   @media(max-width:860px){
-    .app .stage .zoomctl{top:56px;right:10px;transform:none;flex-direction:row}
+    .app .stage .zoomctl{top:50%;right:8px;transform:translateY(-50%);flex-direction:column;padding:3px;align-items:center}
+    .app .stage .zoomctl>button{width:30px!important;height:28px!important;font-size:16px}
+    .app .stage .zoomctl>button.fit{height:24px!important;font-size:9px}
+    .app .stage .zoomctl .pad{grid-template-columns:repeat(3,22px)!important;grid-template-rows:repeat(3,22px)!important;margin:2px 0;padding-top:3px}
+    .app .stage .zoomctl .pad button{width:22px!important;height:22px!important;font-size:10px}
     .app{grid-template-columns:1fr;height:auto}
     .app .stage{height:62vh;min-height:360px}
     .panel{border-left:0;border-top:1px solid var(--line);overflow:visible}
@@ -251,6 +255,32 @@
     .tag .sb{display:none}
     .scroll-x::before{content:"Swipe sideways to see the whole table";display:block;font:500 11px var(--font-mono);letter-spacing:.04em;color:var(--muted);margin:0 0 6px}
   }
+
+  /* ---- stacked layout (v2, October 30 2026): the 3D floor uses the full width of the page, instructions and controls go below it ---- */
+  .app{display:block;height:auto;min-height:0}
+  .app>.lab-head{max-width:1240px;margin:0 auto;padding:18px 16px 14px}
+  .app>.stage{width:100%;height:clamp(420px,70vh,860px);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .panel{max-width:1240px;margin:0 auto;border-left:0;overflow:visible;background:none;display:block;columns:2 420px;column-gap:28px;padding:20px 16px 28px}
+  .panel>*{break-inside:avoid;margin:0 0 22px}
+  .panel>header,.panel>footer,.panel>.guide,.panel>.span-all{column-span:all}
+  /* guide: numbered steps with the current one highlighted, plus a "do this now" line */
+  .guide{max-width:1240px;margin:0 auto;padding:18px 16px 4px;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px 26px;align-items:start}
+  .guide h2{grid-column:1/-1;margin:0;font-size:19px}
+  .guide ol.steps{list-style:none;margin:0;padding:0;display:grid;gap:8px;counter-reset:s}
+  .guide ol.steps li{counter-increment:s;position:relative;padding:9px 12px 9px 46px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);color:var(--ink);font-size:15px;line-height:1.45;box-shadow:var(--shadow-sm)}
+  .guide ol.steps li::before{content:counter(s);position:absolute;left:12px;top:9px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:700 12px var(--font-mono);background:var(--panel-2);color:var(--ink-2);border:1px solid var(--line)}
+  .guide ol.steps li.current{border-color:var(--teal);box-shadow:0 0 0 2px rgba(14,124,134,.15)}
+  .guide ol.steps li.current::before{background:var(--teal);color:#fff;border-color:var(--teal)}
+  .guide ol.steps li.done{color:var(--muted)}
+  .guide ol.steps li.done::before{content:"\2713";background:var(--green);color:#fff;border-color:var(--green)}
+  .guide ol.steps li b,.guide .now b{color:var(--teal);font-weight:700}
+  .guide .now{border-left:4px solid var(--teal);background:var(--panel);border-radius:var(--r);padding:14px 16px;font-size:16px;line-height:1.5;color:var(--ink);box-shadow:var(--shadow-sm)}
+  .guide .now .k{display:block;font:600 10.5px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:4px}
+  .guide .tips{margin:10px 0 0;padding:0;list-style:none;font-size:13.5px;color:var(--muted);display:grid;gap:4px}
+  @media(max-width:860px){.guide{grid-template-columns:1fr}.panel{columns:1}}
+  /* page mode: the 3D card on top across the full width, the round or task below */
+  .card .stage.wide{aspect-ratio:21/9;min-height:360px}
+  @media(max-width:860px){.card .stage.wide{aspect-ratio:4/3;min-height:0}}
   /* ===== end of theme ===== */
 
   /* page-specific CSS below: light unit board, palette with meaning (see build/theme/THEME.md) */
@@ -298,6 +328,21 @@
   .built .pill{margin-right:4px}
   blockquote{font-style:italic}
   .grid.two{align-items:start}
+  /* layout v2 (October 30 2026): the board card first across the full width, the guide, then the controls */
+  .ctl{display:grid;gap:16px}
+  .ctl>*{min-width:0}
+  @media(min-width:900px){.ctl{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);align-items:start}}
+  .ctl h3{margin-top:0}
+  #msg{margin-top:10px}
+  /* phones: a square board, and the zoom buttons in one row along the bottom edge so they do not cover the unit */
+  @media(max-width:860px){
+    .card .stage.wide{aspect-ratio:1/1}
+    .card .stage.wide .zoomctl{top:auto!important;bottom:6px;right:6px!important;transform:none!important;flex-direction:row!important;align-items:center;padding:3px!important}
+    .card .stage.wide .zoomctl>button{width:32px!important;height:30px!important;font-size:16px!important}
+    .card .stage.wide .zoomctl>button.fit{width:36px!important;font-size:10px!important}
+    .card .stage.wide .zoomctl .pad{grid-template-columns:repeat(3,22px)!important;grid-template-rows:repeat(3,20px)!important;margin:0 3px!important;padding:0 0 0 4px!important;border-top:0!important;border-left:1px solid #D9D3C8}
+    .card .stage.wide .zoomctl .pad button{width:22px!important;height:20px!important;font-size:10px!important}
+  }
 
 /* PAGE CSS END */
 </style>
@@ -326,54 +371,66 @@
       <div><b>+1.11</b><span>recognition gap, intend to stay versus not</span></div>
     </div>
   </section>
-  <details class="howto reveal" style="--i:1">
-    <summary>How to use this interactive</summary>
-    <ol>
-      <li>Look at the board on the floor: each bar is one survey item, the night shift average on a 1 to 5 scale. Five items sit at 2.62.</li>
-      <li>Pick one lever in the right panel. The prediction updates at once: engagement index, intent to stay, annual cost, and cost per point.</li>
-      <li>Press Play, or Step, to watch the lever on the floor in four steps: what the manager does, which items move, the theory that predicts it, and the cost.</li>
-      <li>Read the table below: the same lever on days and on nights. Then try the self-check.</li>
-      <li>Drag to orbit the floor, use the + and FIT buttons to zoom, or press Space to step, B to step back, R to play.</li>
+  <section class="card reveal" style="--i:1" data-ref="RM 1 · FLOOR · TUESDAY 10 PM">
+    <h2>4 West tonight <small>the survey board stands along the top wall</small></h2>
+    <div class="stage3d stage wide" id="stage"><div class="nogl" id="nogl" hidden>3D is not available here: this flat plan shows the same rooms, people, and board, and every step still works.</div></div>
+    <div class="caption" id="cap" aria-live="polite"><div class="t">Tonight</div><p>Loading the floor.</p></div>
+    <div class="stepper" id="player">
+      <button class="btn" type="button" data-a="reset" title="Start this lever again from step 1">Reset</button>
+      <button class="btn" type="button" data-a="back">◀ Step back</button>
+      <button class="btn go" type="button" data-a="play" aria-pressed="false">▶ Play</button>
+      <button class="btn" type="button" data-a="next">Step ▶</button>
+    </div>
+    <div class="legend" aria-label="Colors">
+      <span style="--c:var(--teal)"><i></i>RN and LPN, and the manager's moves</span>
+      <span style="--c:var(--green)"><i></i>CNA, and an item that improves</span>
+      <span style="--c:var(--violet)"><i></i>charge nurse and manager</span>
+      <span style="--c:var(--amber)"><i></i>new hire</span>
+      <span style="--c:var(--coral)"><i></i>risk, or an item that worsens</span>
+    </div>
+    <div class="views" role="group" aria-label="Camera views">
+      <button type="button" class="btn on" data-view="overview">Whole unit</button>
+      <button type="button" class="btn" data-view="board">The board</button>
+      <button type="button" class="btn" data-view="station">Nurse station</button>
+      <button type="button" class="btn" data-view="west">West rooms</button>
+    </div>
+  </section>
+  <section class="guide reveal" style="--i:2;padding:18px 0 16px" aria-labelledby="guideTitle">
+    <h2 id="guideTitle">How to use this lab</h2>
+    <ol class="steps" id="howSteps">
+      <li data-h="1">Look at the survey board on the floor above. Each bar is one survey item: the night shift average on a 1 to 5 scale. Five items are tied at 2.62, the lowest on the unit.</li>
+      <li data-h="2">Click one lever in <b>Pick one lever</b> below. The prediction beside the levers changes at once: engagement index, intent to stay, cost per year, and cost per 0.1 point.</li>
+      <li data-h="3">Press <b>▶ Play</b> under the board to watch the lever in four steps: the lever, what moves, the theory, and the cost per point. To go at your own pace, press <b>Step ▶</b> and <b>◀ Step back</b>. <b>Reset</b> starts the lever again.</li>
+      <li data-h="4">Read the table <b>The same lever on days and on nights</b> below the levers. Green numbers rise, coral numbers fall, and the last column says why the two shifts differ.</li>
+      <li data-h="5">Click a different lever and play it too. Compare its <b>Cost per 0.1 point</b> in the prediction with the first lever's.</li>
+      <li data-h="6">Answer the six questions in the <b>Self-check</b> at the bottom of the page. Each answer tells you why it is right or wrong.</li>
     </ol>
-  </details>
-  <div class="grid two">
-    <section class="card reveal" style="--i:2" data-ref="RM 1 · FLOOR · TUESDAY 10 PM">
-      <h2>4 West tonight</h2>
-      <div class="stage3d" id="stage"><div class="nogl" id="nogl" hidden>3D is not available here: this flat plan shows the same rooms, people, and board, and every step still works.</div></div>
-      <div class="caption" id="cap"><div class="t">Tonight</div><p>Loading the floor.</p></div>
-      <div class="stepper" id="player">
-        <button class="btn" type="button" data-a="reset" title="Back to the start of this lever">Reset</button>
-        <button class="btn" type="button" data-a="back">◀ Step back</button>
-        <button class="btn go" type="button" data-a="play" aria-pressed="false">▶ Play</button>
-        <button class="btn" type="button" data-a="next">Step ▶</button>
-      </div>
-      <div class="legend" aria-label="Colors">
-        <span style="--c:var(--teal)"><i></i>RN and LPN, and the manager's moves</span>
-        <span style="--c:var(--green)"><i></i>CNA, and an item that improves</span>
-        <span style="--c:var(--violet)"><i></i>charge nurse and manager</span>
-        <span style="--c:var(--amber)"><i></i>new hire</span>
-        <span style="--c:var(--coral)"><i></i>risk, or an item that worsens</span>
-      </div>
-      <div class="views" role="group" aria-label="Camera views">
-        <button type="button" class="btn on" data-view="overview">Whole unit</button>
-        <button type="button" class="btn" data-view="board">The board</button>
-        <button type="button" class="btn" data-view="station">Nurse station</button>
-        <button type="button" class="btn" data-view="west">West rooms</button>
-      </div>
-    </section>
-    <aside class="card reveal" style="--i:3" data-ref="STATION · LEVERS">
-      <h2>1. Pick one lever</h2>
+    <div>
+      <div class="now" aria-live="polite"><span class="k">Do this now</span><span id="nowText">Find the five bars at 2.62 on the board above. Then click one lever in <b>Pick one lever</b> below.</span></div>
+      <ul class="tips">
+        <li>Words to know: the engagement index is the mean of survey items 1 to 9 plus (6 minus item 10). Item 10, burnout, is reverse-scored, so a lower number is better.</li>
+        <li>In Herzberg's two-factor theory, a motivator (recognition, growth) builds engagement, and a hygiene factor (pay, supervision, working conditions) only removes dissatisfaction. A process theory (Vroom, Adams) explains how people decide how much effort to give.</li>
+        <li>Drag on the board to turn it. Use <b>+</b>, <b>&minus;</b>, the arrows, and <b>FIT</b> on the board to look closer; <b>FIT</b> shows the whole unit again. The buttons under the board jump to <b>The board</b>, <b>Nurse station</b>, or <b>West rooms</b>.</li>
+        <li>Click a person or a room on the board to read who or what it is. Keys: Space steps forward, B steps back, R plays or pauses.</li>
+      </ul>
+    </div>
+  </section>
+  <section class="card reveal" style="--i:3" id="leverCard" data-ref="STATION · LEVERS">
+    <h2>Pick one lever <small>4 motivators, 4 hygiene factors, and 1 process change</small></h2>
+    <div class="ctl">
       <div class="picker" id="levers"></div>
-      <h2 style="margin-top:16px">2. Prediction for the night shift</h2>
-      <div class="regs" id="pred">
-        <div class="reg kv"><span class="rn">Engagement index</span><span class="rv" id="pIndex">2.91</span><span class="rf">mean of 9 items plus reversed burnout</span><span class="rs" id="pIndexD">no lever yet</span></div>
-        <div class="reg kv"><span class="rn">Intent to stay</span><span class="rv" id="pStay">2.62</span><span class="rf">q09, night average</span><span class="rs" id="pStayD">no lever yet</span></div>
-        <div class="reg kv"><span class="rn">Cost per year</span><span class="rv" id="pCost">$0</span><span class="rf">from the budget facts</span><span class="rs" id="pHours">0 manager hours a week</span></div>
-        <div class="reg kv"><span class="rn">Cost per 0.1 point</span><span class="rv" id="pCpp">n/a</span><span class="rf">annual cost divided by index points gained</span><span class="rs" id="pKind"></span></div>
+      <div>
+        <h3>Prediction for the night shift</h3>
+        <div class="regs" id="pred">
+          <div class="reg kv"><span class="rn">Engagement index</span><span class="rv" id="pIndex">2.91</span><span class="rf">mean of 9 items plus reversed burnout</span><span class="rs" id="pIndexD">no lever yet</span></div>
+          <div class="reg kv"><span class="rn">Intent to stay</span><span class="rv" id="pStay">2.62</span><span class="rf">q09, night average</span><span class="rs" id="pStayD">no lever yet</span></div>
+          <div class="reg kv"><span class="rn">Cost per year</span><span class="rv" id="pCost">$0</span><span class="rf">from the budget facts</span><span class="rs" id="pHours">0 manager hours a week</span></div>
+          <div class="reg kv"><span class="rn">Cost per 0.1 point</span><span class="rv" id="pCpp">n/a</span><span class="rf">annual cost divided by index points gained</span><span class="rs" id="pKind"></span></div>
+        </div>
+        <div class="theory" id="theory"><span class="pill violet">Theory</span><p>Click a lever to see which theory predicts its effect, and why some levers do little.</p></div>
       </div>
-      <div class="theory" id="theory"><span class="pill violet">Theory</span><p>Pick a lever to see which theory predicts its effect, and why some levers do little.</p></div>
-    </aside>
-  </div>
+    </div>
+  </section>
   <section class="card reveal" style="--i:4;margin-top:16px" data-ref="BOARD · DAYS VERSUS NIGHTS">
     <h2>The same lever on days and on nights <small>item averages from engagement_survey.csv, 1 to 5</small></h2>
     <div class="scroll-x"><table class="data kv-table" id="cmp"><thead><tr><th>Item</th><th>Night now</th><th>Night after</th><th>Day now</th><th>Day after</th><th>Why the difference</th></tr></thead><tbody></tbody></table></div>
@@ -453,6 +510,8 @@ function Unit3D(stage, opts) {
   controls.enableDamping = true; controls.dampingFactor = 0.08;
   controls.maxPolarAngle = Math.PI * 0.46; controls.minDistance = 4; controls.maxDistance = 46;
   controls.zoomSpeed = 1.1;
+  // pan: right-drag, Ctrl or Shift plus drag, or two fingers; stays on the floor plane
+  controls.enablePan = true; controls.screenSpacePanning = false; controls.panSpeed = 0.9;
   // keep the mouse wheel inside the 3D view: zoom the floor, do not scroll the page
   stage.addEventListener('wheel', e => e.preventDefault(), {passive: false});
 
@@ -729,11 +788,25 @@ function Unit3D(stage, opts) {
     if (name === 'overview' || !views[name]) {
       // the overview (and FIT) must show the whole floor width, also on narrow phone screens,
       // leaving room for the zoom buttons at the right edge
-      const tanH = Math.tan(T.MathUtils.degToRad(camera.fov / 2)) * camera.aspect;
+      // and, on wide stages, fill the stage: the floor fits both the width and the height of the view
+      const tanV = Math.tan(T.MathUtils.degToRad(camera.fov / 2)), tanH = tanV * camera.aspect;
+      const dist0 = pos.distanceTo(tgt), sinE = Math.max(0.3, (pos.y - tgt.y) / dist0);
       const need = (B.w / 2 + 0.5) / (tanH * 0.92) + B.d * 0.25;
-      f = Math.max(f, need / pos.distanceTo(tgt));
-      controls.maxDistance = Math.max(controls.maxDistance, need * 1.3);
-      if (scene.fog) { scene.fog.near = Math.max(scene.fog.near, need * 1.1); scene.fog.far = Math.max(scene.fog.far, need * 2.6); }
+      const needD = (B.d / 2 * sinE + 0.8) / (tanV * 0.78) + B.d * 0.25;   // 0.78 leaves room for the HUD bars
+      const need2 = Math.max(need, needD);
+      f = need2 / dist0;
+      // phones: when the zoom controls are a column on the right edge, fit the floor in the space to their left
+      const zc = stage.querySelector('.zoomctl'), sw = stage.clientWidth;
+      if (zc && sw && sw < 760 && zc.offsetWidth < sw * 0.4) {
+        const m = zc.offsetWidth + 14, keep = (sw - m) / sw;
+        f = Math.max(need / keep, needD) / dist0;
+        const d = f * dist0, shift = (m / sw) * d * tanH;           // move the view so the floor centers in the free space
+        const fwd = tgt.clone().sub(pos); fwd.y = 0; fwd.normalize();
+        const right = new T.Vector3(-fwd.z, 0, fwd.x);
+        tgt.add(right.clone().multiplyScalar(shift)); pos.add(right.multiplyScalar(shift));
+      }
+      controls.maxDistance = Math.max(controls.maxDistance, need2 * 1.3);
+      if (scene.fog) { scene.fog.near = Math.max(scene.fog.near, need2 * 1.1); scene.fog.far = Math.max(scene.fog.far, need2 * 2.6); }
     }
     pos.sub(tgt).multiplyScalar(f).add(tgt);
     return {pos: pos, tgt: tgt};
@@ -765,28 +838,57 @@ function Unit3D(stage, opts) {
     const p = t.clone().add(off), k = 1 / (gsap.globalTimeline.timeScale() || 1);
     gsap.to(camera.position, {x: p.x, y: p.y, z: p.z, duration: RM ? 0 : 0.45, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
   }
+  // pan buttons (arrows) and arrow keys: slide the view across the floor, in screen directions
+  const PANLIM = {x: B.w / 2 + 1.5, z: B.d / 2 + 1.5};
+  function clampTarget(v) { v.x = Math.max(-PANLIM.x, Math.min(PANLIM.x, v.x)); v.z = Math.max(-PANLIM.z + (B.cz || 0), Math.min(PANLIM.z + (B.cz || 0), v.z)); return v; }
+  function pan(dx, dz) {   // dx: +1 right, -1 left; dz: +1 up (away), -1 down (toward the viewer)
+    const off = camera.position.clone().sub(controls.target), dist = off.length(), step = Math.max(0.6, dist * 0.12);
+    const fwd = new T.Vector3(); camera.getWorldDirection(fwd); fwd.y = 0;
+    if (fwd.lengthSq() < 1e-6) fwd.set(0, 0, -1); fwd.normalize();
+    const right = new T.Vector3(-fwd.z, 0, fwd.x);
+    const tgt = clampTarget(controls.target.clone().add(right.multiplyScalar(dx * step)).add(fwd.multiplyScalar(dz * step)));
+    const pos = tgt.clone().add(off), k = 1 / (gsap.globalTimeline.timeScale() || 1);
+    gsap.to(controls.target, {x: tgt.x, y: tgt.y, z: tgt.z, duration: RM ? 0 : 0.35, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
+    gsap.to(camera.position, {x: pos.x, y: pos.y, z: pos.z, duration: RM ? 0 : 0.35, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
+  }
+  controls.addEventListener('change', () => { const c = controls.target, x = c.x, z = c.z; clampTarget(c); if (c.x !== x || c.z !== z) camera.position.add(new T.Vector3(c.x - x, 0, c.z - z)); });
   if (opts.zoomUI !== false) {
     if (!document.getElementById('lab3d-zoom-css')) {
       const st = document.createElement('style'); st.id = 'lab3d-zoom-css';
       st.textContent = '.zoomctl{position:absolute;z-index:4;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:2px;padding:4px;background:rgba(255,255,255,.9);border:1px solid #D9D3C8;border-radius:10px;backdrop-filter:blur(6px);box-shadow:0 1px 2px rgba(20,35,58,.08)}' +
         '.zoomctl button{width:38px;height:34px;border:0;border-radius:7px;background:transparent;color:#14233A;font:700 18px/1 "JetBrains Mono",ui-monospace,monospace;cursor:pointer;padding:0}' +
         '.zoomctl button.fit{font-size:10px;letter-spacing:.06em;height:28px}.zoomctl button:hover{background:rgba(14,124,134,.12);color:#0E7C86}' +
-        '.zoomctl button:focus-visible{outline:2px solid #0E7C86;outline-offset:1px}@media(max-width:520px){.zoomctl{right:10px}.zoomctl button{width:34px;height:32px}}';
+        '.zoomctl button:focus-visible{outline:2px solid #0E7C86;outline-offset:1px}' +
+        '.zoomctl .pad{display:grid;grid-template-columns:repeat(3,26px);grid-template-rows:repeat(3,24px);gap:1px;margin:3px 0;padding-top:4px;border-top:1px solid #D9D3C8}' +
+        '.zoomctl .pad button{width:26px;height:24px;font-size:12px}.zoomctl .pad .u{grid-area:1/2}.zoomctl .pad .l{grid-area:2/1}.zoomctl .pad .c{grid-area:2/2;font-size:9px}.zoomctl .pad .r{grid-area:2/3}.zoomctl .pad .d{grid-area:3/2}' +
+        '@media(max-width:520px){.zoomctl{right:10px}.zoomctl button{width:34px;height:32px}.zoomctl .pad{grid-template-columns:repeat(3,28px);grid-template-rows:repeat(3,26px)}.zoomctl .pad button{width:28px;height:26px}}';
       document.head.appendChild(st);
     }
     const box = document.createElement('div'); box.className = 'zoomctl'; box.setAttribute('role', 'group'); box.setAttribute('aria-label', 'Zoom');
     box.innerHTML = '<button type="button" data-z="in" aria-label="Zoom in" title="Zoom in (+)">+</button>' +
       '<button type="button" data-z="out" aria-label="Zoom out" title="Zoom out (-)">&minus;</button>' +
+      '<div class="pad" role="group" aria-label="Move the view">' +
+      '<button type="button" class="u" data-p="u" aria-label="Move the view up" title="Move up (arrow up)">&#9650;</button>' +
+      '<button type="button" class="l" data-p="l" aria-label="Move the view left" title="Move left (arrow left)">&#9664;</button>' +
+      '<button type="button" class="c" data-z="fit" aria-label="Center the view" title="Center the view (0)">&#9679;</button>' +
+      '<button type="button" class="r" data-p="r" aria-label="Move the view right" title="Move right (arrow right)">&#9654;</button>' +
+      '<button type="button" class="d" data-p="d" aria-label="Move the view down" title="Move down (arrow down)">&#9660;</button></div>' +
       '<button type="button" class="fit" data-z="fit" aria-label="Show the whole unit" title="Show the whole unit (0)">FIT</button>';
     stage.appendChild(box);
     ['pointerdown', 'pointerup', 'wheel', 'click'].forEach(ev => box.addEventListener(ev, e => e.stopPropagation()));
     box.addEventListener('click', e => {
       const b = e.target.closest('button'); if (!b) return;
-      if (b.dataset.z === 'in') zoom(0.75); else if (b.dataset.z === 'out') zoom(1.33); else setView(opts.fitView || 'overview');
+      const pd = {l: [-1, 0], r: [1, 0], u: [0, 1], d: [0, -1]}[b.dataset.p];
+      if (pd) pan(pd[0], pd[1]);
+      else if (b.dataset.z === 'in') zoom(0.75); else if (b.dataset.z === 'out') zoom(1.33); else setView(opts.fitView || 'overview');
     });
+    let over = false;
+    stage.addEventListener('pointerenter', () => { over = true; }); stage.addEventListener('pointerleave', () => { over = false; });
     document.addEventListener('keydown', e => {
       const t = e.target, tag = t && t.tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) return;
+      const ak = {ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1]}[e.key];
+      if (ak) { if (over || stage.contains(e.target)) { e.preventDefault(); pan(ak[0], ak[1]); } return; }
       if (e.key === '+' || e.key === '=') zoom(0.75);
       else if (e.key === '-' || e.key === '_') zoom(1.33);
       else if (e.key === '0') setView(opts.fitView || 'overview');
@@ -820,7 +922,7 @@ function Unit3D(stage, opts) {
 
   const labApi = {T: T, scene: scene, camera: camera, controls: controls, renderer: renderer, recs: recs, colors: C, kinds: KIND, roles: ROLE,
     room: room, person: person, walk: walk, set: set, chip: chip, finishPins: finishPins, silkRect: silkRect, zone: zone, label: label, busMat: busMat, trace: trace, glowBus: glowBus,
-    fly: fly, clearPackets: clearPackets, hi: hi, clear: clear, pop: pop, setView: setView, focusOn: focusOn, intro: intro, zoom: zoom, refreshFloor: refreshFloor,
+    fly: fly, clearPackets: clearPackets, hi: hi, clear: clear, pop: pop, setView: setView, focusOn: focusOn, intro: intro, zoom: zoom, pan: pan, refreshFloor: refreshFloor,
     onPick: cb => { pickCb = cb; }, onFrame: f => frames.push(f), unit: unit};
   (window.__labs = window.__labs || []).push(labApi);   // lets tests reach the camera
   return labApi;
@@ -865,6 +967,11 @@ function make3D(el, opts = {}) {
 // PAGE SCRIPT START
 /* ---- 4 West floor: one layout for the 3D kit (Unit3D) and the flat SVG fallback, with the same verbs ---- */
 const $ = s => document.querySelector(s), $$ = s => Array.from(document.querySelectorAll(s));
+// guide block: mark the current step (1-based; a number past the last step marks every step done) and say the single next action
+function guide(stepNo, nowHtml) {
+  document.querySelectorAll('#howSteps li').forEach(li => { const n = +li.dataset.h; li.classList.toggle('done', n < stepNo); li.classList.toggle('current', n === stepNo); });
+  if (nowHtml) document.getElementById('nowText').innerHTML = nowHtml;
+}
 const cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const COL = {teal: cssv('--teal'), coral: cssv('--coral'), amber: cssv('--amber'), green: cssv('--green'), violet: cssv('--violet'), slate: cssv('--slate'), ink: cssv('--ink')};
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
@@ -897,9 +1004,9 @@ function corridorPath(a, b) {
 function Graphics3D(stage, people, opts) {
   opts = opts || {};
   const lab = Unit3D(stage, {floor: FLOOR, views: Object.assign({
-    overview: {pos: [0, 26, 21], tgt: [0, 0, -0.5], want: 1.6},
+    overview: {pos: [0, 20, 23], tgt: [0, 0, -0.5], want: 1.6},
     station: {pos: [8, 11, 9], tgt: [9.5, 0, 1.2], want: 1.4},
-    board: {pos: [0, 7, -0.5], tgt: [0, 0.8, -6.4], want: 1.5},
+    board: {pos: [0, 9, 4], tgt: [0, 0.9, -6.4], want: 2.6},   // far enough to show all ten bars on the wide stage
     west: {pos: [-6, 12, 7], tgt: [-6, 0, -1.5], want: 1.4}
   }, opts.views || {})});
   if (!lab) return null;
@@ -1100,7 +1207,7 @@ function makePlayer(root, opts) {
 }
 
 /* ---- self-check: 6 questions with one correct answer each, feedback after every answer, a running score ---- */
-function renderQuiz(root, QUIZ) {
+function renderQuiz(root, QUIZ, onDone) {
   let answered = 0, right = 0;
   root.innerHTML = QUIZ.map((q, qi) => '<div class="q" data-q="' + qi + '"><p class="qt"><b>' + (qi + 1) + '.</b> ' + q.q + '</p><div class="opts">' +
     q.a.map((a, ai) => '<button type="button" class="btn opt" data-q="' + qi + '" data-a="' + ai + '">' + esc(a) + '</button>').join('') + '</div><div class="feedback" hidden></div></div>').join('') +
@@ -1114,8 +1221,9 @@ function renderQuiz(root, QUIZ) {
     const fb = box.querySelector('.feedback'); fb.hidden = false; fb.className = 'feedback ' + (ok ? 'ok' : 'bad');
     fb.innerHTML = (ok ? '<b>Correct.</b> ' : '<b>Not quite.</b> The answer is "' + esc(q.a[q.c]) + '". ') + q.why;
     root.querySelector('#quizScore .big').textContent = right;
+    if (onDone && answered === QUIZ.length) onDone(right, QUIZ.length);
   }));
-  root.querySelector('#quizReset').addEventListener('click', () => renderQuiz(root, QUIZ));
+  root.querySelector('#quizReset').addEventListener('click', () => renderQuiz(root, QUIZ, onDone));
 }
 
 (function () {
@@ -1224,10 +1332,20 @@ const R = G.recs;
 const P = id => ({x: R[id].x, z: R[id].z});
 
 let cur = null;
-const player = makePlayer($('#stage').parentElement, {gap: 5200, onReset: () => { if (cur) loadLever(cur); else showIntro(); }});
+const finished = new Set();   // levers whose four steps the learner has reached the end of
+const isPlaying = () => $('#player [data-a=play]').getAttribute('aria-pressed') === 'true';
+const guideStepFor = L => (finished.size > 1 || (finished.size === 1 && !finished.has(L.id))) ? 5 : 3;
+const player = makePlayer($('#stage').parentElement, {gap: 5200, onReset: () => { if (cur) loadLever(cur); else showIntro(); },
+  onStep: (i, s) => {
+    if (!cur) return;
+    if (i < 3) { guide(guideStepFor(cur), isPlaying() ? 'Watch the board above. Read step ' + (i + 1) + ' of 4 in the box under the board as it plays.' : 'Read step ' + (i + 1) + ' of 4 in the box under the board. Then press <b>Step ▶</b> for the next one.'); return; }
+    finished.add(cur.id);
+    if (finished.size > 1) guide(6, 'You have compared ' + finished.size + ' levers. Answer the six questions in the <b>Self-check</b> at the bottom of the page.');
+    else guide(4, 'Read the table <b>The same lever on days and on nights</b> below the levers. Then click a different lever in <b>Pick one lever</b>.');
+  }});
 const introStep = {tag: 'Tonight', color: COL.violet, apply() { G.clear(); G.clearPackets(); G.setBars(NIGHT_BASE, NIGHT_BASE); G.show(R.new1, false); G.show(R.new2, false); G.setView('overview'); },
-  text: 'Tuesday, 10 p.m.: 29 patients in 32 beds, 5 RNs on the floor (about 1 to 5.8), one charge nurse, one LPN, and 3 CNAs. The board along the top wall shows the night shift\'s survey averages: five items tied at 2.62, the lowest on the unit. Violet marks leadership moves, teal the manager\'s own actions. Pick a lever on the right.'};
-function showIntro() { player.load([introStep]); }
+  text: 'Tuesday, 10 p.m.: 29 patients in 32 beds, 5 RNs on the floor (about 1 to 5.8), one charge nurse, one LPN, and 3 CNAs. The board along the top wall shows the night shift\'s survey averages: five items tied at 2.62, the lowest on the unit. Violet marks leadership moves, teal the manager\'s own actions. Click one lever in <b>Pick one lever</b>, below the guide, to start.'};
+function showIntro() { player.load([introStep]); guide(1, 'Find the five bars at 2.62 on the board above. Then click one lever in <b>Pick one lever</b> below.'); }
 
 function packetsTo(ids, text, color, from) {
   const src = from || P('you');
@@ -1257,7 +1375,7 @@ function leverSteps(L) {
       apply() { reset(); G.setBars(pn.out, NIGHT_BASE, ITEMS.map((it, i) => it.reverse ? (pn.out[i] <= it.night ? 'better' : 'worse') : (pn.out[i] >= it.night ? 'better' : 'worse'))); G.setView('board'); }},
     {tag: 'The theory', color: COL.violet, text: '<b>' + esc(L.theory) + '.</b> ' + esc(L.why),
       apply() { reset(); G.setBars(pn.out, NIGHT_BASE, ITEMS.map((it, i) => it.reverse ? (pn.out[i] <= it.night ? 'better' : 'worse') : 'better')); floor[L.id](); }},
-    {tag: 'Cost per point', color: COL.amber, text: '<b>What a point costs.</b> ' + (L.cost ? fmt$(L.cost) + ' a year for ' + pn.dIndex.toFixed(2) + ' index points is ' + fmt$(cpp) + ' per 0.1 point.' : 'No cash: ' + L.hours + ' manager hour' + (L.hours === 1 ? '' : 's') + ' a week buys ' + pn.dIndex.toFixed(2) + ' index points.') + ' On days the same lever moves the index by ' + (pd.dIndex >= 0 ? '+' : '') + pd.dIndex.toFixed(2) + '. ' + esc(L.dayNote) + ' Compare every lever in the table below.',
+    {tag: 'Cost per point', color: COL.amber, text: '<b>What a point costs.</b> ' + (L.cost ? fmt$(L.cost) + ' a year for ' + pn.dIndex.toFixed(2) + ' index points is ' + fmt$(cpp) + ' per 0.1 point.' : 'No cash: ' + L.hours + ' manager hour' + (L.hours === 1 ? '' : 's') + ' a week buys ' + pn.dIndex.toFixed(2) + ' index points.') + ' On days the same lever moves the index by ' + (pd.dIndex >= 0 ? '+' : '') + pd.dIndex.toFixed(2) + '. ' + esc(L.dayNote) + ' The table below the levers shows this lever on days and on nights, item by item.',
       apply() { reset(); G.setBars(pn.out, NIGHT_BASE, ITEMS.map((it, i) => it.reverse ? (pn.out[i] <= it.night ? 'better' : 'worse') : 'better')); G.setView('overview'); }}
   ];
 }
@@ -1288,6 +1406,7 @@ function loadLever(L) {
   $$('#levers .pick').forEach(b => b.classList.toggle('on', b.dataset.id === L.id));
   renderPred(L); renderTable(L);
   player.load(leverSteps(L));
+  guide(guideStepFor(L), 'Press <b>▶ Play</b> under the board to watch "' + esc(L.name) + '" in four steps.');
 }
 $('#levers').innerHTML = LEVERS.map(L => '<button type="button" class="btn pick" data-id="' + L.id + '"><span>' + esc(L.name) + '</span><span class="pm"><span class="pill ' + (L.kind === 'motivator' ? 'violet' : L.kind === 'hygiene' ? 'amber' : 'teal') + '">' + (L.kind === 'motivator' ? 'motivator' : L.kind === 'hygiene' ? 'hygiene' : 'process') + '</span><span>' + (L.cost ? fmt$(L.cost) + '/yr' : '$0') + '</span><span>' + L.hours + ' h/wk</span></span></button>').join('');
 $$('#levers .pick').forEach(b => b.addEventListener('click', () => loadLever(LEVERS.find(L => L.id === b.dataset.id))));
@@ -1295,7 +1414,7 @@ $$('[data-view]').forEach(b => b.addEventListener('click', () => { $$('[data-vie
 G.onPick(key => {
   const r = R[key]; if (!r) return;
   const who = PEOPLE.find(p => p.id === key);
-  $('#cap p').innerHTML = who ? '<b>' + esc(FULL[who.id]) + ', ' + esc(who.role) + '.</b> ' + (who.role === 'Manager' ? 'That is you. Every lever on the right is something you can do or ask for.' : who.role === 'Charge RN' ? 'Night charge nurse, 4 years on the unit, well liked and overloaded; she received 1 formal recognition this year.' : who.role === 'New RN' ? 'A position that exists only if you choose the hiring lever.' : 'Night staff on the unit: shorter tenure (2.2 years on average) and 9 formal recognitions across the whole shift in a year.') : '<b>' + (ROOMS.find(x => x.id === key).label || 'Room ' + key) + '.</b> ' + (key === 'break' ? 'Where the night team would build a self-schedule, and where two recliners are broken.' : key === 'station' ? 'The nurse station at the corner of the L: the charge nurse and the whiteboard live here.' : 'One of 32 beds; 29 are filled tonight.');
+  $('#cap p').innerHTML = who ? '<b>' + esc(FULL[who.id]) + ', ' + esc(who.role) + '.</b> ' + (who.role === 'Manager' ? 'That is you. Every lever in Pick one lever, below the guide, is something you can do or ask for.' : who.role === 'Charge RN' ? 'Night charge nurse, 4 years on the unit, well liked and overloaded; she received 1 formal recognition this year.' : who.role === 'New RN' ? 'A position that exists only if you choose the hiring lever.' : 'Night staff on the unit: shorter tenure (2.2 years on average) and 9 formal recognitions across the whole shift in a year.') : '<b>' + (ROOMS.find(x => x.id === key).label || 'Room ' + key) + '.</b> ' + (key === 'break' ? 'Where the night team would build a self-schedule, and where two recliners are broken.' : key === 'station' ? 'The nurse station at the corner of the L: the charge nurse and the whiteboard live here.' : 'One of 32 beds; 29 are filled tonight.');
 });
 renderTable(null); showIntro();
 
@@ -1312,7 +1431,7 @@ renderQuiz($('#quiz'), [
     why: 'Equity is a comparison: my outcomes for my inputs against yours for yours. The same weekend blocks landing on the same nurses, or the same three day-shift names on the recognition board, is what triggers it.'},
   {q: 'Which lever moves the day shift least in this lab, and why?', a: ['Certification vouchers, because days are already certified', 'The $2 night differential, because days do not receive it', 'Thank-you notes, because day nurses do not value recognition', 'Hiring two night RNs, because days are overstaffed'], c: 1,
     why: 'The differential applies to night hours only, so the day prediction is zero. Days do gain from the vouchers (growth is their lowest item at 2.96) and from thank-you notes, less than nights, because their scores start higher.'}
-]);
+], (right, n) => guide(7, 'Done: ' + right + ' of ' + n + ' correct. Click another lever to compare it, or press <b>Start over</b> in the Self-check to answer again.'));
 })();
 
 // PAGE SCRIPT END

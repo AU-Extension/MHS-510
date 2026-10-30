@@ -233,7 +233,11 @@
   .reveal{animation:rise .7s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*80ms)}
   @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
   @media(max-width:860px){
-    .app .stage .zoomctl{top:56px;right:10px;transform:none;flex-direction:row}
+    .app .stage .zoomctl{top:50%;right:8px;transform:translateY(-50%);flex-direction:column;padding:3px;align-items:center}
+    .app .stage .zoomctl>button{width:30px!important;height:28px!important;font-size:16px}
+    .app .stage .zoomctl>button.fit{height:24px!important;font-size:9px}
+    .app .stage .zoomctl .pad{grid-template-columns:repeat(3,22px)!important;grid-template-rows:repeat(3,22px)!important;margin:2px 0;padding-top:3px}
+    .app .stage .zoomctl .pad button{width:22px!important;height:22px!important;font-size:10px}
     .app{grid-template-columns:1fr;height:auto}
     .app .stage{height:62vh;min-height:360px}
     .panel{border-left:0;border-top:1px solid var(--line);overflow:visible}
@@ -251,6 +255,32 @@
     .tag .sb{display:none}
     .scroll-x::before{content:"Swipe sideways to see the whole table";display:block;font:500 11px var(--font-mono);letter-spacing:.04em;color:var(--muted);margin:0 0 6px}
   }
+
+  /* ---- stacked layout (v2, October 30 2026): the 3D floor uses the full width of the page, instructions and controls go below it ---- */
+  .app{display:block;height:auto;min-height:0}
+  .app>.lab-head{max-width:1240px;margin:0 auto;padding:18px 16px 14px}
+  .app>.stage{width:100%;height:clamp(420px,70vh,860px);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .panel{max-width:1240px;margin:0 auto;border-left:0;overflow:visible;background:none;display:block;columns:2 420px;column-gap:28px;padding:20px 16px 28px}
+  .panel>*{break-inside:avoid;margin:0 0 22px}
+  .panel>header,.panel>footer,.panel>.guide,.panel>.span-all{column-span:all}
+  /* guide: numbered steps with the current one highlighted, plus a "do this now" line */
+  .guide{max-width:1240px;margin:0 auto;padding:18px 16px 4px;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px 26px;align-items:start}
+  .guide h2{grid-column:1/-1;margin:0;font-size:19px}
+  .guide ol.steps{list-style:none;margin:0;padding:0;display:grid;gap:8px;counter-reset:s}
+  .guide ol.steps li{counter-increment:s;position:relative;padding:9px 12px 9px 46px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);color:var(--ink);font-size:15px;line-height:1.45;box-shadow:var(--shadow-sm)}
+  .guide ol.steps li::before{content:counter(s);position:absolute;left:12px;top:9px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:700 12px var(--font-mono);background:var(--panel-2);color:var(--ink-2);border:1px solid var(--line)}
+  .guide ol.steps li.current{border-color:var(--teal);box-shadow:0 0 0 2px rgba(14,124,134,.15)}
+  .guide ol.steps li.current::before{background:var(--teal);color:#fff;border-color:var(--teal)}
+  .guide ol.steps li.done{color:var(--muted)}
+  .guide ol.steps li.done::before{content:"\2713";background:var(--green);color:#fff;border-color:var(--green)}
+  .guide ol.steps li b,.guide .now b{color:var(--teal);font-weight:700}
+  .guide .now{border-left:4px solid var(--teal);background:var(--panel);border-radius:var(--r);padding:14px 16px;font-size:16px;line-height:1.5;color:var(--ink);box-shadow:var(--shadow-sm)}
+  .guide .now .k{display:block;font:600 10.5px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:4px}
+  .guide .tips{margin:10px 0 0;padding:0;list-style:none;font-size:13.5px;color:var(--muted);display:grid;gap:4px}
+  @media(max-width:860px){.guide{grid-template-columns:1fr}.panel{columns:1}}
+  /* page mode: the 3D card on top across the full width, the round or task below */
+  .card .stage.wide{aspect-ratio:21/9;min-height:360px}
+  @media(max-width:860px){.card .stage.wide{aspect-ratio:4/3;min-height:0}}
   /* ===== end of theme ===== */
 
   /* page-specific CSS below: light unit board, palette with meaning (see build/theme/THEME.md) */
@@ -307,6 +337,18 @@
   .grid .cell:hover,.grid .cell:focus-visible{stroke:var(--teal);stroke-opacity:1;stroke-width:1.5;outline:none}
   .grid .cell.sel{stroke:var(--violet);stroke-opacity:1;stroke-width:2}
   .grid .cell.truth{stroke:var(--green);stroke-opacity:1;stroke-width:2}
+  /* layout v2: the floor card on top across the full width; answers read across the width on desktop */
+  .card .stage.wide{border:1px solid var(--line);border-radius:var(--r)}
+  @media(min-width:861px){.card .stage.wide{aspect-ratio:2/1}}
+  @media(min-width:760px){#round .opts{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}}
+  #roundCard .case p{max-width:90ch}
+  @media(max-width:860px){
+    .card .stage .zoomctl{top:50%;right:8px;transform:translateY(-50%);flex-direction:column;padding:3px;align-items:center}
+    .card .stage .zoomctl>button{width:30px!important;height:28px!important;font-size:16px}
+    .card .stage .zoomctl>button.fit{height:24px!important;font-size:9px}
+    .card .stage .zoomctl .pad{grid-template-columns:repeat(3,22px)!important;grid-template-rows:repeat(3,22px)!important;margin:2px 0;padding-top:3px}
+    .card .stage .zoomctl .pad button{width:22px!important;height:22px!important;font-size:10px}
+  }
 
 /*PAGE_CSS_END*/
 </style>
@@ -329,48 +371,57 @@
     <p class="lede">Ten people and groups from 4 West push back on bedside shift report, one at a time. For each, name the reason behind the resistance, choose the manager's response, and place the person on the influence and support grid. Each round is worth 10 points: 3 for the reason, 4 for the response (2 for a defensible second), 3 for the placement (1 if one cell off). Final score out of 100.</p>
   </section>
 
-  <details class="howto reveal" style="--i:1">
-    <summary>How to use this interactive</summary>
-    <ol>
-      <li>Read what the person says. The floor shows where they stand; orbit, zoom, or click a token to see their role.</li>
-      <li>Pick the main reason behind the resistance: habit, fear, loss, mistrust, or poor communication.</li>
-      <li>Pick the manager's response: education, participation, support, negotiation, or (rarely) authority.</li>
-      <li>Click the cell of the grid where this person sits: influence 1 to 5 up the side, support -2 to +2 across. stakeholders.csv has the answer for twelve of them.</li>
-      <li>Press "Check round". The feedback explains the reason, the response, the Kotter step at stake, and the token changes color as support moves.</li>
-      <li>After ten rounds, read your score and the table, then try again: the rounds and the options are shuffled each time.</li>
+  <section class="card reveal" style="--i:1" id="boardCard" data-ref="RM 1 · FLOOR">
+    <h2>Where it happens</h2>
+    <div class="stage wide" id="stage"><div class="nogl" id="nogl" hidden>The 3D unit floor needs WebGL and the 3D libraries, which are not available here. The flat floor plan shows the same rooms and people, and the round card below has every value.</div></div>
+    <div class="caption" id="cap" aria-live="polite"><div class="t" id="capT">Round 1</div><p id="capP">The case appears here with the people involved lit on the floor.</p></div>
+    <div class="stepper">
+      <button class="btn" type="button" data-view="overview">Overview</button>
+      <button class="btn" type="button" data-view="scene">Zoom to the scene</button>
+    </div>
+  </section>
+
+  <section class="guide reveal" style="--i:2;padding:18px 0 16px" aria-labelledby="guideTitle">
+    <h2 id="guideTitle">How this challenge works</h2>
+    <ol class="steps" id="howSteps">
+      <li data-h="1">Read what the person says in the round card below. On the floor above, that person and their room are lit in coral. Click a person on the floor to see who they are.</li>
+      <li data-h="2">Answer question 1: click the main reason behind the resistance. Then answer question 2: click the manager's best response. The table <b>Reasons for resistance and the response that matches</b>, under the round card, is a quick reference.</li>
+      <li data-h="3">Answer question 3: click the cell of the grid where this person sits. Influence (1 to 5) goes up the side and support (-2 against to +2 champion) goes across.</li>
+      <li data-h="4">Press <b>Check round</b>. Your points and the reason appear under the answers. Green is the best answer, amber earns partial points, coral earns none. On the grid, the green ring marks the right cell. Press <b>See it on the board</b> to watch the person's support change above.</li>
+      <li data-h="5">Press <b>Next round</b>. After round 10, press <b>See the final score</b>, review the table, and press <b>Try again (shuffled)</b> if you want a new order.</li>
     </ol>
-  </details>
+    <div>
+      <div class="now" aria-live="polite"><span class="k">Do this now</span><span id="nowText">Read round 1 in the round card below.</span></div>
+      <ul class="tips">
+        <li>Resistance is information: the reason behind it tells you which response will work. stakeholders.csv has the influence and support of every person in these rounds except the 7 p.m. day nurse group, where the course gives its own estimate.</li>
+        <li>The feedback also names the Kotter step at stake, from Create urgency (step 1) to Institute the change in the culture (step 8).</li>
+        <li>Drag on the floor to turn it. Use <b>+</b>, <b>&minus;</b>, the arrows, and <b>FIT</b> to zoom and move. <b>Overview</b> shows the whole floor; <b>Zoom to the scene</b> goes back to this round's room.</li>
+        <li>The rounds and the answer options are shuffled every attempt.</li>
+      </ul>
+    </div>
+  </section>
 
-  <div class="grid two">
-    <section class="card reveal" style="--i:2" data-ref="RM 1 · FLOOR">
-      <h2>Where it happens</h2>
-      <div class="stage3d" id="stage"><div class="nogl" id="nogl" hidden>The 3D unit floor needs WebGL and the 3D libraries, which are not available here. The flat floor plan shows the same rooms and people, and the panel has every value.</div></div>
-      <div class="caption" id="cap"><div class="t" id="capT">Round 1</div><p id="capP">The case appears here with the people involved lit on the floor.</p></div>
-      <div class="stepper">
-        <button class="btn" type="button" data-view="overview">Overview</button>
-        <button class="btn" type="button" data-view="scene">Zoom to the scene</button>
-      </div>
-      <h3 style="margin-top:16px">Reasons for resistance and the response that matches</h3>
-      <div class="scroll-x"><table>
-        <thead><tr><th>Reason</th><th>What you hear</th><th>Response that usually fits</th></tr></thead>
-        <tbody>
-          <tr><td>Habit</td><td>"we have always done it this way"</td><td>education with the unit's own data; a pilot they can watch</td></tr>
-          <tr><td>Fear</td><td>"this will break us", "this will cost"</td><td>facilitation and support; negotiation on limits</td></tr>
-          <tr><td>Loss</td><td>"my time", "my routine", "my resource"</td><td>participation (own part of the design); negotiation (a trade)</td></tr>
-          <tr><td>Mistrust</td><td>"it will fade like last time"</td><td>education with evidence; follow-through they can check</td></tr>
-          <tr><td>Poor communication</td><td>"nobody asked us", "I heard that..."</td><td>education; participation</td></tr>
-          <tr><td>Any, when safety demands it</td><td>a rule nobody follows</td><td>authority, documented, after the others failed</td></tr>
-        </tbody>
-      </table></div>
-    </section>
+  <section class="card reveal" style="--i:3" id="roundCard" data-ref="STATION · ROUND">
+    <h2>Round <span id="rn">1</span> of 10</h2>
+    <div class="progress" id="progress" aria-hidden="true"></div>
+    <div id="round"></div>
+    <div id="final" hidden></div>
+  </section>
 
-    <aside class="card reveal" style="--i:3" data-ref="STATION · ROUND">
-      <h2>Round <span id="rn">1</span> of 10</h2>
-      <div class="progress" id="progress" aria-hidden="true"></div>
-      <div id="round"></div>
-      <div id="final" hidden></div>
-    </aside>
-  </div>
+  <section class="card reveal" style="--i:4;margin-top:16px" data-ref="REFERENCE">
+    <h2>Reasons for resistance and the response that matches</h2>
+    <div class="scroll-x"><table>
+      <thead><tr><th>Reason</th><th>What you hear</th><th>Response that usually fits</th></tr></thead>
+      <tbody>
+        <tr><td>Habit</td><td>"we have always done it this way"</td><td>education with the unit's own data; a pilot they can watch</td></tr>
+        <tr><td>Fear</td><td>"this will break us", "this will cost"</td><td>facilitation and support; negotiation on limits</td></tr>
+        <tr><td>Loss</td><td>"my time", "my routine", "my resource"</td><td>participation (own part of the design); negotiation (a trade)</td></tr>
+        <tr><td>Mistrust</td><td>"it will fade like last time"</td><td>education with evidence; follow-through they can check</td></tr>
+        <tr><td>Poor communication</td><td>"nobody asked us", "I heard that..."</td><td>education; participation</td></tr>
+        <tr><td>Any, when safety demands it</td><td>a rule nobody follows</td><td>authority, documented, after the others failed</td></tr>
+      </tbody>
+    </table></div>
+  </section>
 </main>
 
 <footer class="foot">Atlantis University · School of Health · MHS 510 Leadership and Organizational Behavior<div class="byline">By Professor De Leon</div></footer>
@@ -434,6 +485,8 @@ function Unit3D(stage, opts) {
   controls.enableDamping = true; controls.dampingFactor = 0.08;
   controls.maxPolarAngle = Math.PI * 0.46; controls.minDistance = 4; controls.maxDistance = 46;
   controls.zoomSpeed = 1.1;
+  // pan: right-drag, Ctrl or Shift plus drag, or two fingers; stays on the floor plane
+  controls.enablePan = true; controls.screenSpacePanning = false; controls.panSpeed = 0.9;
   // keep the mouse wheel inside the 3D view: zoom the floor, do not scroll the page
   stage.addEventListener('wheel', e => e.preventDefault(), {passive: false});
 
@@ -710,11 +763,25 @@ function Unit3D(stage, opts) {
     if (name === 'overview' || !views[name]) {
       // the overview (and FIT) must show the whole floor width, also on narrow phone screens,
       // leaving room for the zoom buttons at the right edge
-      const tanH = Math.tan(T.MathUtils.degToRad(camera.fov / 2)) * camera.aspect;
+      // and, on wide stages, fill the stage: the floor fits both the width and the height of the view
+      const tanV = Math.tan(T.MathUtils.degToRad(camera.fov / 2)), tanH = tanV * camera.aspect;
+      const dist0 = pos.distanceTo(tgt), sinE = Math.max(0.3, (pos.y - tgt.y) / dist0);
       const need = (B.w / 2 + 0.5) / (tanH * 0.92) + B.d * 0.25;
-      f = Math.max(f, need / pos.distanceTo(tgt));
-      controls.maxDistance = Math.max(controls.maxDistance, need * 1.3);
-      if (scene.fog) { scene.fog.near = Math.max(scene.fog.near, need * 1.1); scene.fog.far = Math.max(scene.fog.far, need * 2.6); }
+      const needD = (B.d / 2 * sinE + 0.8) / (tanV * 0.78) + B.d * 0.25;   // 0.78 leaves room for the HUD bars
+      const need2 = Math.max(need, needD);
+      f = need2 / dist0;
+      // phones: when the zoom controls are a column on the right edge, fit the floor in the space to their left
+      const zc = stage.querySelector('.zoomctl'), sw = stage.clientWidth;
+      if (zc && sw && sw < 760 && zc.offsetWidth < sw * 0.4) {
+        const m = zc.offsetWidth + 14, keep = (sw - m) / sw;
+        f = Math.max(need / keep, needD) / dist0;
+        const d = f * dist0, shift = (m / sw) * d * tanH;           // move the view so the floor centers in the free space
+        const fwd = tgt.clone().sub(pos); fwd.y = 0; fwd.normalize();
+        const right = new T.Vector3(-fwd.z, 0, fwd.x);
+        tgt.add(right.clone().multiplyScalar(shift)); pos.add(right.multiplyScalar(shift));
+      }
+      controls.maxDistance = Math.max(controls.maxDistance, need2 * 1.3);
+      if (scene.fog) { scene.fog.near = Math.max(scene.fog.near, need2 * 1.1); scene.fog.far = Math.max(scene.fog.far, need2 * 2.6); }
     }
     pos.sub(tgt).multiplyScalar(f).add(tgt);
     return {pos: pos, tgt: tgt};
@@ -746,28 +813,57 @@ function Unit3D(stage, opts) {
     const p = t.clone().add(off), k = 1 / (gsap.globalTimeline.timeScale() || 1);
     gsap.to(camera.position, {x: p.x, y: p.y, z: p.z, duration: RM ? 0 : 0.45, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
   }
+  // pan buttons (arrows) and arrow keys: slide the view across the floor, in screen directions
+  const PANLIM = {x: B.w / 2 + 1.5, z: B.d / 2 + 1.5};
+  function clampTarget(v) { v.x = Math.max(-PANLIM.x, Math.min(PANLIM.x, v.x)); v.z = Math.max(-PANLIM.z + (B.cz || 0), Math.min(PANLIM.z + (B.cz || 0), v.z)); return v; }
+  function pan(dx, dz) {   // dx: +1 right, -1 left; dz: +1 up (away), -1 down (toward the viewer)
+    const off = camera.position.clone().sub(controls.target), dist = off.length(), step = Math.max(0.6, dist * 0.12);
+    const fwd = new T.Vector3(); camera.getWorldDirection(fwd); fwd.y = 0;
+    if (fwd.lengthSq() < 1e-6) fwd.set(0, 0, -1); fwd.normalize();
+    const right = new T.Vector3(-fwd.z, 0, fwd.x);
+    const tgt = clampTarget(controls.target.clone().add(right.multiplyScalar(dx * step)).add(fwd.multiplyScalar(dz * step)));
+    const pos = tgt.clone().add(off), k = 1 / (gsap.globalTimeline.timeScale() || 1);
+    gsap.to(controls.target, {x: tgt.x, y: tgt.y, z: tgt.z, duration: RM ? 0 : 0.35, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
+    gsap.to(camera.position, {x: pos.x, y: pos.y, z: pos.z, duration: RM ? 0 : 0.35, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
+  }
+  controls.addEventListener('change', () => { const c = controls.target, x = c.x, z = c.z; clampTarget(c); if (c.x !== x || c.z !== z) camera.position.add(new T.Vector3(c.x - x, 0, c.z - z)); });
   if (opts.zoomUI !== false) {
     if (!document.getElementById('lab3d-zoom-css')) {
       const st = document.createElement('style'); st.id = 'lab3d-zoom-css';
       st.textContent = '.zoomctl{position:absolute;z-index:4;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:2px;padding:4px;background:rgba(255,255,255,.9);border:1px solid #D9D3C8;border-radius:10px;backdrop-filter:blur(6px);box-shadow:0 1px 2px rgba(20,35,58,.08)}' +
         '.zoomctl button{width:38px;height:34px;border:0;border-radius:7px;background:transparent;color:#14233A;font:700 18px/1 "JetBrains Mono",ui-monospace,monospace;cursor:pointer;padding:0}' +
         '.zoomctl button.fit{font-size:10px;letter-spacing:.06em;height:28px}.zoomctl button:hover{background:rgba(14,124,134,.12);color:#0E7C86}' +
-        '.zoomctl button:focus-visible{outline:2px solid #0E7C86;outline-offset:1px}@media(max-width:520px){.zoomctl{right:10px}.zoomctl button{width:34px;height:32px}}';
+        '.zoomctl button:focus-visible{outline:2px solid #0E7C86;outline-offset:1px}' +
+        '.zoomctl .pad{display:grid;grid-template-columns:repeat(3,26px);grid-template-rows:repeat(3,24px);gap:1px;margin:3px 0;padding-top:4px;border-top:1px solid #D9D3C8}' +
+        '.zoomctl .pad button{width:26px;height:24px;font-size:12px}.zoomctl .pad .u{grid-area:1/2}.zoomctl .pad .l{grid-area:2/1}.zoomctl .pad .c{grid-area:2/2;font-size:9px}.zoomctl .pad .r{grid-area:2/3}.zoomctl .pad .d{grid-area:3/2}' +
+        '@media(max-width:520px){.zoomctl{right:10px}.zoomctl button{width:34px;height:32px}.zoomctl .pad{grid-template-columns:repeat(3,28px);grid-template-rows:repeat(3,26px)}.zoomctl .pad button{width:28px;height:26px}}';
       document.head.appendChild(st);
     }
     const box = document.createElement('div'); box.className = 'zoomctl'; box.setAttribute('role', 'group'); box.setAttribute('aria-label', 'Zoom');
     box.innerHTML = '<button type="button" data-z="in" aria-label="Zoom in" title="Zoom in (+)">+</button>' +
       '<button type="button" data-z="out" aria-label="Zoom out" title="Zoom out (-)">&minus;</button>' +
+      '<div class="pad" role="group" aria-label="Move the view">' +
+      '<button type="button" class="u" data-p="u" aria-label="Move the view up" title="Move up (arrow up)">&#9650;</button>' +
+      '<button type="button" class="l" data-p="l" aria-label="Move the view left" title="Move left (arrow left)">&#9664;</button>' +
+      '<button type="button" class="c" data-z="fit" aria-label="Center the view" title="Center the view (0)">&#9679;</button>' +
+      '<button type="button" class="r" data-p="r" aria-label="Move the view right" title="Move right (arrow right)">&#9654;</button>' +
+      '<button type="button" class="d" data-p="d" aria-label="Move the view down" title="Move down (arrow down)">&#9660;</button></div>' +
       '<button type="button" class="fit" data-z="fit" aria-label="Show the whole unit" title="Show the whole unit (0)">FIT</button>';
     stage.appendChild(box);
     ['pointerdown', 'pointerup', 'wheel', 'click'].forEach(ev => box.addEventListener(ev, e => e.stopPropagation()));
     box.addEventListener('click', e => {
       const b = e.target.closest('button'); if (!b) return;
-      if (b.dataset.z === 'in') zoom(0.75); else if (b.dataset.z === 'out') zoom(1.33); else setView(opts.fitView || 'overview');
+      const pd = {l: [-1, 0], r: [1, 0], u: [0, 1], d: [0, -1]}[b.dataset.p];
+      if (pd) pan(pd[0], pd[1]);
+      else if (b.dataset.z === 'in') zoom(0.75); else if (b.dataset.z === 'out') zoom(1.33); else setView(opts.fitView || 'overview');
     });
+    let over = false;
+    stage.addEventListener('pointerenter', () => { over = true; }); stage.addEventListener('pointerleave', () => { over = false; });
     document.addEventListener('keydown', e => {
       const t = e.target, tag = t && t.tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) return;
+      const ak = {ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1]}[e.key];
+      if (ak) { if (over || stage.contains(e.target)) { e.preventDefault(); pan(ak[0], ak[1]); } return; }
       if (e.key === '+' || e.key === '=') zoom(0.75);
       else if (e.key === '-' || e.key === '_') zoom(1.33);
       else if (e.key === '0') setView(opts.fitView || 'overview');
@@ -801,7 +897,7 @@ function Unit3D(stage, opts) {
 
   const labApi = {T: T, scene: scene, camera: camera, controls: controls, renderer: renderer, recs: recs, colors: C, kinds: KIND, roles: ROLE,
     room: room, person: person, walk: walk, set: set, chip: chip, finishPins: finishPins, silkRect: silkRect, zone: zone, label: label, busMat: busMat, trace: trace, glowBus: glowBus,
-    fly: fly, clearPackets: clearPackets, hi: hi, clear: clear, pop: pop, setView: setView, focusOn: focusOn, intro: intro, zoom: zoom, refreshFloor: refreshFloor,
+    fly: fly, clearPackets: clearPackets, hi: hi, clear: clear, pop: pop, setView: setView, focusOn: focusOn, intro: intro, zoom: zoom, pan: pan, refreshFloor: refreshFloor,
     onPick: cb => { pickCb = cb; }, onFrame: f => frames.push(f), unit: unit};
   (window.__labs = window.__labs || []).push(labApi);   // lets tests reach the camera
   return labApi;
@@ -849,6 +945,11 @@ const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).
 const COL = {teal: css('--teal'), coral: css('--coral'), amber: css('--amber'), green: css('--green'), violet: css('--violet'), slate: css('--slate')};
 const RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+// guide block: mark the current step (1-based) and say the single next action
+function guide(stepNo, nowHtml) {
+  document.querySelectorAll('#howSteps li').forEach(li => { const n = +li.dataset.h; li.classList.toggle('done', n < stepNo); li.classList.toggle('current', n === stepNo); });
+  if (nowHtml) document.getElementById('nowText').innerHTML = nowHtml;
+}
 let speed = 1;
 const ROOMS = [];
 ['401', '402', '403', '404', '405', '406', '407', '408'].forEach((n, i) => ROOMS.push({id: n, x: -10.4 + i * 2.95, z: -3.6, w: 2.6, d: 4, kind: 'patient', label: 'Room ' + n}));
@@ -874,8 +975,9 @@ function Graphics3D(stage, PEOPLE, opts) {
   const api = {
     kind: '3d', lab: lab,
     reset() {
+      // finish the intro drop first: killing it mid-delay would leave a person floating above the floor
       lab.clear(); lab.clearPackets();
-      PEOPLE.forEach(p => { const r = lab.recs[p.id]; gsap.killTweensOf(r.g.position); r.g.position.set(p.x, 0, p.z); r.x = p.x; r.z = p.z; r.sub.textContent = ''; });
+      PEOPLE.forEach(p => { const r = lab.recs[p.id]; gsap.getTweensOf(r.g.position).forEach(tw => tw.progress(1)); gsap.killTweensOf(r.g.position); r.g.position.set(p.x, 0, p.z); r.x = p.x; r.z = p.z; r.sub.textContent = ''; });
     },
     hi: (id, c) => lab.hi(lab.recs[id], c),
     unhi(id) { const r = lab.recs[id]; if (!r) return; if (r.kind === 'room') gsap.to(r.mat, {opacity: 0, duration: 0.4}); else gsap.to(r.mat, {emissiveIntensity: 0, duration: 0.4}); r.el.classList.remove('on'); },
@@ -1050,7 +1152,13 @@ const gx = s => GRID.x0 + (s + 2 + 0.5) / 5 * (GRID.x1 - GRID.x0), gy = i => GRI
 /* ---------------- state ---------------- */
 let order = [], cur = 0, results = [], pick = {reason: null, resp: null, cell: null}, locked = false, resolveTimer = null;
 function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
-function start() { order = shuffle(ROUNDS.map((r, i) => i)); cur = 0; results = []; $('#final').hidden = true; $('#round').hidden = false; showRound(); }
+function start(scroll) { order = shuffle(ROUNDS.map((r, i) => i)); cur = 0; results = []; $('#final').hidden = true; $('#round').hidden = false; showRound(scroll); }
+function guidePick() {
+  if (!pick.reason) guide(2, 'Under question 1 in the round card, click the main reason behind the resistance.');
+  else if (!pick.resp) guide(2, 'Under question 2, click the manager\'s best response.');
+  else if (!pick.cell) guide(3, 'Under question 3, click the grid cell where this person sits: influence up the side, support across.');
+  else guide(4, 'All three are answered. Press <b>Check round</b> under the grid, or change an answer first.');
+}
 function round() { return ROUNDS[order[cur]]; }
 function renderProgress() { const box = $('#progress'); box.innerHTML = ''; for (let i = 0; i < 10; i++) { const b = document.createElement('i'); const r = results[i]; if (r) b.className = r.pts === 10 ? 'full' : r.pts >= 5 ? 'part' : 'zero'; if (i === cur && cur < 10) b.classList.add('now'); box.appendChild(b); } }
 function scene(r) {
@@ -1076,23 +1184,24 @@ function gridSVG(sel, truth) {
   h += '<text transform="translate(12 ' + ((GRID.y0 + GRID.y1) / 2) + ') rotate(-90)" text-anchor="middle" font-size="10" font-weight="600" fill="#14233A">influence (1 to 5)</text>';
   return h;
 }
-function showRound() {
+function showRound(scroll) {
   const r = round(); locked = false; pick = {reason: null, resp: null, cell: null};
   $('#rn').textContent = cur + 1; renderProgress(); scene(r);
   const vr = shuffle(REASONS), vp = shuffle(RESP);
   let h = '<div class="case"><div class="t">' + esc(r.who) + ' · ' + esc(r.role) + '</div><p>"' + esc(r.words) + '"</p></div>';
   h += '<div class="q">1. The main reason behind the resistance <small>3 points</small></div><div class="opts" data-g="reason">' + vr.map(x => '<button type="button" class="opt" data-v="' + x.k + '" aria-pressed="false"><span><b>' + x.n + '</b><small>' + x.d + '</small></span></button>').join('') + '</div>';
   h += '<div class="q">2. The manager\'s best response <small>4 points, 2 for a defensible second</small></div><div class="opts" data-g="resp">' + vp.map(x => '<button type="button" class="opt" data-v="' + x.k + '" aria-pressed="false"><span><b>' + x.n + '</b><small>' + x.d + '</small></span></button>').join('') + '</div>';
-  h += '<div class="q">3. Place them on the grid <small>3 points, 1 if one cell off</small></div><div class="gridwrap"><svg class="grid" viewBox="0 0 310 222" role="group" aria-label="Influence versus support grid; pick a cell">' + gridSVG(null, null) + '</svg></div><p class="hint" id="cellHint">No cell picked.</p>';
-  h += '<div class="rowbtn"><button type="button" class="btn primary" id="check" disabled>Check round</button><span class="hint" id="pickHint">Answer all three.</span></div><div id="fb"></div>';
+  h += '<div class="q">3. Place them on the grid <small>3 points, 1 if one cell off</small></div><div class="gridwrap"><svg class="grid" viewBox="0 0 310 222" role="group" aria-label="Influence versus support grid; pick a cell">' + gridSVG(null, null) + '</svg></div><p class="hint" id="cellHint">No cell picked yet. Click a cell on the grid.</p>';
+  h += '<div class="rowbtn"><button type="button" class="btn primary" id="check" disabled>Check round</button><span class="hint" id="pickHint">Answer all three questions to turn on Check round.</span></div><div id="fb"></div>';
   $('#round').innerHTML = h;
-  const ready = () => { const ok = pick.reason && pick.resp && pick.cell; $('#check').disabled = !ok; $('#pickHint').textContent = ok ? '' : 'Answer all three.'; };
+  const ready = () => { const ok = pick.reason && pick.resp && pick.cell; $('#check').disabled = !ok; $('#pickHint').textContent = ok ? '' : 'Answer all three questions to turn on Check round.'; guidePick(); };
   $$('#round .opts').forEach(g => g.querySelectorAll('.opt').forEach(b => b.onclick = () => { if (locked) return; g.querySelectorAll('.opt').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false')); pick[g.dataset.g] = b.dataset.v; ready(); }));
   const bindGrid = () => $$('#round .grid .cell').forEach(c => { const f = () => { if (locked) return; pick.cell = {i: +c.dataset.i, s: +c.dataset.s}; $('#round .grid').innerHTML = gridSVG(pick.cell, null); bindGrid(); $('#cellHint').textContent = 'Influence ' + pick.cell.i + ', support ' + fmt(pick.cell.s) + '.'; ready(); }; c.onclick = f; c.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); f(); } }; });
   bindGrid();
   $('#check').onclick = check;
   if (hasGSAP && !RM) gsap.from('#round .case', {opacity: 0, y: 8, duration: .35});
-  window.scrollTo({top: Math.max(0, $('#round').getBoundingClientRect().top + window.scrollY - 90), behavior: RM ? 'auto' : 'smooth'});
+  if (scroll) window.scrollTo({top: Math.max(0, $('#roundCard').getBoundingClientRect().top + window.scrollY - 12), behavior: RM ? 'auto' : 'smooth'});
+  guide(1, 'Read what ' + esc(r.who) + ' says in round ' + (cur + 1) + ' of 10 below. Then click the main reason under question 1.');
 }
 function scoreRound(r, p) {
   const a = p.reason === r.reason ? 3 : 0;
@@ -1113,13 +1222,20 @@ function check() {
   $('#fb').innerHTML = '<div class="feedback ' + (sc.pts === 10 ? 'ok' : sc.pts >= 5 ? 'info' : 'bad') + ' fb"><h3>' + sc.pts + ' of 10 · ' + esc(rn) + ' · ' + esc(bn) + ' <span class="pts">(defensible second: ' + esc(sn) + ')</span></h3>' +
     '<div class="scorecard"><div><b>' + sc.a + '/3</b><span>reason</span></div><div><b>' + sc.b + '/4</b><span>response</span></div><div><b>' + sc.c + '/3</b><span>placement</span></div></div>' +
     '<p>' + esc(r.why) + '</p><p class="pts">Kotter step at stake: ' + r.step + ' · ' + esc(KSTEP[r.step - 1]) + (pick.resp === 'authority' ? ' · Authority fits only when safety demands immediate compliance or after every other response has failed with the plan documented; it was not that case here.' : '') + '</p></div>' +
-    '<div class="rowbtn"><button type="button" class="btn primary" id="nextBtn">' + (cur + 1 < 10 ? 'Next round' : 'See the final score') + '</button></div>';
-  $('#nextBtn').onclick = () => { cur++; if (cur < 10) showRound(); else finish(); };
+    '<div class="rowbtn"><button type="button" class="btn" id="boardBtn">See it on the board</button><button type="button" class="btn primary" id="nextBtn">' + (cur + 1 < 10 ? 'Next round' : 'See the final score') + '</button></div>';
+  $('#nextBtn').onclick = () => { cur++; if (cur < 10) showRound(true); else finish(); };
   $('#check').disabled = true; renderProgress();
-  const rm = ROOM[r.room];
-  gfx.fly([{x: Math.max(-11.3, Math.min(11.3, (rm ? rm.x : 0) - 1.2)), z: 0}, HOME[r.id]], bn.split(' ')[0], sc.b === 4 ? COL.teal : COL.amber, !hasGSAP);
   const after = sc.b === 4 ? Math.min(2, r.sup + 1) : sc.b === 2 ? r.sup : Math.max(-2, r.sup - (pick.resp === 'authority' ? 1 : 0));
-  resolveTimer = setTimeout(() => { gfx.unhi(r.room); gfx.unhi(r.id); gfx.hi(r.room, supColor(after)); gfx.hi(r.id, supColor(after)); gfx.set(r.id, 'support ' + fmt(r.sup) + ' → ' + fmt(after)); }, hasGSAP ? 1500 / speed : 0);
+  const resolve = () => {
+    if (resolveTimer) clearTimeout(resolveTimer);
+    gfx.unhi(r.room); gfx.unhi(r.id); gfx.hi(r.room, COL.coral); gfx.hi(r.id, COL.coral); gfx.set(r.id, 'resisting');
+    const rm = ROOM[r.room];
+    gfx.fly([{x: Math.max(-11.3, Math.min(11.3, (rm ? rm.x : 0) - 1.2)), z: 0}, HOME[r.id]], bn.split(' ')[0], sc.b === 4 ? COL.teal : COL.amber, !hasGSAP);
+    resolveTimer = setTimeout(() => { gfx.unhi(r.room); gfx.unhi(r.id); gfx.hi(r.room, supColor(after)); gfx.hi(r.id, supColor(after)); gfx.set(r.id, 'support ' + fmt(r.sup) + ' → ' + fmt(after)); }, hasGSAP ? 1500 / speed : 0);
+  };
+  resolve();
+  $('#boardBtn').onclick = () => { $('#boardCard').scrollIntoView({behavior: RM ? 'auto' : 'smooth', block: 'start'}); gfx.focus(r.focus[0], r.focus[1], 9); resolve(); };
+  guide(4, 'Read your points and the reason under the answers. Press <b>See it on the board</b> to watch the change, then press <b>' + (cur + 1 < 10 ? 'Next round' : 'See the final score') + '</b>.');
   $('#capT').textContent = 'Round ' + (cur + 1) + ' · ' + sc.pts + ' of 10';
   $('#capP').textContent = (sc.b === 4 ? 'With the fitting response, ' + r.who + ' moves one step toward the change (' + fmt(r.sup) + ' to ' + fmt(after) + ').' : sc.b === 2 ? 'A defensible response holds ' + r.who + ' where they are (' + fmt(r.sup) + '); the fitting one would have moved them.' : r.who + ' does not move' + (pick.resp === 'authority' ? (after !== r.sup ? ', and authority costs a step: ' + fmt(r.sup) + ' to ' + fmt(after) : ', and authority confirms the worst view of leadership (stays at ' + fmt(r.sup) + ')') : ' (' + fmt(r.sup) + ')') + '.') + ' Coral is against, amber undecided, green for.';
   if (hasGSAP && !RM) gsap.from('#fb', {opacity: 0, y: 8, duration: .35});
@@ -1134,7 +1250,8 @@ function finish() {
     '<div class="scroll-x" style="margin-top:12px"><table class="rounds"><thead><tr><th>Stakeholder</th><th>Your response</th><th>Best response</th><th>Points</th></tr></thead><tbody>' +
     results.map(r => '<tr><td>' + esc(r.who) + '</td><td>' + esc(RESP.find(x => x.k === r.resp).n) + '</td><td>' + esc(RESP.find(x => x.k === r.best).n) + '</td><td>' + r.pts + '</td></tr>').join('') + '</tbody></table></div>' +
     '<div class="rowbtn"><button type="button" class="btn primary" id="again">Try again (shuffled)</button></div>';
-  $('#again').onclick = start;
+  $('#again').onclick = () => start(true);
+  guide(5, 'Final score: ' + total + ' of 100. Review the table in the round card. Press <b>Try again (shuffled)</b> to play the ten rounds in a new order.');
   $('#rn').textContent = '10'; gfx.reset(); PEOPLE.forEach(p => gfx.show(p.id, true)); gfx.view('overview');
   $('#capT').textContent = 'Final score ' + total + ' of 100'; $('#capP').textContent = 'Every stakeholder at their current support from stakeholders.csv. Authority was never the best response in these ten rounds; participation and negotiation were the best in three rounds each, education in two, support in one, and the group of day nurses needed education.';
 }

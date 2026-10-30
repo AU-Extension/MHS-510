@@ -233,7 +233,11 @@
   .reveal{animation:rise .7s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*80ms)}
   @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
   @media(max-width:860px){
-    .app .stage .zoomctl{top:56px;right:10px;transform:none;flex-direction:row}
+    .app .stage .zoomctl{top:50%;right:8px;transform:translateY(-50%);flex-direction:column;padding:3px;align-items:center}
+    .app .stage .zoomctl>button{width:30px!important;height:28px!important;font-size:16px}
+    .app .stage .zoomctl>button.fit{height:24px!important;font-size:9px}
+    .app .stage .zoomctl .pad{grid-template-columns:repeat(3,22px)!important;grid-template-rows:repeat(3,22px)!important;margin:2px 0;padding-top:3px}
+    .app .stage .zoomctl .pad button{width:22px!important;height:22px!important;font-size:10px}
     .app{grid-template-columns:1fr;height:auto}
     .app .stage{height:62vh;min-height:360px}
     .panel{border-left:0;border-top:1px solid var(--line);overflow:visible}
@@ -251,6 +255,32 @@
     .tag .sb{display:none}
     .scroll-x::before{content:"Swipe sideways to see the whole table";display:block;font:500 11px var(--font-mono);letter-spacing:.04em;color:var(--muted);margin:0 0 6px}
   }
+
+  /* ---- stacked layout (v2, October 30 2026): the 3D floor uses the full width of the page, instructions and controls go below it ---- */
+  .app{display:block;height:auto;min-height:0}
+  .app>.lab-head{max-width:1240px;margin:0 auto;padding:18px 16px 14px}
+  .app>.stage{width:100%;height:clamp(420px,70vh,860px);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .panel{max-width:1240px;margin:0 auto;border-left:0;overflow:visible;background:none;display:block;columns:2 420px;column-gap:28px;padding:20px 16px 28px}
+  .panel>*{break-inside:avoid;margin:0 0 22px}
+  .panel>header,.panel>footer,.panel>.guide,.panel>.span-all{column-span:all}
+  /* guide: numbered steps with the current one highlighted, plus a "do this now" line */
+  .guide{max-width:1240px;margin:0 auto;padding:18px 16px 4px;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px 26px;align-items:start}
+  .guide h2{grid-column:1/-1;margin:0;font-size:19px}
+  .guide ol.steps{list-style:none;margin:0;padding:0;display:grid;gap:8px;counter-reset:s}
+  .guide ol.steps li{counter-increment:s;position:relative;padding:9px 12px 9px 46px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);color:var(--ink);font-size:15px;line-height:1.45;box-shadow:var(--shadow-sm)}
+  .guide ol.steps li::before{content:counter(s);position:absolute;left:12px;top:9px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:700 12px var(--font-mono);background:var(--panel-2);color:var(--ink-2);border:1px solid var(--line)}
+  .guide ol.steps li.current{border-color:var(--teal);box-shadow:0 0 0 2px rgba(14,124,134,.15)}
+  .guide ol.steps li.current::before{background:var(--teal);color:#fff;border-color:var(--teal)}
+  .guide ol.steps li.done{color:var(--muted)}
+  .guide ol.steps li.done::before{content:"\2713";background:var(--green);color:#fff;border-color:var(--green)}
+  .guide ol.steps li b,.guide .now b{color:var(--teal);font-weight:700}
+  .guide .now{border-left:4px solid var(--teal);background:var(--panel);border-radius:var(--r);padding:14px 16px;font-size:16px;line-height:1.5;color:var(--ink);box-shadow:var(--shadow-sm)}
+  .guide .now .k{display:block;font:600 10.5px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:4px}
+  .guide .tips{margin:10px 0 0;padding:0;list-style:none;font-size:13.5px;color:var(--muted);display:grid;gap:4px}
+  @media(max-width:860px){.guide{grid-template-columns:1fr}.panel{columns:1}}
+  /* page mode: the 3D card on top across the full width, the round or task below */
+  .card .stage.wide{aspect-ratio:21/9;min-height:360px}
+  @media(max-width:860px){.card .stage.wide{aspect-ratio:4/3;min-height:0}}
   /* ===== end of theme ===== */
 
   /* page-specific CSS below: light unit board, palette with meaning (see build/theme/THEME.md) */
@@ -285,10 +315,20 @@
   .flat .tk{font:700 .5px var(--font-body);fill:#fff;text-anchor:middle;pointer-events:none}
   .flat .rl{font:600 .42px var(--font-mono);fill:#36465E;pointer-events:none}
   .flat .zl{font:700 .55px var(--font-mono);fill:#5B6B82;text-anchor:middle}
-  .stage3d .tag.room{display:none}
-  .stage3d .tag.room.on,.stage3d .tag.room.keep{display:flex}
+  .stage .tag.room{display:none}
+  .stage .tag.room.on,.stage .tag.room.keep{display:flex}
+  /* round card across the full width: the question or chart on the left, the answers on the right */
+  .rbody .ask{margin:0 0 4px}
+  .rbody .chart{max-width:640px}
+  @media(min-width:900px){.rbody{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:22px;align-items:start}.rbody .qs>.q:first-child{margin-top:0}.rbody .chart{margin:0}}
   .checklist td{font-family:var(--font-body);font-size:13px;white-space:normal;vertical-align:top}
   .checklist{min-width:600px}
+  /* phones: a taller board and the zoom buttons as one row along the bottom, so they do not cover the station end of the floor */
+  @media(max-width:520px){
+    .card .stage.wide{aspect-ratio:1/1}
+    .card .stage .zoomctl{top:auto;bottom:8px;right:8px;transform:none;flex-direction:row;align-items:center}
+    .card .stage .zoomctl .pad{margin:0 2px;padding:0 0 0 4px;border-top:0;border-left:1px solid #D9D3C8}
+  }
 /*W78 CSS END*/
 </style>
 </head>
@@ -310,31 +350,37 @@
     <p class="lede">You are presenting the 4 West improvement proposal (two night RN positions on the weekend line, a fixed charge rotation, and recognition funded from the underspent lines) to five executives. Ten questions and four charts: choose the strongest answer and the headline that states what each chart shows. Score out of 100.</p>
   </section>
 
-  <details class="howto reveal" style="--i:1">
-    <summary>How to use this interactive</summary>
-    <ol>
-      <li>Each round an executive asks a question (6 points, 3 for a partial answer) or a chart appears and you pick its headline (10 points, 5 for a headline that describes without insight).</li>
-      <li>The floor shows who is asking; your answer flies to them in green, amber, or coral.</li>
-      <li>Read the feedback: it says why that executive cares and cites the file behind the number.</li>
-      <li>After 14 rounds you get a score out of 100 and can try again with shuffled rounds and answers.</li>
-      <li>Use the executive checklist at the bottom to rehearse your own final presentation.</li>
+  <section class="card reveal" style="--i:1" data-ref="RM 1 · BOARDROOM">
+    <h2>The executive panel</h2>
+    <div class="stage wide" id="stage"><div class="nogl" id="nogl" hidden>The 3D unit floor needs WebGL and the 3D libraries, which are not available here. The flat floor plan shows the same room, people and packets, and the round below has every value.</div></div>
+    <div class="caption" id="cap"><div class="t" id="capT">Round 1</div><p id="capP">The executives take their seats in the 4 West break room, the only room on the unit with a table for six.</p></div>
+    <div class="panel-list" id="execs"></div>
+  </section>
+
+  <section class="guide reveal" style="--i:2;padding:18px 0 16px" aria-labelledby="guideTitle">
+    <h2 id="guideTitle">How this challenge works</h2>
+    <ol class="steps" id="howSteps">
+      <li data-h="1">Read the round card below. Either an executive asks a question (worth 6 points), or a chart appears and you choose its headline (worth 10 points). On the board above, the executive who asks is marked in amber.</li>
+      <li data-h="2">Press the strongest answer, or the headline that states what the chart shows with its number. A partial answer earns 3 points; a headline that only describes the chart earns 5.</li>
+      <li data-h="3">Read the feedback: why that executive cares and which file the number comes from. On the board above, your answer flies to them in green (convinced), amber (half convinced), or coral (not convinced).</li>
+      <li data-h="4">Press <b>Next round</b>. After round 14, press <b>See my score</b>, review the table, and press <b>Try again (shuffled)</b> if you want another attempt.</li>
+      <li data-h="5">Rehearse your own final presentation with <b>The executive checklist</b> at the bottom of the page.</li>
     </ol>
-  </details>
+    <div>
+      <div class="now" aria-live="polite"><span class="k">Do this now</span><span id="nowText">Read round 1 below.</span></div>
+      <ul class="tips">
+        <li>A headline states the insight with its number; a caption only names what is plotted. Every chart in your own deck needs a headline.</li>
+        <li>Drag on the board to turn it. Use <b>+</b>, <b>&minus;</b>, the arrows, and <b>FIT</b> to look closer or see the whole floor.</li>
+      </ul>
+    </div>
+  </section>
 
-  <div class="grid two">
-    <section class="card reveal" style="--i:2" data-ref="RM 1 · BOARDROOM">
-      <h2>The executive panel</h2>
-      <div class="stage3d" id="stage"><div class="nogl" id="nogl" hidden>The 3D unit floor needs WebGL and the 3D libraries, which are not available here. The flat floor plan shows the same room, people and packets, and the panel has every value.</div></div>
-      <div class="caption" id="cap"><div class="t" id="capT">Round 1</div><p id="capP">The executives take their seats in the 4 West break room, the only room on the unit with a table for six.</p></div>
-      <div class="panel-list" id="execs"></div>
-    </section>
-    <aside class="card reveal" style="--i:3" data-ref="PODIUM · ROUND">
-      <div class="progress" id="progress" aria-hidden="true"></div>
-      <div id="round"></div>
-    </aside>
-  </div>
+  <section class="card reveal" style="--i:3" data-ref="PODIUM · ROUND">
+    <div class="progress" id="progress" aria-hidden="true"></div>
+    <div id="round"></div>
+  </section>
 
-  <section class="card reveal" style="--i:4" data-ref="CHECKLIST" style="margin-top:16px">
+  <section class="card reveal" style="--i:4;margin-top:16px" data-ref="CHECKLIST">
     <h2>The executive checklist for your final presentation</h2>
     <div class="scroll-x"><table class="checklist">
       <thead><tr><th>Executive</th><th>What they listen for</th><th>What a weak answer sounds like</th><th>What a strong answer contains</th></tr></thead>
@@ -348,7 +394,7 @@
     </table></div>
   </section>
 
-  <section class="card reveal" style="--i:5" data-ref="NOTES" style="margin-top:16px">
+  <section class="card reveal" style="--i:5;margin-top:16px" data-ref="NOTES">
     <h2>Things to notice</h2>
     <ul class="notice">
       <li>Executives ask the same five questions in every hospital: what does it cost, what does it save, how do you know, what is the measure, and why will it last. Answer them before they are asked.</li>
@@ -420,6 +466,8 @@ function Unit3D(stage, opts) {
   controls.enableDamping = true; controls.dampingFactor = 0.08;
   controls.maxPolarAngle = Math.PI * 0.46; controls.minDistance = 4; controls.maxDistance = 46;
   controls.zoomSpeed = 1.1;
+  // pan: right-drag, Ctrl or Shift plus drag, or two fingers; stays on the floor plane
+  controls.enablePan = true; controls.screenSpacePanning = false; controls.panSpeed = 0.9;
   // keep the mouse wheel inside the 3D view: zoom the floor, do not scroll the page
   stage.addEventListener('wheel', e => e.preventDefault(), {passive: false});
 
@@ -696,11 +744,25 @@ function Unit3D(stage, opts) {
     if (name === 'overview' || !views[name]) {
       // the overview (and FIT) must show the whole floor width, also on narrow phone screens,
       // leaving room for the zoom buttons at the right edge
-      const tanH = Math.tan(T.MathUtils.degToRad(camera.fov / 2)) * camera.aspect;
+      // and, on wide stages, fill the stage: the floor fits both the width and the height of the view
+      const tanV = Math.tan(T.MathUtils.degToRad(camera.fov / 2)), tanH = tanV * camera.aspect;
+      const dist0 = pos.distanceTo(tgt), sinE = Math.max(0.3, (pos.y - tgt.y) / dist0);
       const need = (B.w / 2 + 0.5) / (tanH * 0.92) + B.d * 0.25;
-      f = Math.max(f, need / pos.distanceTo(tgt));
-      controls.maxDistance = Math.max(controls.maxDistance, need * 1.3);
-      if (scene.fog) { scene.fog.near = Math.max(scene.fog.near, need * 1.1); scene.fog.far = Math.max(scene.fog.far, need * 2.6); }
+      const needD = (B.d / 2 * sinE + 0.8) / (tanV * 0.78) + B.d * 0.25;   // 0.78 leaves room for the HUD bars
+      const need2 = Math.max(need, needD);
+      f = need2 / dist0;
+      // phones: when the zoom controls are a column on the right edge, fit the floor in the space to their left
+      const zc = stage.querySelector('.zoomctl'), sw = stage.clientWidth;
+      if (zc && sw && sw < 760 && zc.offsetWidth < sw * 0.4) {
+        const m = zc.offsetWidth + 14, keep = (sw - m) / sw;
+        f = Math.max(need / keep, needD) / dist0;
+        const d = f * dist0, shift = (m / sw) * d * tanH;           // move the view so the floor centers in the free space
+        const fwd = tgt.clone().sub(pos); fwd.y = 0; fwd.normalize();
+        const right = new T.Vector3(-fwd.z, 0, fwd.x);
+        tgt.add(right.clone().multiplyScalar(shift)); pos.add(right.multiplyScalar(shift));
+      }
+      controls.maxDistance = Math.max(controls.maxDistance, need2 * 1.3);
+      if (scene.fog) { scene.fog.near = Math.max(scene.fog.near, need2 * 1.1); scene.fog.far = Math.max(scene.fog.far, need2 * 2.6); }
     }
     pos.sub(tgt).multiplyScalar(f).add(tgt);
     return {pos: pos, tgt: tgt};
@@ -732,28 +794,57 @@ function Unit3D(stage, opts) {
     const p = t.clone().add(off), k = 1 / (gsap.globalTimeline.timeScale() || 1);
     gsap.to(camera.position, {x: p.x, y: p.y, z: p.z, duration: RM ? 0 : 0.45, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
   }
+  // pan buttons (arrows) and arrow keys: slide the view across the floor, in screen directions
+  const PANLIM = {x: B.w / 2 + 1.5, z: B.d / 2 + 1.5};
+  function clampTarget(v) { v.x = Math.max(-PANLIM.x, Math.min(PANLIM.x, v.x)); v.z = Math.max(-PANLIM.z + (B.cz || 0), Math.min(PANLIM.z + (B.cz || 0), v.z)); return v; }
+  function pan(dx, dz) {   // dx: +1 right, -1 left; dz: +1 up (away), -1 down (toward the viewer)
+    const off = camera.position.clone().sub(controls.target), dist = off.length(), step = Math.max(0.6, dist * 0.12);
+    const fwd = new T.Vector3(); camera.getWorldDirection(fwd); fwd.y = 0;
+    if (fwd.lengthSq() < 1e-6) fwd.set(0, 0, -1); fwd.normalize();
+    const right = new T.Vector3(-fwd.z, 0, fwd.x);
+    const tgt = clampTarget(controls.target.clone().add(right.multiplyScalar(dx * step)).add(fwd.multiplyScalar(dz * step)));
+    const pos = tgt.clone().add(off), k = 1 / (gsap.globalTimeline.timeScale() || 1);
+    gsap.to(controls.target, {x: tgt.x, y: tgt.y, z: tgt.z, duration: RM ? 0 : 0.35, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
+    gsap.to(camera.position, {x: pos.x, y: pos.y, z: pos.z, duration: RM ? 0 : 0.35, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
+  }
+  controls.addEventListener('change', () => { const c = controls.target, x = c.x, z = c.z; clampTarget(c); if (c.x !== x || c.z !== z) camera.position.add(new T.Vector3(c.x - x, 0, c.z - z)); });
   if (opts.zoomUI !== false) {
     if (!document.getElementById('lab3d-zoom-css')) {
       const st = document.createElement('style'); st.id = 'lab3d-zoom-css';
       st.textContent = '.zoomctl{position:absolute;z-index:4;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:2px;padding:4px;background:rgba(255,255,255,.9);border:1px solid #D9D3C8;border-radius:10px;backdrop-filter:blur(6px);box-shadow:0 1px 2px rgba(20,35,58,.08)}' +
         '.zoomctl button{width:38px;height:34px;border:0;border-radius:7px;background:transparent;color:#14233A;font:700 18px/1 "JetBrains Mono",ui-monospace,monospace;cursor:pointer;padding:0}' +
         '.zoomctl button.fit{font-size:10px;letter-spacing:.06em;height:28px}.zoomctl button:hover{background:rgba(14,124,134,.12);color:#0E7C86}' +
-        '.zoomctl button:focus-visible{outline:2px solid #0E7C86;outline-offset:1px}@media(max-width:520px){.zoomctl{right:10px}.zoomctl button{width:34px;height:32px}}';
+        '.zoomctl button:focus-visible{outline:2px solid #0E7C86;outline-offset:1px}' +
+        '.zoomctl .pad{display:grid;grid-template-columns:repeat(3,26px);grid-template-rows:repeat(3,24px);gap:1px;margin:3px 0;padding-top:4px;border-top:1px solid #D9D3C8}' +
+        '.zoomctl .pad button{width:26px;height:24px;font-size:12px}.zoomctl .pad .u{grid-area:1/2}.zoomctl .pad .l{grid-area:2/1}.zoomctl .pad .c{grid-area:2/2;font-size:9px}.zoomctl .pad .r{grid-area:2/3}.zoomctl .pad .d{grid-area:3/2}' +
+        '@media(max-width:520px){.zoomctl{right:10px}.zoomctl button{width:34px;height:32px}.zoomctl .pad{grid-template-columns:repeat(3,28px);grid-template-rows:repeat(3,26px)}.zoomctl .pad button{width:28px;height:26px}}';
       document.head.appendChild(st);
     }
     const box = document.createElement('div'); box.className = 'zoomctl'; box.setAttribute('role', 'group'); box.setAttribute('aria-label', 'Zoom');
     box.innerHTML = '<button type="button" data-z="in" aria-label="Zoom in" title="Zoom in (+)">+</button>' +
       '<button type="button" data-z="out" aria-label="Zoom out" title="Zoom out (-)">&minus;</button>' +
+      '<div class="pad" role="group" aria-label="Move the view">' +
+      '<button type="button" class="u" data-p="u" aria-label="Move the view up" title="Move up (arrow up)">&#9650;</button>' +
+      '<button type="button" class="l" data-p="l" aria-label="Move the view left" title="Move left (arrow left)">&#9664;</button>' +
+      '<button type="button" class="c" data-z="fit" aria-label="Center the view" title="Center the view (0)">&#9679;</button>' +
+      '<button type="button" class="r" data-p="r" aria-label="Move the view right" title="Move right (arrow right)">&#9654;</button>' +
+      '<button type="button" class="d" data-p="d" aria-label="Move the view down" title="Move down (arrow down)">&#9660;</button></div>' +
       '<button type="button" class="fit" data-z="fit" aria-label="Show the whole unit" title="Show the whole unit (0)">FIT</button>';
     stage.appendChild(box);
     ['pointerdown', 'pointerup', 'wheel', 'click'].forEach(ev => box.addEventListener(ev, e => e.stopPropagation()));
     box.addEventListener('click', e => {
       const b = e.target.closest('button'); if (!b) return;
-      if (b.dataset.z === 'in') zoom(0.75); else if (b.dataset.z === 'out') zoom(1.33); else setView(opts.fitView || 'overview');
+      const pd = {l: [-1, 0], r: [1, 0], u: [0, 1], d: [0, -1]}[b.dataset.p];
+      if (pd) pan(pd[0], pd[1]);
+      else if (b.dataset.z === 'in') zoom(0.75); else if (b.dataset.z === 'out') zoom(1.33); else setView(opts.fitView || 'overview');
     });
+    let over = false;
+    stage.addEventListener('pointerenter', () => { over = true; }); stage.addEventListener('pointerleave', () => { over = false; });
     document.addEventListener('keydown', e => {
       const t = e.target, tag = t && t.tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) return;
+      const ak = {ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1]}[e.key];
+      if (ak) { if (over || stage.contains(e.target)) { e.preventDefault(); pan(ak[0], ak[1]); } return; }
       if (e.key === '+' || e.key === '=') zoom(0.75);
       else if (e.key === '-' || e.key === '_') zoom(1.33);
       else if (e.key === '0') setView(opts.fitView || 'overview');
@@ -787,7 +878,7 @@ function Unit3D(stage, opts) {
 
   const labApi = {T: T, scene: scene, camera: camera, controls: controls, renderer: renderer, recs: recs, colors: C, kinds: KIND, roles: ROLE,
     room: room, person: person, walk: walk, set: set, chip: chip, finishPins: finishPins, silkRect: silkRect, zone: zone, label: label, busMat: busMat, trace: trace, glowBus: glowBus,
-    fly: fly, clearPackets: clearPackets, hi: hi, clear: clear, pop: pop, setView: setView, focusOn: focusOn, intro: intro, zoom: zoom, refreshFloor: refreshFloor,
+    fly: fly, clearPackets: clearPackets, hi: hi, clear: clear, pop: pop, setView: setView, focusOn: focusOn, intro: intro, zoom: zoom, pan: pan, refreshFloor: refreshFloor,
     onPick: cb => { pickCb = cb; }, onFrame: f => frames.push(f), unit: unit};
   (window.__labs = window.__labs || []).push(labApi);   // lets tests reach the camera
   return labApi;
@@ -836,6 +927,11 @@ const D = {"rate":41.0,"ben":0.28,"fteHours":2080,"otRate":61.5,"agencyRate":95.
 const C = {teal: '#0E7C86', coral: '#D4453F', amber: '#C27A08', green: '#1F8A4C', violet: '#6A4FC8', slate: '#5B6B82'};
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
 const fmt$ = n => '$' + Math.round(n).toLocaleString('en-US');
+// guide block: mark the current step (1-based) and say the single next action
+function guide(stepNo, nowHtml) {
+  $$('#howSteps li').forEach(li => { const n = +li.dataset.h; li.classList.toggle('done', n < stepNo); li.classList.toggle('current', n === stepNo); });
+  if (nowHtml) $('#nowText').innerHTML = nowHtml;
+}
 
 const EXECS = {cno: ['CNO', 'Dr. Marisol Quintana', 'Chief Nursing Officer'], cfo: ['CFO', 'Howard Blankenship', 'Chief Financial Officer'], cmo: ['CMO', 'Dr. Elena Vasquez-Ortiz', 'Chief Medical Officer'], hr: ['HR', 'Denise Whitaker', 'Human Resources director'], qual: ['QUAL', 'Samuel Adeyemi', 'Director of quality']};
 
@@ -992,8 +1088,9 @@ function buildFloor(lab) {
   if (lab.zone) { lab.zone('rooms 401 to 416', -2.0, -5.3, C.teal); lab.zone('rooms 417 to 432', -2.0, 5.3, C.teal); }
 }
 function Graphics3D(stage) {
+  const nx = stage.clientWidth < 700 ? 0 : 1;   // on wide stages aim a little right of center so the zoom buttons at the right edge do not cover the station end
   const lab = Unit3D(stage, {floor: {w: FW, d: FD, title: '4 WEST · MED-SURG · 32 BEDS', corridors: [{z: 0, w: 3}]},
-    views: {overview: {pos: [0, 21, 16], tgt: [0, 0, 0.6], want: 1.6}, board: {pos: [11.2, 6, 3.2], tgt: [11.4, 0.3, -2.6], want: 1.2}}, fitView: 'overview'});
+    views: {overview: {pos: [nx, 21, 16], tgt: [nx, 0, 0.6], want: 1.6}, board: nx ? {pos: [11.3, 4.9, 1.6], tgt: [11.4, 0.4, -2.45], want: 1.2} : {pos: [11.3, 6.5, 3.6], tgt: [11.4, 0.3, -1.6], want: 1.2}}, fitView: 'overview'});
   if (!lab) return null;
   buildFloor(lab); lab.intro(); setTimeout(() => lab.setView('board'), 2200); return lab;
 }
@@ -1058,9 +1155,10 @@ function showRound() {
   renderProgress();
   const head = '<div class="round-head"><span class="pill violet">Round ' + (idx + 1) + ' of 14 · ' + (r.kind === 'q' ? 'question, 6 points' : 'chart headline, 10 points') + '</span><span class="score"><span>Score</span><span class="big" style="font-size:22px">' + total() + '</span></span></div>';
   let body;
-  if (r.kind === 'q') body = '<div class="ask"><div class="who">' + EXECS[r.who][0] + '</div><p><b>' + esc(EXECS[r.who][1]) + ', ' + esc(EXECS[r.who][2]) + ':</b> "' + esc(r.q) + '"</p></div><div class="q">Your strongest answer</div>';
-  else body = '<div class="chart">' + CHARTS[r.chart].svg() + '<div class="cap">' + esc(CHARTS[r.chart].cap) + '</div></div><div class="q">Which headline states what this chart shows?</div>';
-  $('#round').innerHTML = head + body + '<div class="opts" id="opts">' + cur.opts.map((o, i) => '<button type="button" class="btn" data-i="' + i + '">' + esc(o.t) + '</button>').join('') + '</div><div id="fb"></div><div id="nextwrap" hidden style="margin-top:12px"><button type="button" class="btn primary" id="next">' + (idx === 13 ? 'See my score' : 'Next round') + '</button></div>';
+  if (r.kind === 'q') body = '<div class="ask"><div class="who">' + EXECS[r.who][0] + '</div><p><b>' + esc(EXECS[r.who][1]) + ', ' + esc(EXECS[r.who][2]) + ':</b> "' + esc(r.q) + '"</p></div>';
+  else body = '<div class="chart">' + CHARTS[r.chart].svg() + '<div class="cap">' + esc(CHARTS[r.chart].cap) + '</div></div>';
+  const qlab = r.kind === 'q' ? '<div class="q">Press the strongest answer</div>' : '<div class="q">Press the headline that states what this chart shows</div>';
+  $('#round').innerHTML = head + '<div class="rbody"><div>' + body + '</div><div class="qs">' + qlab + '<div class="opts" id="opts">' + cur.opts.map((o, i) => '<button type="button" class="btn" data-i="' + i + '">' + esc(o.t) + '</button>').join('') + '</div><div id="fb"></div><div id="nextwrap" hidden style="margin-top:12px"><button type="button" class="btn primary" id="next">' + (idx === 13 ? 'See my score' : 'Next round') + '</button></div></div></div>';
   $('#opts').addEventListener('click', e => { const b = e.target.closest('button'); if (!b || cur.done) return; answer(+b.dataset.i); });
   $('#next').addEventListener('click', () => { results.push(cur.s); idx++; if (idx >= 14) finish(); else showRound(); });
   $$('.exec').forEach(d => d.classList.remove('on'));
@@ -1068,6 +1166,8 @@ function showRound() {
   if (r.kind === 'q') { $('#ex-' + r.who).classList.add('on'); G.hi(G.recs[r.who], C.amber); G.hi(G.recs.mgr, C.violet); G.fly([{x: SEATS[r.who][0], z: SEATS[r.who][1]}, {x: PODIUM.x, z: PODIUM.z}], EXECS[r.who][0] + ' asks', C.amber, {dur: 1.3}); setCap('Round ' + (idx + 1) + ' · ' + EXECS[r.who][2], EXECS[r.who][1] + ' asks the question. Amber marks the executive waiting for an answer; your answer flies back in green, amber, or coral.', C.amber); }
   else { G.hi(G.recs.break, C.teal); G.hi(G.recs.mgr, C.violet); setCap('Round ' + (idx + 1) + ' · a chart on the screen', 'The slide is up. The whole panel reads the headline before the axes: choose the one that states the insight with its number.', C.teal); }
   if (G.kind !== '2d') G.setView('board');
+  guide(1, 'Round ' + (idx + 1) + ' of 14: ' + (r.kind === 'q' ? 'read the ' + EXECS[r.who][2] + '\'s question below' : 'read the chart below') + '. Then press ' + (r.kind === 'q' ? 'the strongest answer' : 'the headline that states what it shows') + '.');
+  const here = cur; setTimeout(() => { if (cur === here && !cur.done) guide(2, r.kind === 'q' ? 'Press the strongest answer to ' + EXECS[r.who][1] + ' in the round below.' : 'Press the headline that states what the chart shows, with its number.'); }, 2600);
 }
 function answer(i) {
   const r = cur.r, o = cur.opts[i], max = r.kind === 'q' ? 6 : 10; cur.done = true; cur.s = o.s;
@@ -1075,6 +1175,7 @@ function answer(i) {
   const best = r.opts.find(x => x.s === max).t;
   $('#fb').innerHTML = '<div class="feedback ' + (o.s === max ? 'ok' : o.s ? 'info' : 'bad') + '">' + (o.s === max ? '<b>Strongest answer, ' + max + ' points.</b> ' : o.s ? '<b>Partial, ' + o.s + ' points.</b> The strongest: "' + esc(best) + '" ' : '<b>No points.</b> The strongest: "' + esc(best) + '" ') + esc(r.why) + '</div>';
   $('#nextwrap').hidden = false; renderProgress();
+  guide(3, (o.s === max ? 'Strongest answer: ' : o.s ? 'Partial: ' : 'No points: ') + o.s + ' of ' + max + ' points. Read why below, then press <b>' + (idx === 13 ? 'See my score' : 'Next round') + '</b>.');
   const col = o.s === max ? C.green : o.s ? C.amber : C.coral;
   G.clearPackets();
   const to = r.kind === 'q' ? {x: SEATS[r.who][0], z: SEATS[r.who][1]} : {x: 11.4, z: -3.3};
@@ -1092,6 +1193,7 @@ function finish() {
     '<button type="button" class="btn primary" id="again">Try again (shuffled)</button></div>';
   $('#again').addEventListener('click', start);
   $$('.exec').forEach(d => d.classList.remove('on'));
+  guide(5, 'Final score ' + t + ' of 100. Review the table below, then rehearse with <b>The executive checklist</b> at the bottom. Press <b>Try again (shuffled)</b> to play again.');
   G.clear(); G.clearPackets(); G.hi(G.recs.mgr, t >= 70 ? C.green : C.amber); Object.keys(EXECS).forEach(k => G.hi(G.recs[k], t >= 90 ? C.green : t >= 70 ? C.amber : C.coral));
   setCap('Final score ' + t + ' of 100', t >= 90 ? 'Five green executives: the proposal moves to the pilot.' : 'Try again: the rounds and the answers are shuffled every time.', t >= 70 ? C.green : C.amber);
 }

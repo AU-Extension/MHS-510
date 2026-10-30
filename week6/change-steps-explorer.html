@@ -233,7 +233,11 @@
   .reveal{animation:rise .7s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*80ms)}
   @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
   @media(max-width:860px){
-    .app .stage .zoomctl{top:56px;right:10px;transform:none;flex-direction:row}
+    .app .stage .zoomctl{top:50%;right:8px;transform:translateY(-50%);flex-direction:column;padding:3px;align-items:center}
+    .app .stage .zoomctl>button{width:30px!important;height:28px!important;font-size:16px}
+    .app .stage .zoomctl>button.fit{height:24px!important;font-size:9px}
+    .app .stage .zoomctl .pad{grid-template-columns:repeat(3,22px)!important;grid-template-rows:repeat(3,22px)!important;margin:2px 0;padding-top:3px}
+    .app .stage .zoomctl .pad button{width:22px!important;height:22px!important;font-size:10px}
     .app{grid-template-columns:1fr;height:auto}
     .app .stage{height:62vh;min-height:360px}
     .panel{border-left:0;border-top:1px solid var(--line);overflow:visible}
@@ -251,6 +255,32 @@
     .tag .sb{display:none}
     .scroll-x::before{content:"Swipe sideways to see the whole table";display:block;font:500 11px var(--font-mono);letter-spacing:.04em;color:var(--muted);margin:0 0 6px}
   }
+
+  /* ---- stacked layout (v2, October 30 2026): the 3D floor uses the full width of the page, instructions and controls go below it ---- */
+  .app{display:block;height:auto;min-height:0}
+  .app>.lab-head{max-width:1240px;margin:0 auto;padding:18px 16px 14px}
+  .app>.stage{width:100%;height:clamp(420px,70vh,860px);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .panel{max-width:1240px;margin:0 auto;border-left:0;overflow:visible;background:none;display:block;columns:2 420px;column-gap:28px;padding:20px 16px 28px}
+  .panel>*{break-inside:avoid;margin:0 0 22px}
+  .panel>header,.panel>footer,.panel>.guide,.panel>.span-all{column-span:all}
+  /* guide: numbered steps with the current one highlighted, plus a "do this now" line */
+  .guide{max-width:1240px;margin:0 auto;padding:18px 16px 4px;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px 26px;align-items:start}
+  .guide h2{grid-column:1/-1;margin:0;font-size:19px}
+  .guide ol.steps{list-style:none;margin:0;padding:0;display:grid;gap:8px;counter-reset:s}
+  .guide ol.steps li{counter-increment:s;position:relative;padding:9px 12px 9px 46px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);color:var(--ink);font-size:15px;line-height:1.45;box-shadow:var(--shadow-sm)}
+  .guide ol.steps li::before{content:counter(s);position:absolute;left:12px;top:9px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:700 12px var(--font-mono);background:var(--panel-2);color:var(--ink-2);border:1px solid var(--line)}
+  .guide ol.steps li.current{border-color:var(--teal);box-shadow:0 0 0 2px rgba(14,124,134,.15)}
+  .guide ol.steps li.current::before{background:var(--teal);color:#fff;border-color:var(--teal)}
+  .guide ol.steps li.done{color:var(--muted)}
+  .guide ol.steps li.done::before{content:"\2713";background:var(--green);color:#fff;border-color:var(--green)}
+  .guide ol.steps li b,.guide .now b{color:var(--teal);font-weight:700}
+  .guide .now{border-left:4px solid var(--teal);background:var(--panel);border-radius:var(--r);padding:14px 16px;font-size:16px;line-height:1.5;color:var(--ink);box-shadow:var(--shadow-sm)}
+  .guide .now .k{display:block;font:600 10.5px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:4px}
+  .guide .tips{margin:10px 0 0;padding:0;list-style:none;font-size:13.5px;color:var(--muted);display:grid;gap:4px}
+  @media(max-width:860px){.guide{grid-template-columns:1fr}.panel{columns:1}}
+  /* page mode: the 3D card on top across the full width, the round or task below */
+  .card .stage.wide{aspect-ratio:21/9;min-height:360px}
+  @media(max-width:860px){.card .stage.wide{aspect-ratio:4/3;min-height:0}}
   /* ===== end of theme ===== */
 
   /* page-specific CSS below: light unit board, palette with meaning (see build/theme/THEME.md) */
@@ -258,7 +288,7 @@
   .tabs{display:flex;gap:4px;padding:4px;background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm)}
   .tabs button{flex:1;border:0;background:transparent;border-radius:7px;padding:8px 6px;font:600 12.5px var(--font-body);color:var(--muted);cursor:pointer}
   .tabs button[aria-selected="true"]{background:var(--teal);color:#fff}
-  .steps{display:grid;gap:5px}
+  .ksteps{display:grid;gap:5px}
   .stepRow{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:6px 9px;background:#fff;font-size:13px}
   .stepRow .n{font:700 12px var(--font-mono);color:#fff;background:var(--violet);border-radius:6px;width:24px;height:24px;display:grid;place-items:center}
   .stepRow.on{border-color:var(--violet);background:var(--violet-soft)}
@@ -309,6 +339,17 @@
   .flat .ps{font:500 .26px "Figtree",sans-serif;fill:#66728A;text-anchor:middle;paint-order:stroke;stroke:#fff;stroke-width:.1}
   .flat .pk{font:700 .34px "Figtree",sans-serif;fill:#fff;text-anchor:middle}
   @media(max-width:520px){.sups{grid-template-columns:1fr 1fr}.mv{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  /* layout v2: each tab reads across the width in two columns on desktop, one on phones */
+  .duo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px 28px;align-items:start}
+  .duo h2{margin-top:0}
+  .quizgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(380px,100%),1fr));gap:10px;align-items:start}
+  .quizgrid .quiz-q{margin:0}
+  .runs{margin-top:14px}
+  .runs td:first-child{font-family:var(--font-body);font-weight:600}
+  #sec-steps .controls{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .sups{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+  @media(max-width:860px){.duo{grid-template-columns:1fr}}
+  @media(max-width:520px){#sec-steps .controls{grid-template-columns:repeat(2,minmax(0,1fr))}.mv .btn{font-size:12px}}
 
 /*PAGE_CSS_END*/
 </style>
@@ -325,6 +366,11 @@
 
 <!--PAGE_BODY_START-->
 <div class="app">
+  <header class="lab-head">
+    <p class="eyebrow">MHS 510 · Week 6 · Explorer</p>
+    <h1>Change steps explorer</h1>
+    <p class="lede">Bedside shift report was announced on 4 West last year and lasted about three weeks. This time you lead it through Kotter's eight steps. Watch the fourteen stakeholders from stakeholders.csv change color as support shifts, skip or rush a step to see what breaks, then plan your moves on the stakeholder map.</p>
+  </header>
   <section class="stage" id="stage" aria-label="3D model of the 4 West floor with the fourteen stakeholders of the bedside shift report change. Their color shows support: coral against, amber undecided, green for. Drag to orbit, use the zoom buttons, click a person to read their concern.">
     <div class="hud hud-top">
       <ol class="phases" id="phases" aria-label="Kotter steps"></ol>
@@ -345,53 +391,65 @@
         <button type="button" data-view="pilot">Pilot rooms</button>
       </div>
     </div>
-    <div class="nogl" id="nogl" hidden>The 3D unit floor needs WebGL and the 3D libraries, which are not available here. The flat floor plan shows the same rooms and people, and the panel has every value.</div>
+    <div class="nogl" id="nogl" hidden>The 3D unit floor needs WebGL and the 3D libraries, which are not available here. The flat floor plan shows the same rooms and people, and the panels below have every value.</div>
+  </section>
+
+  <section class="guide" aria-labelledby="guideTitle">
+    <h2 id="guideTitle">How to use this explorer</h2>
+    <ol class="steps" id="howSteps">
+      <li data-h="1">Under <b>1. Eight steps</b> below, leave every step on <b>Done well</b> and press <b>Play</b>, or press <b>Step</b> to go one step at a time. On the floor above, each person's color shows their support: coral against, amber undecided, green for.</li>
+      <li data-h="2">Read the narration for each step and watch who changes color. After step 8, read the <b>Will it stick?</b> number and the support list beside it.</li>
+      <li data-h="3">Change how a step is run: set step 2 to <b>Skipped</b> in its list and press <b>Play</b> again. Then set every step to <b>Rushed</b> and play again. Compare the runs in the <b>Your runs</b> table.</li>
+      <li data-h="4">Press the <b>2. Stakeholder map</b> tab. Click a dot, then press <b>More support &rarr;</b> or <b>&larr; Less support</b> (or drag the dot) to plan where that person should be in 90 days. Start with the four people with influence 4 or 5.</li>
+      <li data-h="5">Press the <b>3. Self-check</b> tab and answer the six questions. Then use your map in Assignment 6.2.</li>
+    </ol>
+    <div>
+      <div class="now" aria-live="polite"><span class="k">Do this now</span><span id="nowText">Leave every step on <b>Done well</b> and press <b>Play</b> under 1. Eight steps below.</span></div>
+      <ul class="tips">
+        <li>A stakeholder is anyone the change affects or who can affect it. Support runs from -2 (against) to +2 (champion). Influence runs from 1 to 5.</li>
+        <li><b>Step back</b> shows the step before again. <b>Reset</b> clears the run and goes back to day 0.</li>
+        <li>Drag on the floor to turn it. Use <b>+</b>, <b>&minus;</b>, the arrows, and <b>FIT</b> to zoom and move. <b>Station</b> and <b>Pilot rooms</b> jump to those parts of the floor. Click a person on the floor to open them on the stakeholder map.</li>
+        <li>Keyboard: Space steps, B steps back, R plays or pauses.</li>
+      </ul>
+    </div>
   </section>
 
   <aside class="panel">
-    <header>
-      <p class="eyebrow">MHS 510 · Week 6 · Explorer</p>
-      <h1>Change steps explorer</h1>
-      <p class="lede">Bedside shift report was announced on 4 West last year and lasted about three weeks. This time you lead it through Kotter's eight steps. Watch the fourteen stakeholders from stakeholders.csv change color as support shifts, skip or rush a step to see what breaks, then plan your moves on the stakeholder map.</p>
-    </header>
-
-    <div class="spec" aria-label="The urgency data">
-      <div><b>15</b><span>handoff misses in six months, 13 inside the 6:30 to 7:30 and 18:30 to 19:30 windows (incidents.csv)</span></div>
-      <div><b>66%</b><span>HCAHPS nurse communication top-box in September against the hospital's 78 (unit_scorecard.csv)</span></div>
-      <div><b>2.62</b><span>"Handoffs between shifts give me what I need", night shift mean (engagement_survey.csv)</span></div>
-      <div><b>14</b><span>stakeholders: one at -2 with influence 5, three champions at +2, the CNO at +1 and busy</span></div>
-    </div>
-
-    <div class="tabs" role="tablist" aria-label="Sections">
+    <div class="tabs span-all" role="tablist" aria-label="Sections">
       <button type="button" role="tab" id="tab-steps" aria-selected="true" aria-controls="sec-steps">1. Eight steps</button>
       <button type="button" role="tab" id="tab-map" aria-selected="false" aria-controls="sec-map">2. Stakeholder map</button>
       <button type="button" role="tab" id="tab-check" aria-selected="false" aria-controls="sec-check">3. Self-check</button>
     </div>
 
-    <section id="sec-steps" role="tabpanel" aria-labelledby="tab-steps">
-      <h2>Decide how you run each step, then play</h2>
-      <p class="hint" style="margin-bottom:8px">"Done well" is the full move. "Rushed" reaches only the people already leaning in. "Skipped" leaves a gap that later steps cannot fill. Change a setting and the whole run recomputes.</p>
-      <div class="steps" id="steps" role="group" aria-label="Kotter steps"></div>
+    <section id="sec-steps" class="span-all" role="tabpanel" aria-labelledby="tab-steps">
+      <div class="duo">
+        <div>
+          <h2>Decide how you run each step, then play</h2>
+          <p class="hint" style="margin-bottom:8px">"Done well" is the full move. "Rushed" reaches only the people already leaning in. "Skipped" leaves a gap that later steps cannot fill. Change a step in its list and the whole run is worked out again.</p>
+          <div class="ksteps" id="steps" role="group" aria-label="Kotter steps"></div>
 
-      <section class="narr" aria-live="polite" style="margin-top:14px">
-        <div class="narr-head"><span class="ptag" id="ptag">Ready</span><span id="stepCount"></span></div>
-        <p id="narration">Press Play to walk the change across the floor, one step at a time, or use Step and Step back.</p>
-      </section>
-      <div class="controls" style="margin-top:10px">
-        <button type="button" class="btn primary" id="play">Play</button>
-        <button type="button" class="btn" id="next">Step</button>
-        <button type="button" class="btn" id="back" disabled>Step back</button>
-        <button type="button" class="btn" id="reset">Reset</button>
+          <section class="narr" aria-live="polite" style="margin-top:14px">
+            <div class="narr-head"><span class="ptag" id="ptag">Ready</span><span id="stepCount"></span></div>
+            <p id="narration">Press Play to walk the change across the floor, one step at a time, or press Step to go at your own pace.</p>
+          </section>
+          <div class="controls" style="margin-top:10px">
+            <button type="button" class="btn primary" id="play">Play</button>
+            <button type="button" class="btn" id="next">Step</button>
+            <button type="button" class="btn" id="back" disabled>Step back</button>
+            <button type="button" class="btn" id="reset">Reset</button>
+          </div>
+          <div class="speed" style="margin-top:10px"><label for="speed">Speed</label><input type="range" id="speed" min="0.5" max="3" step="0.25" value="1"><output id="speedOut" for="speed">1×</output></div>
+        </div>
+        <div>
+          <h2>Will it stick? <small>live</small></h2>
+          <div class="stick" aria-live="polite"><span>Chance that bedside report is still happening in a year</span><b id="stickV">–</b><div class="bar"><i id="stickBar"></i></div><small id="stickNote">The score combines the mean support of the fourteen stakeholders, the steps done well, and a penalty when anyone with influence 4 or 5 is still against the change.</small></div>
+          <h3 style="margin-top:14px">Support after this step <small>(-2 against to +2 champion; i is influence)</small></h3>
+          <div class="sups" id="sups"></div>
+          <div class="runs" id="runs" aria-live="polite"></div>
+        </div>
       </div>
-      <div class="speed" style="margin-top:10px"><label for="speed">Speed</label><input type="range" id="speed" min="0.5" max="3" step="0.25" value="1"><output id="speedOut" for="speed">1×</output></div>
-      <p class="hint" style="margin-top:6px">Keyboard: Space steps, B steps back, R plays or pauses.</p>
 
-      <h2 style="margin-top:18px">Will it stick? <small>live</small></h2>
-      <div class="stick" aria-live="polite"><span>Chance that bedside report is still happening in a year</span><b id="stickV">–</b><div class="bar"><i id="stickBar"></i></div><small id="stickNote">The score combines the mean support of the fourteen stakeholders, the steps done well, and a penalty when anyone with influence 4 or 5 is still against the change.</small></div>
-      <h3 style="margin-top:14px">Support after this step <small>(-2 against to +2 champion)</small></h3>
-      <div class="sups" id="sups"></div>
-
-      <h2 style="margin-top:18px">Two older models, as diagrams</h2>
+      <h2 style="margin-top:22px">Two older models, as diagrams</h2>
       <div class="diagram" aria-label="Lewin's three stages drawn as an arrow, and Schein's three levels of culture drawn as layers">
         <p class="dt">Lewin: unfreeze, change, refreeze. Kotter steps 1 to 4 unfreeze, 5 to 7 change, 8 refreezes.</p>
         <div class="lewin"><div style="--c:var(--coral);--b:var(--coral-soft)"><b>Unfreeze</b>urgency, coalition, vision, communicate</div><div style="--c:var(--amber);--b:var(--amber-soft)"><b>Change</b>enable, pilot, wins, expand</div><div style="--c:var(--green);--b:var(--green-soft)"><b>Refreeze</b>checklist, scorecard, orientation, culture</div></div>
@@ -400,26 +458,42 @@
       </div>
     </section>
 
-    <section id="sec-map" role="tabpanel" aria-labelledby="tab-map" hidden>
-      <h2>Influence versus support</h2>
-      <p class="hint" style="margin-bottom:8px">Each dot is a row of stakeholders.csv at its current position. Drag a dot left or right (or select it and use the arrows) to set the support you plan to reach in 90 days; the panel suggests the move for that quadrant. Influence does not change: you cannot promote your way out of resistance.</p>
-      <div class="mapwrap"><svg class="map" id="map" viewBox="0 0 520 330" role="img" aria-label="Grid with influence from 1 to 5 on the vertical axis and support from -2 to +2 on the horizontal axis"></svg></div>
-      <div class="mv" role="group" aria-label="Move the selected person">
-        <button type="button" class="btn" id="mvL" title="Plan one step less support">← less</button>
-        <button type="button" class="btn" id="mvR" title="Plan one step more support">more →</button>
-        <button type="button" class="btn" id="mvReset">Reset dot</button>
-        <button type="button" class="btn" id="mvAll">Reset all</button>
+    <section id="sec-map" class="span-all" role="tabpanel" aria-labelledby="tab-map" hidden>
+      <div class="duo">
+        <div>
+          <h2>Influence versus support</h2>
+          <p class="hint" style="margin-bottom:8px">Each dot is a row of stakeholders.csv at its current position. Click a dot, then press <b>More support &rarr;</b> or <b>&larr; Less support</b> (or drag the dot left or right, or use the arrow keys) to set the support you plan to reach in 90 days. Influence does not change: you cannot promote your way out of resistance.</p>
+          <div class="mapwrap"><svg class="map" id="map" viewBox="0 0 520 330" role="img" aria-label="Grid with influence from 1 to 5 on the vertical axis and support from -2 to +2 on the horizontal axis"></svg></div>
+          <div class="mv" role="group" aria-label="Move the selected person">
+            <button type="button" class="btn" id="mvL" title="Plan one step less support">&larr; Less support</button>
+            <button type="button" class="btn" id="mvR" title="Plan one step more support">More support &rarr;</button>
+            <button type="button" class="btn" id="mvReset">Reset this dot</button>
+            <button type="button" class="btn" id="mvAll">Reset all dots</button>
+          </div>
+        </div>
+        <div>
+          <div class="plan" id="plan" style="margin-top:0"><div class="t">Pick a person</div><p>Click a dot on the map or a person on the floor above.</p></div>
+          <h3 style="margin-top:14px">Your 90-day plan so far</h3>
+          <div class="scroll-x"><table id="planTable"><thead><tr><th>Stakeholder</th><th>Infl.</th><th>Now</th><th>Plan</th><th>Move</th></tr></thead><tbody></tbody></table></div>
+        </div>
       </div>
-      <div class="plan" id="plan"><div class="t">Pick a person</div><p>Click a dot on the map or a person on the floor.</p></div>
-      <h3 style="margin-top:14px">Your 90-day plan so far</h3>
-      <div class="scroll-x"><table id="planTable"><thead><tr><th>Stakeholder</th><th>Infl.</th><th>Now</th><th>Plan</th><th>Move</th></tr></thead><tbody></tbody></table></div>
     </section>
 
-    <section id="sec-check" role="tabpanel" aria-labelledby="tab-check" hidden>
+    <section id="sec-check" class="span-all" role="tabpanel" aria-labelledby="tab-check" hidden>
       <h2>Self-check</h2>
-      <p class="hint" style="font-size:13.5px;margin-bottom:10px">Six questions. Pick an answer and read why.</p>
-      <div id="quiz"></div>
+      <p class="hint" style="font-size:13.5px;margin-bottom:10px">Six questions. Click the answer you think is right. The explanation appears under the question.</p>
+      <div id="quiz" class="quizgrid"></div>
       <div class="score" id="qscore" style="margin-top:10px"></div>
+    </section>
+
+    <section>
+      <h2>The urgency data</h2>
+      <div class="spec" aria-label="The urgency data">
+        <div><b>15</b><span>handoff misses in six months, 13 inside the 6:30 to 7:30 and 18:30 to 19:30 windows (incidents.csv)</span></div>
+        <div><b>66%</b><span>HCAHPS nurse communication top-box in September against the hospital's 78 (unit_scorecard.csv)</span></div>
+        <div><b>2.62</b><span>"Handoffs between shifts give me what I need", night shift mean (engagement_survey.csv)</span></div>
+        <div><b>14</b><span>stakeholders: one at -2 with influence 5, three champions at +2, the CNO at +1 and busy</span></div>
+      </div>
     </section>
 
     <section>
@@ -432,17 +506,6 @@
         <li>The change costs almost nothing in money: the whole budget is printed sheets and a two-hour educator session. What it costs is attention, for 90 days.</li>
       </ul>
     </section>
-
-    <details>
-      <summary>How to use this interactive</summary>
-      <ol class="notice" style="margin:4px 12px 12px;padding-left:20px">
-        <li>Read the four urgency facts. They come from the course data files.</li>
-        <li>Leave every step on "Done well" and press Play. Watch the tokens change color and the "will it stick" number climb.</li>
-        <li>Set step 2 to "Skipped" and play again. Then try rushing every step. Compare the final numbers.</li>
-        <li>Open the stakeholder map, pick the four most influential people, and plan where you want each one in 90 days. Read the suggested move for each quadrant.</li>
-        <li>Finish with the six self-check questions, then use your map in Assignment 6.2.</li>
-      </ol>
-    </details>
 
     <footer>Atlantis University · School of Health · MHS 510 Leadership and Organizational Behavior<div class="byline">By Professor De Leon</div></footer>
   </aside>
@@ -507,6 +570,8 @@ function Unit3D(stage, opts) {
   controls.enableDamping = true; controls.dampingFactor = 0.08;
   controls.maxPolarAngle = Math.PI * 0.46; controls.minDistance = 4; controls.maxDistance = 46;
   controls.zoomSpeed = 1.1;
+  // pan: right-drag, Ctrl or Shift plus drag, or two fingers; stays on the floor plane
+  controls.enablePan = true; controls.screenSpacePanning = false; controls.panSpeed = 0.9;
   // keep the mouse wheel inside the 3D view: zoom the floor, do not scroll the page
   stage.addEventListener('wheel', e => e.preventDefault(), {passive: false});
 
@@ -783,11 +848,25 @@ function Unit3D(stage, opts) {
     if (name === 'overview' || !views[name]) {
       // the overview (and FIT) must show the whole floor width, also on narrow phone screens,
       // leaving room for the zoom buttons at the right edge
-      const tanH = Math.tan(T.MathUtils.degToRad(camera.fov / 2)) * camera.aspect;
+      // and, on wide stages, fill the stage: the floor fits both the width and the height of the view
+      const tanV = Math.tan(T.MathUtils.degToRad(camera.fov / 2)), tanH = tanV * camera.aspect;
+      const dist0 = pos.distanceTo(tgt), sinE = Math.max(0.3, (pos.y - tgt.y) / dist0);
       const need = (B.w / 2 + 0.5) / (tanH * 0.92) + B.d * 0.25;
-      f = Math.max(f, need / pos.distanceTo(tgt));
-      controls.maxDistance = Math.max(controls.maxDistance, need * 1.3);
-      if (scene.fog) { scene.fog.near = Math.max(scene.fog.near, need * 1.1); scene.fog.far = Math.max(scene.fog.far, need * 2.6); }
+      const needD = (B.d / 2 * sinE + 0.8) / (tanV * 0.78) + B.d * 0.25;   // 0.78 leaves room for the HUD bars
+      const need2 = Math.max(need, needD);
+      f = need2 / dist0;
+      // phones: when the zoom controls are a column on the right edge, fit the floor in the space to their left
+      const zc = stage.querySelector('.zoomctl'), sw = stage.clientWidth;
+      if (zc && sw && sw < 760 && zc.offsetWidth < sw * 0.4) {
+        const m = zc.offsetWidth + 14, keep = (sw - m) / sw;
+        f = Math.max(need / keep, needD) / dist0;
+        const d = f * dist0, shift = (m / sw) * d * tanH;           // move the view so the floor centers in the free space
+        const fwd = tgt.clone().sub(pos); fwd.y = 0; fwd.normalize();
+        const right = new T.Vector3(-fwd.z, 0, fwd.x);
+        tgt.add(right.clone().multiplyScalar(shift)); pos.add(right.multiplyScalar(shift));
+      }
+      controls.maxDistance = Math.max(controls.maxDistance, need2 * 1.3);
+      if (scene.fog) { scene.fog.near = Math.max(scene.fog.near, need2 * 1.1); scene.fog.far = Math.max(scene.fog.far, need2 * 2.6); }
     }
     pos.sub(tgt).multiplyScalar(f).add(tgt);
     return {pos: pos, tgt: tgt};
@@ -819,28 +898,57 @@ function Unit3D(stage, opts) {
     const p = t.clone().add(off), k = 1 / (gsap.globalTimeline.timeScale() || 1);
     gsap.to(camera.position, {x: p.x, y: p.y, z: p.z, duration: RM ? 0 : 0.45, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
   }
+  // pan buttons (arrows) and arrow keys: slide the view across the floor, in screen directions
+  const PANLIM = {x: B.w / 2 + 1.5, z: B.d / 2 + 1.5};
+  function clampTarget(v) { v.x = Math.max(-PANLIM.x, Math.min(PANLIM.x, v.x)); v.z = Math.max(-PANLIM.z + (B.cz || 0), Math.min(PANLIM.z + (B.cz || 0), v.z)); return v; }
+  function pan(dx, dz) {   // dx: +1 right, -1 left; dz: +1 up (away), -1 down (toward the viewer)
+    const off = camera.position.clone().sub(controls.target), dist = off.length(), step = Math.max(0.6, dist * 0.12);
+    const fwd = new T.Vector3(); camera.getWorldDirection(fwd); fwd.y = 0;
+    if (fwd.lengthSq() < 1e-6) fwd.set(0, 0, -1); fwd.normalize();
+    const right = new T.Vector3(-fwd.z, 0, fwd.x);
+    const tgt = clampTarget(controls.target.clone().add(right.multiplyScalar(dx * step)).add(fwd.multiplyScalar(dz * step)));
+    const pos = tgt.clone().add(off), k = 1 / (gsap.globalTimeline.timeScale() || 1);
+    gsap.to(controls.target, {x: tgt.x, y: tgt.y, z: tgt.z, duration: RM ? 0 : 0.35, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
+    gsap.to(camera.position, {x: pos.x, y: pos.y, z: pos.z, duration: RM ? 0 : 0.35, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
+  }
+  controls.addEventListener('change', () => { const c = controls.target, x = c.x, z = c.z; clampTarget(c); if (c.x !== x || c.z !== z) camera.position.add(new T.Vector3(c.x - x, 0, c.z - z)); });
   if (opts.zoomUI !== false) {
     if (!document.getElementById('lab3d-zoom-css')) {
       const st = document.createElement('style'); st.id = 'lab3d-zoom-css';
       st.textContent = '.zoomctl{position:absolute;z-index:4;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:2px;padding:4px;background:rgba(255,255,255,.9);border:1px solid #D9D3C8;border-radius:10px;backdrop-filter:blur(6px);box-shadow:0 1px 2px rgba(20,35,58,.08)}' +
         '.zoomctl button{width:38px;height:34px;border:0;border-radius:7px;background:transparent;color:#14233A;font:700 18px/1 "JetBrains Mono",ui-monospace,monospace;cursor:pointer;padding:0}' +
         '.zoomctl button.fit{font-size:10px;letter-spacing:.06em;height:28px}.zoomctl button:hover{background:rgba(14,124,134,.12);color:#0E7C86}' +
-        '.zoomctl button:focus-visible{outline:2px solid #0E7C86;outline-offset:1px}@media(max-width:520px){.zoomctl{right:10px}.zoomctl button{width:34px;height:32px}}';
+        '.zoomctl button:focus-visible{outline:2px solid #0E7C86;outline-offset:1px}' +
+        '.zoomctl .pad{display:grid;grid-template-columns:repeat(3,26px);grid-template-rows:repeat(3,24px);gap:1px;margin:3px 0;padding-top:4px;border-top:1px solid #D9D3C8}' +
+        '.zoomctl .pad button{width:26px;height:24px;font-size:12px}.zoomctl .pad .u{grid-area:1/2}.zoomctl .pad .l{grid-area:2/1}.zoomctl .pad .c{grid-area:2/2;font-size:9px}.zoomctl .pad .r{grid-area:2/3}.zoomctl .pad .d{grid-area:3/2}' +
+        '@media(max-width:520px){.zoomctl{right:10px}.zoomctl button{width:34px;height:32px}.zoomctl .pad{grid-template-columns:repeat(3,28px);grid-template-rows:repeat(3,26px)}.zoomctl .pad button{width:28px;height:26px}}';
       document.head.appendChild(st);
     }
     const box = document.createElement('div'); box.className = 'zoomctl'; box.setAttribute('role', 'group'); box.setAttribute('aria-label', 'Zoom');
     box.innerHTML = '<button type="button" data-z="in" aria-label="Zoom in" title="Zoom in (+)">+</button>' +
       '<button type="button" data-z="out" aria-label="Zoom out" title="Zoom out (-)">&minus;</button>' +
+      '<div class="pad" role="group" aria-label="Move the view">' +
+      '<button type="button" class="u" data-p="u" aria-label="Move the view up" title="Move up (arrow up)">&#9650;</button>' +
+      '<button type="button" class="l" data-p="l" aria-label="Move the view left" title="Move left (arrow left)">&#9664;</button>' +
+      '<button type="button" class="c" data-z="fit" aria-label="Center the view" title="Center the view (0)">&#9679;</button>' +
+      '<button type="button" class="r" data-p="r" aria-label="Move the view right" title="Move right (arrow right)">&#9654;</button>' +
+      '<button type="button" class="d" data-p="d" aria-label="Move the view down" title="Move down (arrow down)">&#9660;</button></div>' +
       '<button type="button" class="fit" data-z="fit" aria-label="Show the whole unit" title="Show the whole unit (0)">FIT</button>';
     stage.appendChild(box);
     ['pointerdown', 'pointerup', 'wheel', 'click'].forEach(ev => box.addEventListener(ev, e => e.stopPropagation()));
     box.addEventListener('click', e => {
       const b = e.target.closest('button'); if (!b) return;
-      if (b.dataset.z === 'in') zoom(0.75); else if (b.dataset.z === 'out') zoom(1.33); else setView(opts.fitView || 'overview');
+      const pd = {l: [-1, 0], r: [1, 0], u: [0, 1], d: [0, -1]}[b.dataset.p];
+      if (pd) pan(pd[0], pd[1]);
+      else if (b.dataset.z === 'in') zoom(0.75); else if (b.dataset.z === 'out') zoom(1.33); else setView(opts.fitView || 'overview');
     });
+    let over = false;
+    stage.addEventListener('pointerenter', () => { over = true; }); stage.addEventListener('pointerleave', () => { over = false; });
     document.addEventListener('keydown', e => {
       const t = e.target, tag = t && t.tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) return;
+      const ak = {ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1]}[e.key];
+      if (ak) { if (over || stage.contains(e.target)) { e.preventDefault(); pan(ak[0], ak[1]); } return; }
       if (e.key === '+' || e.key === '=') zoom(0.75);
       else if (e.key === '-' || e.key === '_') zoom(1.33);
       else if (e.key === '0') setView(opts.fitView || 'overview');
@@ -874,7 +982,7 @@ function Unit3D(stage, opts) {
 
   const labApi = {T: T, scene: scene, camera: camera, controls: controls, renderer: renderer, recs: recs, colors: C, kinds: KIND, roles: ROLE,
     room: room, person: person, walk: walk, set: set, chip: chip, finishPins: finishPins, silkRect: silkRect, zone: zone, label: label, busMat: busMat, trace: trace, glowBus: glowBus,
-    fly: fly, clearPackets: clearPackets, hi: hi, clear: clear, pop: pop, setView: setView, focusOn: focusOn, intro: intro, zoom: zoom, refreshFloor: refreshFloor,
+    fly: fly, clearPackets: clearPackets, hi: hi, clear: clear, pop: pop, setView: setView, focusOn: focusOn, intro: intro, zoom: zoom, pan: pan, refreshFloor: refreshFloor,
     onPick: cb => { pickCb = cb; }, onFrame: f => frames.push(f), unit: unit};
   (window.__labs = window.__labs || []).push(labApi);   // lets tests reach the camera
   return labApi;
@@ -922,6 +1030,11 @@ const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).
 const COL = {teal: css('--teal'), coral: css('--coral'), amber: css('--amber'), green: css('--green'), violet: css('--violet'), slate: css('--slate')};
 const RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+// guide block: mark the current step (1-based) and say the single next action
+function guide(stepNo, nowHtml) {
+  document.querySelectorAll('#howSteps li').forEach(li => { const n = +li.dataset.h; li.classList.toggle('done', n < stepNo); li.classList.toggle('current', n === stepNo); });
+  if (nowHtml) document.getElementById('nowText').innerHTML = nowHtml;
+}
 let speed = 1;
 const ROOMS = [];
 ['401', '402', '403', '404', '405', '406', '407', '408'].forEach((n, i) => ROOMS.push({id: n, x: -10.4 + i * 2.95, z: -3.6, w: 2.6, d: 4, kind: 'patient', label: 'Room ' + n}));
@@ -936,7 +1049,7 @@ function Graphics3D(stage, PEOPLE, opts) {
   opts = opts || {};
   const lab = Unit3D(stage, {
     floor: {w: 24, d: 12, title: opts.title || '4 WEST · MED-SURG · 32 BEDS', corridors: [{z: 0, w: 3}]},
-    views: Object.assign({overview: {pos: [0, 19, 15], tgt: [0, 0, 0.5], want: 1.55}, station: {pos: [-7, 9, 8.5], tgt: [-7.5, 0, 1.2], want: 1.5}, rooms: {pos: [5, 9, 7.5], tgt: [5, 0, -1], want: 1.5}}, opts.views || {})
+    views: Object.assign({overview: {pos: [0, 19, 15], tgt: [0, 0, 0.5], want: 1.55}, station: {pos: [-6.6, 11, 10.5], tgt: [-6.8, 0, 0.9], want: 1.5}, rooms: {pos: [5, 9, 7.5], tgt: [5, 0, -1], want: 1.5}}, opts.views || {})
   });
   if (!lab) return null;
   ROOMS.forEach(r => lab.room(r.id, r.x, r.z, r.w, r.d, r.label, {kind: r.kind, num: r.num || r.id}));
@@ -947,8 +1060,9 @@ function Graphics3D(stage, PEOPLE, opts) {
   const api = {
     kind: '3d', lab: lab,
     reset() {
+      // finish the intro drop first: killing it mid-delay would leave a person floating above the floor
       lab.clear(); lab.clearPackets();
-      PEOPLE.forEach(p => { const r = lab.recs[p.id]; gsap.killTweensOf(r.g.position); r.g.position.set(p.x, 0, p.z); r.x = p.x; r.z = p.z; r.sub.textContent = ''; });
+      PEOPLE.forEach(p => { const r = lab.recs[p.id]; gsap.getTweensOf(r.g.position).forEach(tw => tw.progress(1)); gsap.killTweensOf(r.g.position); r.g.position.set(p.x, 0, p.z); r.x = p.x; r.z = p.z; r.sub.textContent = ''; });
     },
     hi: (id, c) => lab.hi(lab.recs[id], c),
     unhi(id) { const r = lab.recs[id]; if (!r) return; if (r.kind === 'room') gsap.to(r.mat, {opacity: 0, duration: 0.4}); else gsap.to(r.mat, {emissiveIntensity: 0, duration: 0.4}); r.el.classList.remove('on'); },
@@ -1104,7 +1218,7 @@ function simulate(states) {
 }
 if (typeof module !== 'undefined') module.exports = {STK, KOTTER, simulate};
 /* ---------------- cast: the fourteen stakeholders placed on the floor (the four from outside the unit stand at the elevator end) ---------------- */
-const POS = {mgr: [-9.6, 0], dalia: [-7.4, 0.9], marcus: [-5.4, 0.9], carmen: [-4.5, -0.9], yesenia: [-1, 0.9], kwame: [1.4, -0.9], beatriz: [2.0, 0.9], diego: [4.35, -0.9], stephanie: [7.3, -0.9], gladys: [4.85, 0.9], arango: [-1.55, -0.9], quintana: [11.3, -0.9], terrence: [11.3, 0.9], priya: [10.25, -0.9], lisa: [9.1, 0.9]};
+const POS = {mgr: [-10.4, -0.8], dalia: [-7.4, 0.9], marcus: [-5.4, 0.9], carmen: [-4.5, -0.9], yesenia: [-1, 0.9], kwame: [1.4, -0.9], beatriz: [2.0, 0.9], diego: [4.35, -0.9], stephanie: [7.3, -0.9], gladys: [4.85, 0.9], arango: [-1.55, -0.9], quintana: [11.4, -0.9], terrence: [11.3, 0.9], priya: [9.5, -0.9], lisa: [9.1, 0.9]};
 const ROLEOF = {dalia: 'CHARGE', marcus: 'CHARGE', yesenia: 'CHARGE', kwame: 'CHARGE', beatriz: 'EDUCATOR', diego: 'RN', stephanie: 'RN', gladys: 'CNA', arango: 'MD', quintana: 'CNO', terrence: 'DIRECTOR', priya: 'HR', carmen: 'RN', lisa: 'MANAGER'};
 const SHORT = {dalia: 'Dalia F.', marcus: 'Marcus R.', yesenia: 'Yesenia C.', kwame: 'Kwame B.', beatriz: 'Beatriz L.', diego: 'Diego S.', stephanie: 'Stephanie D.', gladys: 'Gladys P.', arango: 'Dr. Arango', quintana: 'Dr. Quintana', terrence: 'Terrence O.', priya: 'Priya R.', carmen: 'Carmen A.', lisa: 'Lisa H.'};
 const supColor = v => v < 0 ? COL.coral : v === 0 ? COL.amber : COL.green;
@@ -1112,7 +1226,7 @@ const PEOPLE = [{id: 'mgr', role: 'MANAGER', nm: 'You', x: POS.mgr[0], z: POS.mg
 const HOME = {}; PEOPLE.forEach(p => HOME[p.id] = {x: p.x, z: p.z});
 const stage = $('#stage');
 const gfx = makeFloor(stage, PEOPLE, {title: '4 WEST · MED-SURG · 32 BEDS · BEDSIDE REPORT', noDefaultZone: true, zones: [{text: 'from the hospital', x: 10.5, z: 0, c: COL.slate}, {text: 'pilot rooms 401 to 408', x: 0, z: -6.3, c: COL.violet}],
-  views: {pilot: {pos: [-3, 9, 4], tgt: [-3, 0, -3], want: 1.5}}});
+  views: {pilot: {pos: [0, 13.5, 7.5], tgt: [0, 0, -2.4], want: 1.5}}});
 /* color a token by support: 3D tints the body, 2D recolors the dot */
 function tint(id, v) {
   const c = supColor(v);
@@ -1152,13 +1266,39 @@ const DAYS = [1, 7, 14, 21, 35, 65, 80, 90];
 
 /* ---------------- state and player ---------------- */
 let states = Array(8).fill('done'), sim = simulate(states), step = -1, playing = false, timer = null;
+let tab = 'steps', changed = null, noRecord = false;
+const runs = [];   // each finished run: its settings and its result
+function runLabel(st) {
+  const sk = [], ru = [];
+  st.forEach((s, i) => { if (s === 'skipped') sk.push(i + 1); else if (s === 'rushed') ru.push(i + 1); });
+  if (!sk.length && !ru.length) return 'All steps done well';
+  if (ru.length === 8) return 'All steps rushed';
+  if (sk.length === 8) return 'All steps skipped';
+  return [sk.length ? 'Skipped ' + sk.join(', ') : '', ru.length ? 'Rushed ' + ru.join(', ') : ''].filter(Boolean).join('; ');
+}
+function recordRun() {
+  const label = runLabel(states), mean = (Object.values(sim.final).reduce((a, b) => a + b, 0) / 14).toFixed(2);
+  if (!runs.some(r => r.label === label)) runs.push({label, stick: sim.stick, mean});
+  $('#runs').innerHTML = '<h3 style="margin:0 0 6px">Your runs (' + runs.length + ')</h3><div class="scroll-x"><table><thead><tr><th>How the steps were run</th><th>Will it stick?</th><th>Mean support</th></tr></thead><tbody>' +
+    runs.map(r => '<tr><td>' + esc(r.label) + '</td><td>' + r.stick + '%</td><td>' + r.mean + '</td></tr>').join('') + '</tbody></table></div>';
+}
+function guideSteps() {
+  if (changed !== null && (step < 0 || !playing) && changed.fresh) { guide(3, 'Step ' + (changed.i + 1) + ' is now ' + (changed.v === 'done' ? 'done well' : changed.v) + '. ' + (step > 0 && step < 7 ? 'Press <b>Reset</b>, then <b>Play</b>, to watch the whole run with this setting.' : 'Press <b>Play</b> to watch the whole run with this setting.')); return; }
+  if (step < 0) { guide(1, 'Leave every step on <b>Done well</b> and press <b>Play</b> under 1. Eight steps below.'); return; }
+  if (playing) { guide(2, 'Watch the colors change on the floor above and read the narration below. Press <b>Pause</b> to stop.'); return; }
+  if (step < 7) { guide(2, 'Read step ' + (step + 1) + ' of 8 in the narration box below. Then press <b>Step</b> for step ' + (step + 2) + '.'); return; }
+  const lab = runLabel(states);
+  if (!runs.some(r => r.label === 'Skipped 2')) guide(3, 'This run: ' + sim.stick + '% chance it sticks. Now set step 2 to <b>Skipped</b> in its list, then press <b>Play</b>.');
+  else if (!runs.some(r => r.label === 'All steps rushed')) guide(3, 'This run: ' + sim.stick + '% chance it sticks. Now set all eight steps to <b>Rushed</b>, then press <b>Play</b>.');
+  else guide(3, 'This run (' + esc(lab.toLowerCase()) + '): ' + sim.stick + '%. Compare your runs in the table beside the support list. Then press the <b>2. Stakeholder map</b> tab.');
+}
 function renderSteps() {
   const box = $('#steps'); box.innerHTML = '';
   KOTTER.forEach((k, i) => {
     const d = document.createElement('div'); d.className = 'stepRow ' + states[i] + (i === step ? ' on' : '');
     d.innerHTML = '<span class="n">' + k.n + '</span><span>' + esc(k.name) + '</span><select aria-label="How step ' + k.n + ' is run" data-i="' + i + '"><option value="done">Done well</option><option value="rushed">Rushed</option><option value="skipped">Skipped</option></select>';
     d.querySelector('select').value = states[i];
-    d.querySelector('select').onchange = e => { states[i] = e.target.value; sim = simulate(states); stop(); renderSteps(); if (step >= 0) show(step, true); else renderSupport(-1); };
+    d.querySelector('select').onchange = e => { states[i] = e.target.value; sim = simulate(states); stop(); changed = {i: i, v: states[i], fresh: true}; renderSteps(); noRecord = true; if (step >= 0) show(step, true); else renderSupport(-1); noRecord = false; if (tab === 'steps') guideSteps(); };
     box.appendChild(d);
   });
 }
@@ -1193,13 +1333,15 @@ function show(k, instant) {
   $('#clock').innerHTML = 'Day <b>' + DAYS[k] + '</b> of 90';
   renderSupport(k); renderSteps(); renderPhases();
   $('#back').disabled = k <= 0; $('#next').disabled = k >= 7;
+  if (k === 7 && !noRecord) recordRun();
   if (hasGSAP && !RM) gsap.fromTo('#narration', {opacity: 0.4}, {opacity: 1, duration: 0.35});
+  if (tab === 'steps') guideSteps();
 }
-function resetAll() { stop(); step = -1; gfx.reset(); renderSupport(-1); renderSteps(); renderPhases(); $('#ptag').textContent = 'Ready'; $('#ptag').style.removeProperty('--pc'); $('#narration').textContent = 'Press Play to walk the change across the floor, one step at a time, or use Step and Step back.'; $('#stepCount').textContent = ''; $('#clock').innerHTML = 'Day <b>0</b>'; $('#back').disabled = true; $('#next').disabled = false; gfx.view('overview'); }
-function stop() { playing = false; if (timer) clearTimeout(timer); timer = null; $('#play').textContent = 'Play'; }
+function resetAll() { stop(); step = -1; gfx.reset(); renderSupport(-1); renderSteps(); renderPhases(); $('#ptag').textContent = 'Ready'; $('#ptag').style.removeProperty('--pc'); $('#narration').textContent = 'Press Play to walk the change across the floor, one step at a time, or press Step to go at your own pace.'; $('#stepCount').textContent = ''; $('#clock').innerHTML = 'Day <b>0</b>'; $('#back').disabled = true; $('#next').disabled = false; gfx.view('overview'); if (tab === 'steps') guideSteps(); }
+function stop() { const was = playing; playing = false; if (timer) clearTimeout(timer); timer = null; $('#play').textContent = 'Play'; if (was && tab === 'steps') guideSteps(); }
 function playLoop() { if (!playing) return; if (step >= 7) { stop(); return; } timer = setTimeout(() => { if (!playing) return; show(step + 1, false); playLoop(); }, 5200 / speed); }
-$('#play').onclick = () => { if (playing) { stop(); return; } if (step >= 7) show(0, false); else if (step < 0) show(0, false); playing = true; $('#play').textContent = 'Pause'; playLoop(); };
-$('#next').onclick = () => { stop(); if (step < 7) show(step + 1, false); };
+$('#play').onclick = () => { if (playing) { stop(); return; } if (changed) changed.fresh = false; if (step >= 7) show(0, false); else if (step < 0) show(0, false); playing = true; $('#play').textContent = 'Pause'; guideSteps(); playLoop(); };
+$('#next').onclick = () => { stop(); if (changed) changed.fresh = false; if (step < 7) show(step + 1, false); };
 $('#back').onclick = () => { stop(); if (step > 0) show(step - 1, true); };
 $('#reset').onclick = resetAll;
 $('#speed').oninput = e => { speed = +e.target.value; $('#speedOut').textContent = speed + '×'; };
@@ -1208,7 +1350,8 @@ document.addEventListener('keydown', e => {
   if (e.key === ' ') { e.preventDefault(); $('#next').click(); } else if (e.key === 'b' || e.key === 'B') $('#back').click(); else if (e.key === 'r' || e.key === 'R') $('#play').click();
 });
 $$('.views button').forEach(b => b.onclick = () => { $$('.views button').forEach(x => x.classList.toggle('on', x === b)); gfx.view(b.dataset.view); });
-$$('.tabs [role=tab]').forEach(t => t.onclick = () => { $$('.tabs [role=tab]').forEach(x => { x.setAttribute('aria-selected', x === t ? 'true' : 'false'); $('#' + x.getAttribute('aria-controls')).hidden = x !== t; }); });
+$$('.tabs [role=tab]').forEach(t => t.onclick = () => { $$('.tabs [role=tab]').forEach(x => { x.setAttribute('aria-selected', x === t ? 'true' : 'false'); $('#' + x.getAttribute('aria-controls')).hidden = x !== t; });
+  tab = t.id.slice(4); if (tab === 'steps') guideSteps(); else if (tab === 'map') guideMap(); else guideQuiz(); });
 function openTab(id) { $('#tab-' + id).click(); }
 
 /* ---------------- the stakeholder map: influence (vertical) versus support (horizontal), dots draggable left and right ---------------- */
@@ -1216,6 +1359,12 @@ const MAP = {x0: 70, x1: 470, y0: 24, y1: 290};
 const mx = s => MAP.x0 + (s + 2) / 4 * (MAP.x1 - MAP.x0), my = i => MAP.y1 - (i - 1) / 4 * (MAP.y1 - MAP.y0);
 const plan = {}; STK.forEach(s => plan[s.id] = s.sup);
 let sel = null;
+function guideMap() {
+  if (!sel) { guide(4, 'Click a dot on the map below. Start with <b>Dalia F.</b>, influence 5 and against the change.'); return; }
+  const s = STK.find(x => x.id === sel), nm = esc(SHORT[sel]);
+  if (plan[sel] === s.sup) guide(4, 'Press <b>More support &rarr;</b> under the map to plan where ' + nm + ' should be in 90 days. Then read the suggested move.');
+  else { const left = STK.filter(x => x.inf >= 4 && plan[x.id] === x.sup).map(x => SHORT[x.id]); guide(4, 'Read the suggested move for ' + nm + ' beside the map. ' + (left.length ? 'Next, click <b>' + esc(left[0]) + '</b>, another person with influence ' + STK.find(x => SHORT[x.id] === left[0]).inf + '.' : 'All influence 4 and 5 people have a plan. Press the <b>3. Self-check</b> tab.')); }
+}
 const QUAD = {
   hiAgainst: {t: 'High influence, against: engage first', p: 'This person can stop the change alone. Meet one to one before anything is announced, ask what would have to be true for it to work, and give them a piece of the design to own. Kotter step 2 exists for them.'},
   hiNeutral: {t: 'High influence, undecided: convince with evidence', p: 'Bring the handoff data, name their concern in the vision, and ask for a specific, time-limited commitment (a 30-day pilot). Keep them informed weekly.'},
@@ -1250,6 +1399,7 @@ function renderMap() {
     g.addEventListener('pointerdown', e => { selectDot(g.dataset.id); drag = g.dataset.id; svg.setPointerCapture(e.pointerId); e.preventDefault(); });
   });
   renderPlanTable();
+  if (tab === 'map') guideMap();
 }
 let drag = null;
 $('#map').addEventListener('pointermove', e => {
@@ -1263,7 +1413,8 @@ function selectDot(id) { sel = id; renderMap(); showPlan(id); gfx.clear(); gfx.h
 function move(d) { if (!sel) return; plan[sel] = Math.max(-2, Math.min(2, plan[sel] + d)); renderMap(); showPlan(sel); }
 $('#mvL').onclick = () => move(-1); $('#mvR').onclick = () => move(1);
 $('#mvReset').onclick = () => { if (sel) { plan[sel] = STK.find(s => s.id === sel).sup; renderMap(); showPlan(sel); } };
-$('#mvAll').onclick = () => { STK.forEach(s => plan[s.id] = s.sup); sel = null; renderMap(); $('#plan').innerHTML = '<div class="t">Pick a person</div><p>Click a dot on the map or a person on the floor.</p>'; };
+$('#mvAll').onclick = () => { STK.forEach(s => plan[s.id] = s.sup); sel = null; renderMap(); $('#plan').innerHTML = '<div class="t">Pick a person</div><p>Click a dot on the map or a person on the floor above.</p>'; guideMap(); };
+['mvL', 'mvR', 'mvReset'].forEach(id => $('#' + id).addEventListener('click', () => { if (!sel) { $('#plan').innerHTML = '<div class="t">No person picked yet</div><p>Click a dot on the map first, then press this button again.</p>'; guideMap(); } }));
 function showPlan(id) {
   const s = STK.find(x => x.id === id), q = QUAD[quadOf(s.inf, s.sup)], qp = QUAD[quadOf(s.inf, plan[id])];
   $('#plan').innerHTML = '<div class="t">' + esc(s.nm) + ' · influence ' + s.inf + ' · now ' + fmt(s.sup) + (plan[id] !== s.sup ? ' · plan ' + fmt(plan[id]) : '') + '</div>' +
@@ -1290,6 +1441,11 @@ const QUIZ = [
   {q: 'Which of these is a short-term win you can measure from the course data files?', o: ['Handoff misses in rooms 401 to 408 during the pilot month, from incidents.csv', 'RN turnover annualized, from unit_scorecard.csv', 'HCAHPS nurse communication twelve months from now', "The engagement index at next year's survey"], a: 0, why: 'A short-term win is visible, unambiguous, and arrives within weeks. Turnover, HCAHPS, and the engagement index move over months and have many causes; a count of handoff misses in eight rooms over 30 days is yours to show.'}
 ];
 let qDone = {};
+function guideQuiz() {
+  const n = Object.keys(qDone).length, ok = Object.keys(qDone).filter(k => qDone[k] === QUIZ[k].a).length;
+  if (n < QUIZ.length) { const q = QUIZ.findIndex((_, i) => qDone[i] === undefined); guide(5, 'Answer question ' + (q + 1) + ' of ' + QUIZ.length + ' below: click the answer you think is right, then read why.'); }
+  else guide(6, 'Done: ' + ok + ' of 6 right. Use your stakeholder map in Assignment 6.2, or press the <b>1. Eight steps</b> tab and try another run.');
+}
 function renderQuiz() {
   const box = $('#quiz'); box.innerHTML = '';
   QUIZ.forEach((item, qi) => {
@@ -1302,9 +1458,10 @@ function renderQuiz() {
   });
   const n = Object.keys(qDone).length, ok = Object.keys(qDone).filter(k => qDone[k] === QUIZ[k].a).length;
   $('#qscore').innerHTML = n ? '<span class="big">' + ok + '</span> of ' + n + ' answered right' + (n === QUIZ.length ? ' · ' + (ok === 6 ? 'all six.' : 'read the explanations and play the steps again.') : '') : '';
+  if (tab === 'check') guideQuiz();
 }
 if (location.hash === '#test') window.__sim = {simulate, STK, KOTTER, states: () => states, plan};
-renderSteps(); renderPhases(); renderSupport(-1); renderMap(); renderQuiz();
+renderSteps(); renderPhases(); renderSupport(-1); renderMap(); renderQuiz(); guideSteps();
 })();
 
 //PAGE_JS_END

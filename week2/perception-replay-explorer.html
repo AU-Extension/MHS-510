@@ -233,7 +233,11 @@
   .reveal{animation:rise .7s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*80ms)}
   @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
   @media(max-width:860px){
-    .app .stage .zoomctl{top:56px;right:10px;transform:none;flex-direction:row}
+    .app .stage .zoomctl{top:50%;right:8px;transform:translateY(-50%);flex-direction:column;padding:3px;align-items:center}
+    .app .stage .zoomctl>button{width:30px!important;height:28px!important;font-size:16px}
+    .app .stage .zoomctl>button.fit{height:24px!important;font-size:9px}
+    .app .stage .zoomctl .pad{grid-template-columns:repeat(3,22px)!important;grid-template-rows:repeat(3,22px)!important;margin:2px 0;padding-top:3px}
+    .app .stage .zoomctl .pad button{width:22px!important;height:22px!important;font-size:10px}
     .app{grid-template-columns:1fr;height:auto}
     .app .stage{height:62vh;min-height:360px}
     .panel{border-left:0;border-top:1px solid var(--line);overflow:visible}
@@ -251,8 +255,34 @@
     .tag .sb{display:none}
     .scroll-x::before{content:"Swipe sideways to see the whole table";display:block;font:500 11px var(--font-mono);letter-spacing:.04em;color:var(--muted);margin:0 0 6px}
   }
+
+  /* ---- stacked layout (v2, October 30 2026): the 3D floor uses the full width of the page, instructions and controls go below it ---- */
+  .app{display:block;height:auto;min-height:0}
+  .app>.lab-head{max-width:1240px;margin:0 auto;padding:18px 16px 14px}
+  .app>.stage{width:100%;height:clamp(420px,70vh,860px);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .panel{max-width:1240px;margin:0 auto;border-left:0;overflow:visible;background:none;display:block;columns:2 420px;column-gap:28px;padding:20px 16px 28px}
+  .panel>*{break-inside:avoid;margin:0 0 22px}
+  .panel>header,.panel>footer,.panel>.guide,.panel>.span-all{column-span:all}
+  /* guide: numbered steps with the current one highlighted, plus a "do this now" line */
+  .guide{max-width:1240px;margin:0 auto;padding:18px 16px 4px;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px 26px;align-items:start}
+  .guide h2{grid-column:1/-1;margin:0;font-size:19px}
+  .guide ol.steps{list-style:none;margin:0;padding:0;display:grid;gap:8px;counter-reset:s}
+  .guide ol.steps li{counter-increment:s;position:relative;padding:9px 12px 9px 46px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);color:var(--ink);font-size:15px;line-height:1.45;box-shadow:var(--shadow-sm)}
+  .guide ol.steps li::before{content:counter(s);position:absolute;left:12px;top:9px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:700 12px var(--font-mono);background:var(--panel-2);color:var(--ink-2);border:1px solid var(--line)}
+  .guide ol.steps li.current{border-color:var(--teal);box-shadow:0 0 0 2px rgba(14,124,134,.15)}
+  .guide ol.steps li.current::before{background:var(--teal);color:#fff;border-color:var(--teal)}
+  .guide ol.steps li.done{color:var(--muted)}
+  .guide ol.steps li.done::before{content:"\2713";background:var(--green);color:#fff;border-color:var(--green)}
+  .guide ol.steps li b,.guide .now b{color:var(--teal);font-weight:700}
+  .guide .now{border-left:4px solid var(--teal);background:var(--panel);border-radius:var(--r);padding:14px 16px;font-size:16px;line-height:1.5;color:var(--ink);box-shadow:var(--shadow-sm)}
+  .guide .now .k{display:block;font:600 10.5px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:4px}
+  .guide .tips{margin:10px 0 0;padding:0;list-style:none;font-size:13.5px;color:var(--muted);display:grid;gap:4px}
+  @media(max-width:860px){.guide{grid-template-columns:1fr}.panel{columns:1}}
+  /* page mode: the 3D card on top across the full width, the round or task below */
+  .card .stage.wide{aspect-ratio:21/9;min-height:360px}
+  @media(max-width:860px){.card .stage.wide{aspect-ratio:4/3;min-height:0}}
   /* ===== end of theme ===== */
-  /* page-specific: perception replay explorer (app mode: the 4 West floor on the left, the control rail on the right) */
+  /* page-specific: perception replay explorer (app mode, layout v2: the 4 West floor across the top, the guide and the panel below) */
   .controls{grid-template-columns:repeat(4,minmax(0,1fr))}
   @media(max-width:520px){.controls{grid-template-columns:repeat(2,minmax(0,1fr))}}
   .eyes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
@@ -303,9 +333,19 @@
   .info{font-size:13.5px;color:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:#fff}
   .info b{color:var(--ink)}
   .phases li{cursor:default}
-  .panel details table{margin:0 0 12px;width:calc(100% - 28px)}
+  @media(max-width:600px){.phases{flex-wrap:wrap;max-width:100%}.phases li{padding:4px 6px;letter-spacing:.04em}}
+  .panel details table{margin:0;width:100%}
+  .panel>.span-all{margin-top:10px}
+  .panel details .scroll-x{margin-bottom:12px}
+  .panel>.span-all .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+  @media(max-width:860px){.panel>.span-all .cards{grid-template-columns:1fr}}
+  .panel>.span-all .notice{columns:2 380px;column-gap:28px;display:block}
+  .panel>.span-all .notice li{break-inside:avoid;margin-bottom:6px}
   .panel details td,.panel details th{font-family:var(--font-body);font-size:12.5px;vertical-align:top}
   @media(max-width:600px){.stage:has(.nogl:not([hidden])) .hud-top{top:86px}.stage:has(.nogl:not([hidden])) .flat{top:74px;height:calc(100% - 74px)}.eyes{grid-template-columns:1fr 1fr}.saw{grid-template-columns:1fr}}
+  /* flat plan fallback on the wide stage: keep the plan between the top HUD and the legend so no room number hides under them */
+  .app>.stage:has(.nogl:not([hidden])) .flat{top:100px;height:calc(100% - 152px)}
+  @media(max-width:600px){.app>.stage:has(.nogl:not([hidden])) .flat{top:215px;height:calc(100% - 300px)}}
 
 </style>
 </head>
@@ -320,6 +360,11 @@
 </header>
 
 <div class="app">
+  <header class="lab-head">
+    <p class="eyebrow">MHS 510 · Week 2 · Explorer</p>
+    <h1>Perception replay explorer</h1>
+    <p class="lede">One missed 2 p.m. dose at room 409, found at the 7 p.m. handoff, replayed through four pairs of eyes. Watch each attribution error light up. Then rebuild the incident from the facts alone and see how the manager's conclusion changes.</p>
+  </header>
   <section class="stage" id="stage" aria-label="3D model of the 4 West floor around room 409. Drag to orbit, scroll or pinch to zoom, click a room or a person to read about it.">
     <div class="hud hud-top">
       <ol class="phases" id="phases" aria-label="Viewpoint"></ol>
@@ -340,27 +385,35 @@
         <button type="button" id="follow" class="on" aria-pressed="true" title="Move the camera to each step">Follow</button>
       </div>
     </div>
-    <div class="nogl" id="nogl" hidden>The 3D unit floor needs WebGL and the 3D libraries, which are not available here. The flat floor plan shows the same rooms, people, and steps, and the panel has every value.</div>
+    <div class="nogl" id="nogl" hidden>The 3D unit floor needs WebGL and the 3D libraries, which are not available here. This flat floor plan shows the same rooms, people, and steps, and the panel below has every value.</div>
+  </section>
+
+  <section class="guide" aria-labelledby="guideTitle">
+    <h2 id="guideTitle">How to use this explorer</h2>
+    <ol class="steps" id="howSteps">
+      <li data-h="1">Press <b>Step</b> to see the incident report. Keep pressing <b>Step</b> through all seven steps: the record, four people's views, the manager on Monday, and the facts. Read the narration under <b>Part 1</b> below and watch the people move on the board above. <b>Step back</b> goes back one step; <b>Run</b> plays every step for you.</li>
+      <li data-h="2">At each viewpoint, read <b>What they saw, what they assumed</b>. The bias behind the assumption lights up in coral, with its definition under it. To jump to one person's view, click <b>Camila</b>, <b>Daniel</b>, <b>Marcus</b>, or <b>Daughter</b>. You are done when you reach step 7, The facts.</li>
+      <li data-h="3">Under <b>Part 2</b>, press <b>Fact</b> or <b>Assumption</b> on each of the twelve statements. A fact is written in a record; an assumption is someone's interpretation. You are done when the box under the statements says "The manager's conclusion, facts only".</li>
+      <li data-h="4">Under <b>Part 3</b>, click one answer for each cue (Consistency, Distinctiveness, Consensus) and read the verdict under the cues. Try different answers until you have seen the cause land on Thiago, on the situation, and on "not enough to conclude".</li>
+      <li data-h="5">Under <b>Part 4</b>, click the bias each sentence shows, or <b>No bias</b> when the thinking is sound. The feedback names the right answer and why.</li>
+    </ol>
+    <div>
+      <div class="now" aria-live="polite"><span class="k">Do this now</span><span id="nowText">Press <b>Step</b> to see the incident report for room 409.</span></div>
+      <ul class="tips">
+        <li>Words to know: perception is how we select, organize, and interpret what we notice. Attribution is the cause we assign to a behavior: inside the person (internal) or in the situation (external). A bias is a predictable error in that judgment.</li>
+        <li>Click a room or a person on the board to read their part in the incident. Drag to turn the board. Use <b>+</b>, <b>&minus;</b>, the arrows, and <b>FIT</b> to zoom and move. <b>Room 409</b> and <b>Station</b> jump to those places.</li>
+        <li>Keyboard: Space steps forward, B steps back, R runs or pauses.</li>
+      </ul>
+    </div>
   </section>
 
   <aside class="panel">
-    <header>
-      <p class="eyebrow">MHS 510 · Week 2 · Explorer</p>
-      <h1>Perception replay explorer</h1>
-      <p class="lede">One missed 2 p.m. dose at room 409, found at the 7 p.m. handoff, replayed through four pairs of eyes. Watch each attribution error light up, then rebuild the incident from the facts alone and see how the manager's conclusion changes.</p>
-    </header>
-
-    <section aria-labelledby="eyes">
-      <h2 id="eyes">1. Replay the incident through four pairs of eyes</h2>
-      <p class="hint" style="margin:0 0 8px">Perception is the process of selecting, organizing, and interpreting what we notice. Each person noticed a different slice of the afternoon, and each filled the gaps with an assumption. Attribution is the cause we assign to a behavior: inside the person (internal) or in the situation (external).</p>
-      <div class="eyes" id="eyesBtns" role="group" aria-label="Viewpoints"></div>
-    </section>
-
-    <div id="player">
-      <section class="narr" aria-live="polite">
+    <section id="player" aria-labelledby="eyes">
+      <h2 id="eyes">Part 1. Replay the incident through four pairs of eyes</h2>
+      <div class="narr" aria-live="polite">
         <div class="narr-head"><span class="ptag" id="ptag">Ready</span><span data-a="count"></span></div>
         <p id="narration"></p>
-      </section>
+      </div>
       <div class="controls" style="margin-top:12px">
         <button type="button" class="btn primary" data-a="play">Run</button>
         <button type="button" class="btn" data-a="next">Step</button>
@@ -368,42 +421,43 @@
         <button type="button" class="btn" data-a="reset">Reset</button>
       </div>
       <div class="speed" style="margin-top:12px"><label for="speed">Speed</label><input type="range" id="speed" min="0.5" max="3" step="0.25" value="1"><output id="speedOut" for="speed">1×</output></div>
-      <p class="hint" style="margin-top:8px">Teal marks a fact in the record; coral marks an assumption or the bias behind it. Keyboard: Space steps, B steps back, R runs or pauses.</p>
-    </div>
+      <h3 style="margin:14px 0 6px">Jump to one person's view</h3>
+      <div class="eyes" id="eyesBtns" role="group" aria-label="Viewpoints"></div>
+      <p class="hint" style="margin-top:8px">Each person noticed a different slice of the afternoon and filled the gaps with an assumption. On the board, teal marks a fact in the record and coral marks an assumption or the bias behind it. <b>Run</b> shows a new step about every six seconds at 1× speed. <b>Reset</b> goes back to the start.</p>
+    </section>
 
     <section aria-labelledby="sawh">
       <h2 id="sawh">What they saw, what they assumed <small>live</small></h2>
-      <div class="saw" id="saw"><div class="s"><b>Saw</b><span id="sawS">Pick a viewpoint or press Run.</span></div><div class="a"><b>Assumed</b><span id="sawA"></span></div></div>
+      <div class="saw" id="saw"><div class="s"><b>Saw</b><span id="sawS">Press Step or click a person's name to see a viewpoint.</span></div><div class="a"><b>Assumed</b><span id="sawA"></span></div></div>
       <div class="biases" id="biasList" style="margin-top:10px" aria-label="Attribution biases"></div>
       <div class="bdef" id="bdef" style="margin-top:8px">The bias at work in each viewpoint lights up here, with its definition.</div>
+      <div class="info" id="info" style="margin-top:12px">Click a room or a person on the board above to read their part in this incident.</div>
     </section>
 
-    <div class="info" id="info">Click a room or a person on the floor to read who they are in this incident.</div>
-
-    <section aria-labelledby="tlh">
-      <h2 id="tlh">2. Rebuild it with the facts only</h2>
-      <p class="hint" style="margin:0 0 8px">Twelve statements about the afternoon. Mark each one as a fact (it is in a record: the pharmacy log, the rapid response record, the assignment sheet, the equipment ticket, schedule.csv, the incident report) or an assumption (someone's interpretation). The manager's conclusion rebuilds itself from the facts you keep.</p>
+    <section class="span-all" aria-labelledby="tlh">
+      <h2 id="tlh">Part 2. Rebuild it with the facts only</h2>
+      <p class="hint" style="margin:0 0 8px">Twelve statements about the afternoon. Press <b>Fact</b> when the statement is in a record (the pharmacy log, the rapid response record, the assignment sheet, the equipment ticket, schedule.csv, the incident report). Press <b>Assumption</b> when it is someone's interpretation. The manager's conclusion rebuilds itself from the facts you keep.</p>
       <div class="cards" id="cards"></div>
       <p class="hint" id="tlProg" style="margin:8px 0"></p>
       <div class="conclusion" id="conclusion"></div>
     </section>
 
     <section aria-labelledby="cueh">
-      <h2 id="cueh">3. The CNA who is "always late"</h2>
-      <p class="hint" style="margin:0 0 8px">Thiago Albuquerque, a part-time night CNA since November 2025, has clocked in after 7:10 p.m. three times this month. Before deciding whether the cause is Thiago or the situation, Kelley's covariation model asks three questions. Toggle each cue and watch the verdict change.</p>
+      <h2 id="cueh">Part 3. The CNA who is "always late"</h2>
+      <p class="hint" style="margin:0 0 8px">Thiago Albuquerque, a part-time night CNA since November 2025, has clocked in after 7:10 p.m. three times this month. Is the cause Thiago or the situation? Kelley's covariation model asks three questions first. Click one answer for each question and watch the verdict change.</p>
       <div class="cues" id="cues"></div>
       <div class="verdict" id="verdict" style="margin-top:10px"></div>
     </section>
 
     <section aria-labelledby="qz">
-      <h2 id="qz">4. Self-check: name the bias</h2>
-      <p class="hint" style="font-size:13.5px">Each sentence is something a 4 West manager might think. Pick the bias, or "no bias" when the thinking is sound.</p>
+      <h2 id="qz">Part 4. Self-check: name the bias</h2>
+      <p class="hint" style="font-size:13.5px">Each sentence is something a 4 West manager might think. Click the bias, or <b>No bias</b> when the thinking is sound. You get one try per question; press <b>Try again</b> at the end to answer them all again.</p>
       <div class="qbar" id="qbar" aria-hidden="true"></div>
       <div id="quiz"></div>
       <div class="score" id="qscore" style="margin-top:10px"></div>
     </section>
 
-    <section>
+    <section class="span-all">
       <h2>Things to notice</h2>
       <ul class="notice">
         <li>Nobody in the replay lied. Each person saw a real slice of the afternoon and filled the rest with an assumption. That is the perceptual process doing what it always does.</li>
@@ -414,20 +468,9 @@
       </ul>
     </section>
 
-    <details>
-      <summary>How to use this interactive</summary>
-      <ol class="notice" style="margin:4px 12px 12px;padding-left:20px">
-        <li>Press Run, or Step through the seven moments: the record, four viewpoints, the manager's first conclusion, and the facts.</li>
-        <li>Read what each person saw and assumed; the bias behind the assumption lights up in coral with its definition.</li>
-        <li>In part 2, sort the twelve statements into facts and assumptions. The manager's conclusion rebuilds from the facts you keep.</li>
-        <li>In part 3, toggle the three cues of the covariation model for the CNA who is "always late" and read the verdict and the question to ask.</li>
-        <li>Finish with the six self-check questions.</li>
-      </ol>
-    </details>
-
-    <details>
+    <details class="span-all">
       <summary>The biases in this explorer</summary>
-      <table><thead><tr><th>Bias</th><th>What it is</th><th>In this incident</th></tr></thead><tbody id="biasTable"></tbody></table>
+      <div class="scroll-x"><table><thead><tr><th>Bias</th><th>What it is</th><th>In this incident</th></tr></thead><tbody id="biasTable"></tbody></table></div>
     </details>
 
     <footer>Atlantis University · School of Health · MHS 510 Leadership and Organizational Behavior<div class="byline">By Professor De Leon</div></footer>
@@ -491,6 +534,8 @@ function Unit3D(stage, opts) {
   controls.enableDamping = true; controls.dampingFactor = 0.08;
   controls.maxPolarAngle = Math.PI * 0.46; controls.minDistance = 4; controls.maxDistance = 46;
   controls.zoomSpeed = 1.1;
+  // pan: right-drag, Ctrl or Shift plus drag, or two fingers; stays on the floor plane
+  controls.enablePan = true; controls.screenSpacePanning = false; controls.panSpeed = 0.9;
   // keep the mouse wheel inside the 3D view: zoom the floor, do not scroll the page
   stage.addEventListener('wheel', e => e.preventDefault(), {passive: false});
 
@@ -767,11 +812,25 @@ function Unit3D(stage, opts) {
     if (name === 'overview' || !views[name]) {
       // the overview (and FIT) must show the whole floor width, also on narrow phone screens,
       // leaving room for the zoom buttons at the right edge
-      const tanH = Math.tan(T.MathUtils.degToRad(camera.fov / 2)) * camera.aspect;
+      // and, on wide stages, fill the stage: the floor fits both the width and the height of the view
+      const tanV = Math.tan(T.MathUtils.degToRad(camera.fov / 2)), tanH = tanV * camera.aspect;
+      const dist0 = pos.distanceTo(tgt), sinE = Math.max(0.3, (pos.y - tgt.y) / dist0);
       const need = (B.w / 2 + 0.5) / (tanH * 0.92) + B.d * 0.25;
-      f = Math.max(f, need / pos.distanceTo(tgt));
-      controls.maxDistance = Math.max(controls.maxDistance, need * 1.3);
-      if (scene.fog) { scene.fog.near = Math.max(scene.fog.near, need * 1.1); scene.fog.far = Math.max(scene.fog.far, need * 2.6); }
+      const needD = (B.d / 2 * sinE + 0.8) / (tanV * 0.78) + B.d * 0.25;   // 0.78 leaves room for the HUD bars
+      const need2 = Math.max(need, needD);
+      f = need2 / dist0;
+      // phones: when the zoom controls are a column on the right edge, fit the floor in the space to their left
+      const zc = stage.querySelector('.zoomctl'), sw = stage.clientWidth;
+      if (zc && sw && sw < 760 && zc.offsetWidth < sw * 0.4) {
+        const m = zc.offsetWidth + 14, keep = (sw - m) / sw;
+        f = Math.max(need / keep, needD) / dist0;
+        const d = f * dist0, shift = (m / sw) * d * tanH;           // move the view so the floor centers in the free space
+        const fwd = tgt.clone().sub(pos); fwd.y = 0; fwd.normalize();
+        const right = new T.Vector3(-fwd.z, 0, fwd.x);
+        tgt.add(right.clone().multiplyScalar(shift)); pos.add(right.multiplyScalar(shift));
+      }
+      controls.maxDistance = Math.max(controls.maxDistance, need2 * 1.3);
+      if (scene.fog) { scene.fog.near = Math.max(scene.fog.near, need2 * 1.1); scene.fog.far = Math.max(scene.fog.far, need2 * 2.6); }
     }
     pos.sub(tgt).multiplyScalar(f).add(tgt);
     return {pos: pos, tgt: tgt};
@@ -803,28 +862,57 @@ function Unit3D(stage, opts) {
     const p = t.clone().add(off), k = 1 / (gsap.globalTimeline.timeScale() || 1);
     gsap.to(camera.position, {x: p.x, y: p.y, z: p.z, duration: RM ? 0 : 0.45, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
   }
+  // pan buttons (arrows) and arrow keys: slide the view across the floor, in screen directions
+  const PANLIM = {x: B.w / 2 + 1.5, z: B.d / 2 + 1.5};
+  function clampTarget(v) { v.x = Math.max(-PANLIM.x, Math.min(PANLIM.x, v.x)); v.z = Math.max(-PANLIM.z + (B.cz || 0), Math.min(PANLIM.z + (B.cz || 0), v.z)); return v; }
+  function pan(dx, dz) {   // dx: +1 right, -1 left; dz: +1 up (away), -1 down (toward the viewer)
+    const off = camera.position.clone().sub(controls.target), dist = off.length(), step = Math.max(0.6, dist * 0.12);
+    const fwd = new T.Vector3(); camera.getWorldDirection(fwd); fwd.y = 0;
+    if (fwd.lengthSq() < 1e-6) fwd.set(0, 0, -1); fwd.normalize();
+    const right = new T.Vector3(-fwd.z, 0, fwd.x);
+    const tgt = clampTarget(controls.target.clone().add(right.multiplyScalar(dx * step)).add(fwd.multiplyScalar(dz * step)));
+    const pos = tgt.clone().add(off), k = 1 / (gsap.globalTimeline.timeScale() || 1);
+    gsap.to(controls.target, {x: tgt.x, y: tgt.y, z: tgt.z, duration: RM ? 0 : 0.35, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
+    gsap.to(camera.position, {x: pos.x, y: pos.y, z: pos.z, duration: RM ? 0 : 0.35, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
+  }
+  controls.addEventListener('change', () => { const c = controls.target, x = c.x, z = c.z; clampTarget(c); if (c.x !== x || c.z !== z) camera.position.add(new T.Vector3(c.x - x, 0, c.z - z)); });
   if (opts.zoomUI !== false) {
     if (!document.getElementById('lab3d-zoom-css')) {
       const st = document.createElement('style'); st.id = 'lab3d-zoom-css';
       st.textContent = '.zoomctl{position:absolute;z-index:4;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:2px;padding:4px;background:rgba(255,255,255,.9);border:1px solid #D9D3C8;border-radius:10px;backdrop-filter:blur(6px);box-shadow:0 1px 2px rgba(20,35,58,.08)}' +
         '.zoomctl button{width:38px;height:34px;border:0;border-radius:7px;background:transparent;color:#14233A;font:700 18px/1 "JetBrains Mono",ui-monospace,monospace;cursor:pointer;padding:0}' +
         '.zoomctl button.fit{font-size:10px;letter-spacing:.06em;height:28px}.zoomctl button:hover{background:rgba(14,124,134,.12);color:#0E7C86}' +
-        '.zoomctl button:focus-visible{outline:2px solid #0E7C86;outline-offset:1px}@media(max-width:520px){.zoomctl{right:10px}.zoomctl button{width:34px;height:32px}}';
+        '.zoomctl button:focus-visible{outline:2px solid #0E7C86;outline-offset:1px}' +
+        '.zoomctl .pad{display:grid;grid-template-columns:repeat(3,26px);grid-template-rows:repeat(3,24px);gap:1px;margin:3px 0;padding-top:4px;border-top:1px solid #D9D3C8}' +
+        '.zoomctl .pad button{width:26px;height:24px;font-size:12px}.zoomctl .pad .u{grid-area:1/2}.zoomctl .pad .l{grid-area:2/1}.zoomctl .pad .c{grid-area:2/2;font-size:9px}.zoomctl .pad .r{grid-area:2/3}.zoomctl .pad .d{grid-area:3/2}' +
+        '@media(max-width:520px){.zoomctl{right:10px}.zoomctl button{width:34px;height:32px}.zoomctl .pad{grid-template-columns:repeat(3,28px);grid-template-rows:repeat(3,26px)}.zoomctl .pad button{width:28px;height:26px}}';
       document.head.appendChild(st);
     }
     const box = document.createElement('div'); box.className = 'zoomctl'; box.setAttribute('role', 'group'); box.setAttribute('aria-label', 'Zoom');
     box.innerHTML = '<button type="button" data-z="in" aria-label="Zoom in" title="Zoom in (+)">+</button>' +
       '<button type="button" data-z="out" aria-label="Zoom out" title="Zoom out (-)">&minus;</button>' +
+      '<div class="pad" role="group" aria-label="Move the view">' +
+      '<button type="button" class="u" data-p="u" aria-label="Move the view up" title="Move up (arrow up)">&#9650;</button>' +
+      '<button type="button" class="l" data-p="l" aria-label="Move the view left" title="Move left (arrow left)">&#9664;</button>' +
+      '<button type="button" class="c" data-z="fit" aria-label="Center the view" title="Center the view (0)">&#9679;</button>' +
+      '<button type="button" class="r" data-p="r" aria-label="Move the view right" title="Move right (arrow right)">&#9654;</button>' +
+      '<button type="button" class="d" data-p="d" aria-label="Move the view down" title="Move down (arrow down)">&#9660;</button></div>' +
       '<button type="button" class="fit" data-z="fit" aria-label="Show the whole unit" title="Show the whole unit (0)">FIT</button>';
     stage.appendChild(box);
     ['pointerdown', 'pointerup', 'wheel', 'click'].forEach(ev => box.addEventListener(ev, e => e.stopPropagation()));
     box.addEventListener('click', e => {
       const b = e.target.closest('button'); if (!b) return;
-      if (b.dataset.z === 'in') zoom(0.75); else if (b.dataset.z === 'out') zoom(1.33); else setView(opts.fitView || 'overview');
+      const pd = {l: [-1, 0], r: [1, 0], u: [0, 1], d: [0, -1]}[b.dataset.p];
+      if (pd) pan(pd[0], pd[1]);
+      else if (b.dataset.z === 'in') zoom(0.75); else if (b.dataset.z === 'out') zoom(1.33); else setView(opts.fitView || 'overview');
     });
+    let over = false;
+    stage.addEventListener('pointerenter', () => { over = true; }); stage.addEventListener('pointerleave', () => { over = false; });
     document.addEventListener('keydown', e => {
       const t = e.target, tag = t && t.tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) return;
+      const ak = {ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1]}[e.key];
+      if (ak) { if (over || stage.contains(e.target)) { e.preventDefault(); pan(ak[0], ak[1]); } return; }
       if (e.key === '+' || e.key === '=') zoom(0.75);
       else if (e.key === '-' || e.key === '_') zoom(1.33);
       else if (e.key === '0') setView(opts.fitView || 'overview');
@@ -858,7 +946,7 @@ function Unit3D(stage, opts) {
 
   const labApi = {T: T, scene: scene, camera: camera, controls: controls, renderer: renderer, recs: recs, colors: C, kinds: KIND, roles: ROLE,
     room: room, person: person, walk: walk, set: set, chip: chip, finishPins: finishPins, silkRect: silkRect, zone: zone, label: label, busMat: busMat, trace: trace, glowBus: glowBus,
-    fly: fly, clearPackets: clearPackets, hi: hi, clear: clear, pop: pop, setView: setView, focusOn: focusOn, intro: intro, zoom: zoom, refreshFloor: refreshFloor,
+    fly: fly, clearPackets: clearPackets, hi: hi, clear: clear, pop: pop, setView: setView, focusOn: focusOn, intro: intro, zoom: zoom, pan: pan, refreshFloor: refreshFloor,
     onPick: cb => { pickCb = cb; }, onFrame: f => frames.push(f), unit: unit};
   (window.__labs = window.__labs || []).push(labApi);   // lets tests reach the camera
   return labApi;
@@ -889,7 +977,8 @@ const KINDACC = {patient: '#0E7C86', station: '#6A4FC8', med: '#C27A08', supply:
 const CORR = {z: -2.4, x: 9};
 const atRoom = id => { const r = FLOOR.rooms.find(q => q.id === id); return r.door === 's' ? {x: r.x, z: r.z + r.d / 2 + 0.6} : r.door === 'n' ? {x: r.x, z: r.z - r.d / 2 - 0.6} : r.door === 'w' ? {x: r.x - r.w / 2 - 0.6, z: r.z} : {x: r.x + r.w / 2 + 0.6, z: r.z}; };
 // the n-th token sent to the same door stands 1.3 units to the side (along the corridor) so the tags do not overlap
-function spreadPoint(id, n) { const r = FLOOR.rooms.find(q => q.id === id), p = atRoom(id); if (!r || !n) return p; const k = (n % 2 ? 1 : -1) * Math.ceil(n / 2) * 1.3; return (r.door === 'w' || r.door === 'e') ? {x: p.x, z: p.z + k} : {x: p.x + k, z: p.z}; }
+// (layout v2) visitors at the same door stand farther apart, and on a north or south door every other one steps 0.8 into the corridor, so the name tags do not overlap in the overview
+function spreadPoint(id, n) { const r = FLOOR.rooms.find(q => q.id === id), p = atRoom(id); if (!r || !n) return p; const k = (n % 2 ? 1 : -1) * Math.ceil(n / 2) * 1.3; return (r.door === 'w' || r.door === 'e') ? {x: p.x, z: p.z + k * 1.25} : {x: p.x + k, z: p.z + (n % 2 ? (r.door === 's' ? 0.8 : -0.8) : 0)}; }
 // a corridor path from a point to a room door: along the main corridor, then down the east wing when needed
 function pathTo(from, id) {
   const to = atRoom(id), p = [];
@@ -1006,6 +1095,11 @@ function Floor(stage, people, opts) {
 // FLOOR END
 
 const $ = s => document.querySelector(s), $$ = s => Array.from(document.querySelectorAll(s));
+// guide block: mark the current step (1-based) and say the single next action
+function guide(stepNo, nowHtml) {
+  document.querySelectorAll('#howSteps li').forEach(li => { const n = +li.dataset.h; li.classList.toggle('done', n < stepNo); li.classList.toggle('current', n === stepNo); });
+  if (nowHtml) document.getElementById('nowText').innerHTML = nowHtml;
+}
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
 const C = {violet: '#6A4FC8', teal: '#0E7C86', green: '#1F8A4C', amber: '#C27A08', coral: '#D4453F', slate: '#5B6B82'};
 
@@ -1015,7 +1109,7 @@ const PEOPLE = [
   {id: 'daniel', x: RX(0) + 0.3, z: -2.4, role: 'DAY RN', color: C.teal, nm: 'Daniel C.', who: 'Daniel Cordeiro, day RN, 2.3 years on 4 West, evaluation 3.9. On his second overtime shift of the week, with seven patients after the 3 p.m. admission.'},
   {id: 'camila', x: 3.0, z: -2.4, role: 'NIGHT RN', color: C.teal, nm: 'Camila F.', who: 'Camila Figueiredo, night RN, 2.6 years on the unit. Found the unscanned 2 p.m. dose at 7:05 p.m. during bedside handoff.'},
   {id: 'marcus', x: 8.0, z: -2.0, role: 'CHARGE RN', color: C.teal, nm: 'Marcus R.', who: 'Marcus Reid, day charge nurse. Ran the rapid response in 414 at 2:08 p.m. and assigned the 3 p.m. admission to Daniel.'},
-  {id: 'dau', x: RX(0) - 0.6, z: -2.0, role: 'FAMILY', color: C.amber, nm: 'Daughter, 409', who: 'The daughter of the patient in room 409. She was in the room most of the afternoon and walked past the station at 2:50 p.m.'},
+  {id: 'dau', x: RX(0) + 0.4, z: -0.1, role: 'FAMILY', color: C.amber, nm: 'Daughter, 409', who: 'The daughter of the patient in room 409. She was in the room most of the afternoon and walked past the station at 2:50 p.m.'},
   {id: 'thiago', x: 9.0, z: 1.4, role: 'CNA · NIGHT', color: C.green, nm: 'Thiago A.', who: 'Thiago Albuquerque, part-time night CNA since November 2025. The "always late" case in part 3.'}
 ];
 const ROOMS_INFO = {'409': 'Room 409: the 2 p.m. IV antibiotic dose was delivered to the drawer at 1:50 p.m. and never scanned. Found at 7:05 p.m.', '414': 'Room 414: rapid response at 2:08 p.m.; Daniel was in the room with the team until 2:50 p.m.', '405': 'Room 405: admission from the emergency department at 3:00 p.m., assigned to Daniel (his seventh patient).', 'station': 'Nurse station: the rapid response debrief at 2:50 p.m., which the daughter saw as "nurses laughing".', 'med': 'Med room.', 'break': 'Break room.', 'supply': 'Supply room.'};
@@ -1078,14 +1172,18 @@ const QOPTS = [['fae', 'Fundamental attribution error'], ['self', 'Self-serving 
 window.__mhs = {STEPS, CARDS, CUES, verdictFor, QUIZ};
 
 let speed = 1, follow = true, qDone = {}, cardState = {}, cue = {consistency: true, distinctiveness: false, consensus: false};
+let playing = false; const seenVerdicts = new Set();
 const stage = $('#stage');
 let G = null;
-try { G = Floor(stage, PEOPLE, {views: {west: {pos: [-8, 9, 4], tgt: [-9.5, 0, -2.5], want: 1.5}}}); } catch (e) { console.error(e); G = null; }
+// layout v2: the stage is wide now, so the close views sit a little higher and farther back to keep the name tags in frame
+try { G = Floor(stage, PEOPLE, {views: {west: {pos: [-8, 12, 7.5], tgt: [-9, 0, -2.4], want: 1.5}, station: {pos: [7, 12.5, 8.5], tgt: [9.3, 0, -1.6], want: 1.5}}}); } catch (e) { console.error(e); G = null; }
 if (!G) G = Floor(stage, PEOPLE);
 if (G.kind === '2d') { $('#nogl').hidden = false; $$('.views button[data-view]').forEach(b => b.hidden = true); }
 if (stage.clientWidth < 700) { follow = false; $('#follow').classList.remove('on'); $('#follow').setAttribute('aria-pressed', 'false'); }
 G.set('409', '2 p.m. dose', 'missed'); G.set('414', 'rapid response', '2:08 p.m.'); G.set('405', 'admission', '3:00 p.m.'); G.set('station', 'debrief', '2:50 p.m.');
-G.onPick(id => { const p = PEOPLE.find(q => q.id === id); const t = p ? p.who : ROOMS_INFO[id]; if (t) $('#info').innerHTML = '<b>' + esc(p ? p.nm : (/^\d/.test(id) ? 'Room ' + id : id)) + '.</b> ' + esc(t); });
+G.onPick(id => { const p = PEOPLE.find(q => q.id === id), rm = FLOOR.rooms.find(q => q.id === id), t = p ? p.who : ROOMS_INFO[id], nm = p ? p.nm : rm ? rm.label : id;
+  const body = t ? (t.indexOf(nm + ': ') === 0 ? t.slice(nm.length + 2) : t.indexOf(nm + '.') === 0 ? t.slice(nm.length + 1).trim() : t) : '';
+  if (t) $('#info').innerHTML = '<b>' + esc(nm) + '</b>' + (body ? '<br>' + esc(body.charAt(0).toUpperCase() + body.slice(1)) : ''); });
 if (G.intro) G.intro();
 const point = t => { const r = FLOOR.rooms.find(q => q.id === t); return r ? atRoom(t) : t; };
 function resetScene() { G.clear(); G.clearPackets(); PEOPLE.forEach(p => G.place(p.id, p.x, p.z)); }
@@ -1107,7 +1205,7 @@ function applyStep(k, animate) {
     }
   }
   const foc = STEPS[k].focus;
-  if (follow && G.kind === '3d') { if (foc === 'overview') G.setView('overview'); else { const r = FLOOR.rooms.find(q => q.id === foc); if (r) G.focusOn(r.x, r.z, 8.5); } }
+  if (follow && G.kind === '3d') { if (foc === 'overview') G.setView('overview'); else { const r = FLOOR.rooms.find(q => q.id === foc); if (r) G.focusOn(r.x, r.z * 0.6 - 0.96, 10.5); } }   // aim between the room and the corridor so the name tags stay in frame
   $('#hudClock').textContent = CLOCK[k];
   $$('#phases li').forEach((li, i) => li.classList.toggle('on', i === k));
   $('#sawS').textContent = STEPS[k].saw; $('#sawA').textContent = STEPS[k].assumed;
@@ -1125,17 +1223,37 @@ function makePlayer(root) {
     i = n; const s = STEPS[i];
     tag.style.setProperty('--pc', s.bias ? C.coral : i === STEPS.length - 1 ? C.teal : C.slate); tag.textContent = s.tag;
     cap.textContent = s.t; cnt.textContent = 'Step ' + (i + 1) + ' of ' + STEPS.length; back.disabled = !hist.length && i <= 0;
-    applyStep(i, true);
+    applyStep(i, true); replayGuide(i);
   }
-  function stop() { if (timer) { hasGSAP ? timer.kill() : clearTimeout(timer); timer = null; } play.textContent = 'Run'; }
+  function stop() { const was = playing; if (timer) { hasGSAP ? timer.kill() : clearTimeout(timer); timer = null; } playing = false; play.textContent = 'Run'; if (was && i >= 0) replayGuide(i); }
   function tick() { if (i >= STEPS.length - 1) { stop(); return; } go(i + 1); if (i >= STEPS.length - 1) { timer = null; stop(); return; } timer = hasGSAP ? gsap.delayedCall(6 / speed, tick) : setTimeout(tick, 6000 / speed); }
-  play.onclick = () => { if (timer) { stop(); return; } if (i >= STEPS.length - 1) { i = -1; hist = []; } play.textContent = 'Pause'; tick(); };
+  play.onclick = () => { if (timer) { stop(); return; } if (i >= STEPS.length - 1) { i = -1; hist = []; } play.textContent = 'Pause'; playing = true; tick(); };
   root.querySelector('[data-a=next]').onclick = () => { stop(); go(i + 1); };
   back.onclick = () => { stop(); if (hist.length) go(hist.pop(), false); else go(i - 1, false); };
-  root.querySelector('[data-a=reset]').onclick = () => { api.reset(); applyStep(0, false); if (G.kind === '3d') G.setView('overview'); };
+  root.querySelector('[data-a=reset]').onclick = () => { api.reset(); applyStep(0, false); if (G.kind === '3d') G.setView('overview'); guide(1, 'Press <b>Step</b> to see the incident report for room 409.'); };
   const api = {go, stop, get index() { return i; }, back: () => back.click(), toggle: () => play.click(), step: () => { stop(); go(i + 1); },
-    reset() { stop(); i = -1; hist = []; tag.style.setProperty('--pc', 'var(--muted)'); tag.textContent = 'Ready'; cap.textContent = 'Press Run to replay the incident, or Step to go one viewpoint at a time. The first step is the incident report itself.'; cnt.textContent = 'Step 0 of ' + STEPS.length; back.disabled = true; }};
+    reset() { stop(); i = -1; hist = []; tag.style.setProperty('--pc', 'var(--muted)'); tag.textContent = 'Ready'; cap.textContent = 'Press Step to see the first step, the incident report itself. Press Step again for each viewpoint, or press Run to play all seven steps.'; cnt.textContent = 'Step 0 of ' + STEPS.length; back.disabled = true; }};
   api.reset(); return api;
+}
+// "Do this now" for the replay: called after every step, run, and pause
+function replayGuide(i) {
+  const n = STEPS.length;
+  if (playing && i < n - 1) { guide(i === 0 ? 1 : 2, 'Watch the board above and read the narration under <b>Part 1</b>. The next step comes in a few seconds. Press <b>Pause</b> to stop.'); return; }
+  if (i === 0) { guide(1, 'Read the incident report under <b>Part 1</b>. Then press <b>Step</b> to see the afternoon through Camila\'s eyes (step 2 of ' + n + ').'); return; }
+  if (i < n - 1) { guide(2, 'Read what ' + ['', 'Camila', 'Daniel', 'Marcus', 'the daughter', 'you, the manager,'][i] + ' saw and assumed, and the bias in coral under it. Then press <b>Step</b> for step ' + (i + 2) + ' of ' + n + ': ' + esc(STEPS[i + 1].tag) + '.'); return; }
+  cardGuide(true);
+}
+function cardGuide(fromReplay) {
+  const done = Object.keys(cardState).length, right = CARDS.filter((c, i) => cardState[i] === (c.fact ? 'fact' : 'assume')).length;
+  if (done < CARDS.length) { const next = CARDS.findIndex((c, i) => cardState[i] === undefined); guide(3, (fromReplay ? 'Replay done. ' : '') + 'Under <b>Part 2</b> below, sort statement ' + (next + 1) + ' of ' + CARDS.length + ': press <b>Fact</b> if it is in a record, or <b>Assumption</b> if it is an interpretation.'); return; }
+  if (right < CARDS.length) { guide(3, (CARDS.length - right) + ' statement' + (CARDS.length - right > 1 ? 's are' : ' is') + ' in the wrong group. Read the box under the statements, find the card it names, and press the other button on it.'); return; }
+  if (seenVerdicts.size < 3) guide(4, 'Under <b>Part 3</b>, click a different answer for one of the three cues and read how the verdict changes.');
+  else quizGuide();
+}
+function quizGuide() {
+  const n = Object.keys(qDone).length, right = Object.entries(qDone).filter(([qi, k]) => QUIZ[qi].a === k).length;
+  if (n < QUIZ.length) { const next = QUIZ.findIndex((q, qi) => qDone[qi] === undefined); guide(5, 'Under <b>Part 4</b>, answer question ' + (next + 1) + ' of ' + QUIZ.length + ': click the bias the sentence shows, or <b>No bias</b>.'); }
+  else guide(6, 'Done: ' + right + ' of ' + QUIZ.length + ' correct. Read the feedback under each question. Press <b>Try again</b> under the questions to answer them again.');
 }
 const player = makePlayer($('#player'));
 $('#phases').innerHTML = STEPS.map((s, i) => '<li style="--c:' + (s.bias ? C.coral : C.teal) + '" title="' + esc(s.tag) + '">' + (i === 0 ? 'Record' : i === 6 ? 'Facts' : i === 5 ? 'Manager' : EYES[i - 1][1]) + '</li>').join('');
@@ -1150,7 +1268,7 @@ function renderCards() {
   CARDS.forEach((c, i) => {
     const el = box.querySelector('[data-i="' + i + '"]'), st = cardState[i];
     el.classList.toggle('fact', st === 'fact'); el.classList.toggle('assume', st === 'assume');
-    el.querySelectorAll('.btn').forEach(b => { b.setAttribute('aria-pressed', st === b.dataset.v); b.onclick = () => { cardState[i] = b.dataset.v; renderCards(); }; });
+    el.querySelectorAll('.btn').forEach(b => { b.setAttribute('aria-pressed', st === b.dataset.v); b.onclick = () => { cardState[i] = b.dataset.v; renderCards(); cardGuide(false); }; });
   });
   const done = Object.keys(cardState).length, right = CARDS.filter((c, i) => cardState[i] === (c.fact ? 'fact' : 'assume')).length, wrong = done - right;
   const factsKept = CARDS.filter((c, i) => cardState[i] === 'fact');
@@ -1164,11 +1282,15 @@ renderCards();
 // part 3
 function renderCues() {
   $('#cues').innerHTML = CUES.map(c => '<div class="cue"><span class="q"><b>' + c.nm + '</b>' + esc(c.q) + '</span><span class="ch"><button class="btn" type="button" data-k="' + c.k + '" data-v="1" aria-pressed="' + cue[c.k] + '">' + esc(c.hi) + '</button><button class="btn" type="button" data-k="' + c.k + '" data-v="0" aria-pressed="' + !cue[c.k] + '">' + esc(c.lo) + '</button></span></div>').join('');
-  $$('#cues .btn').forEach(b => b.onclick = () => { cue[b.dataset.k] = b.dataset.v === '1'; renderCues(); });
-  const v = verdictFor(cue);
+  $$('#cues .btn').forEach(b => b.onclick = () => { cue[b.dataset.k] = b.dataset.v === '1'; renderCues(); cueGuide(); });
+  const v = verdictFor(cue); seenVerdicts.add(v.t === 'A one-time situation' ? 'The situation, not the person' : v.t);
   $('#verdict').style.setProperty('--vc', v.col);
   $('#verdict').innerHTML = '<div class="t">' + esc(v.t) + ' · attribution: ' + v.k + '</div><p>' + esc(v.p) + '</p><p><b>The question to ask first:</b> "' + esc(v.ask) + '"</p>';
   if (G.recs.station) { G.set('station', cue.consistency ? 'late 3 of 3' : 'late 3 this month', 'Thiago, 7:12 p.m.'); }
+}
+function cueGuide() {
+  if (seenVerdicts.size < 3) guide(4, 'Read the verdict. Then click a different answer for one cue. You have seen ' + seenVerdicts.size + ' of the 3 kinds of verdict: Thiago, the situation, and not enough to conclude.');
+  else guide(5, 'You have seen all three kinds of verdict. Now, under <b>Part 4</b>, answer question ' + ((QUIZ.findIndex((q, qi) => qDone[qi] === undefined) + 1) || 1) + ': click the bias the sentence shows, or <b>No bias</b>.');
 }
 renderCues();
 // part 4
@@ -1177,7 +1299,7 @@ function renderQuiz() {
   QUIZ.forEach((item, qi) => {
     const d = document.createElement('div'); d.className = 'quiz-q'; d.innerHTML = '<p>' + (qi + 1) + '. ' + esc(item.q) + '</p>';
     const o = document.createElement('div'); o.className = 'opts';
-    QOPTS.forEach(([k, nm]) => { const b = document.createElement('button'); b.className = 'btn'; b.type = 'button'; b.textContent = nm; if (qDone[qi] !== undefined) { b.disabled = true; if (k === item.a) b.classList.add('right'); else if (k === qDone[qi]) b.classList.add('wrong'); } b.onclick = () => { qDone[qi] = k; renderQuiz(); }; o.appendChild(b); });
+    QOPTS.forEach(([k, nm]) => { const b = document.createElement('button'); b.className = 'btn'; b.type = 'button'; b.textContent = nm; if (qDone[qi] !== undefined) { b.disabled = true; if (k === item.a) b.classList.add('right'); else if (k === qDone[qi]) b.classList.add('wrong'); } b.onclick = () => { qDone[qi] = k; renderQuiz(); quizGuide(); }; o.appendChild(b); });
     d.appendChild(o);
     if (qDone[qi] !== undefined) { const f = document.createElement('div'); f.className = 'feedback ' + (qDone[qi] === item.a ? 'ok' : 'bad'); f.style.marginTop = '8px'; f.textContent = (qDone[qi] === item.a ? 'Correct. ' : 'Not quite: the answer is ' + QOPTS.find(o => o[0] === item.a)[1] + '. ') + item.why; d.appendChild(f); }
     box.appendChild(d);
@@ -1185,7 +1307,7 @@ function renderQuiz() {
   const n = Object.keys(qDone).length, right = Object.entries(qDone).filter(([qi, k]) => QUIZ[qi].a === k).length;
   $('#qbar').innerHTML = QUIZ.map((q, qi) => '<i class="' + (qDone[qi] === undefined ? '' : qDone[qi] === q.a ? 'ok' : 'bad') + '"></i>').join('');
   $('#qscore').innerHTML = n ? '<span>Score</span><span class="big">' + right + ' / ' + QUIZ.length + '</span>' + (n === QUIZ.length ? '<button class="btn" id="qreset" type="button">Try again</button>' : '<span>' + n + ' of ' + QUIZ.length + ' answered</span>') : '';
-  const r = document.getElementById('qreset'); if (r) r.onclick = () => { qDone = {}; renderQuiz(); };
+  const r = document.getElementById('qreset'); if (r) r.onclick = () => { qDone = {}; renderQuiz(); quizGuide(); };
 }
 renderQuiz();
 $$('.views button[data-view]').forEach(b => b.addEventListener('click', () => { $$('.views button[data-view]').forEach(x => x.classList.toggle('on', x === b)); G.setView(b.dataset.view); }));
@@ -1194,6 +1316,7 @@ const sp = $('#speed'); sp.addEventListener('input', () => { speed = parseFloat(
 document.addEventListener('keydown', e => { const t = e.target, tg = t && t.tagName; if (tg === 'INPUT' || tg === 'SELECT' || tg === 'TEXTAREA' || tg === 'BUTTON' || tg === 'SUMMARY') return; if (e.key === ' ') { e.preventDefault(); player.step(); } else if (e.key === 'r' || e.key === 'R') player.toggle(); else if (e.key === 'b' || e.key === 'B') player.back(); });
 applyStep(0, false);
 if (!hasGSAP) $('#narration').textContent += ' (Animations are off because the animation library did not load; every step still works.)';
+guide(1, 'Press <b>Step</b> to see the incident report for room 409.');
 window.__page = {player, applyStep, get G() { return G; },
   autoSort: () => { CARDS.forEach((c, i) => { cardState[i] = c.fact ? 'fact' : 'assume'; }); renderCards(); return $('#tlProg').textContent; },
   cueTest: () => { const out = {}; [[1, 0, 0], [1, 1, 1], [0, 0, 0], [1, 1, 0], [1, 0, 1]].forEach(v => { cue = {consistency: !!v[0], distinctiveness: !!v[1], consensus: !!v[2]}; renderCues(); out[v.join('')] = verdictFor(cue).k; }); return out; },

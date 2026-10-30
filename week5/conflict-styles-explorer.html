@@ -233,7 +233,11 @@
   .reveal{animation:rise .7s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*80ms)}
   @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
   @media(max-width:860px){
-    .app .stage .zoomctl{top:56px;right:10px;transform:none;flex-direction:row}
+    .app .stage .zoomctl{top:50%;right:8px;transform:translateY(-50%);flex-direction:column;padding:3px;align-items:center}
+    .app .stage .zoomctl>button{width:30px!important;height:28px!important;font-size:16px}
+    .app .stage .zoomctl>button.fit{height:24px!important;font-size:9px}
+    .app .stage .zoomctl .pad{grid-template-columns:repeat(3,22px)!important;grid-template-rows:repeat(3,22px)!important;margin:2px 0;padding-top:3px}
+    .app .stage .zoomctl .pad button{width:22px!important;height:22px!important;font-size:10px}
     .app{grid-template-columns:1fr;height:auto}
     .app .stage{height:62vh;min-height:360px}
     .panel{border-left:0;border-top:1px solid var(--line);overflow:visible}
@@ -251,6 +255,32 @@
     .tag .sb{display:none}
     .scroll-x::before{content:"Swipe sideways to see the whole table";display:block;font:500 11px var(--font-mono);letter-spacing:.04em;color:var(--muted);margin:0 0 6px}
   }
+
+  /* ---- stacked layout (v2, October 30 2026): the 3D floor uses the full width of the page, instructions and controls go below it ---- */
+  .app{display:block;height:auto;min-height:0}
+  .app>.lab-head{max-width:1240px;margin:0 auto;padding:18px 16px 14px}
+  .app>.stage{width:100%;height:clamp(420px,70vh,860px);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .panel{max-width:1240px;margin:0 auto;border-left:0;overflow:visible;background:none;display:block;columns:2 420px;column-gap:28px;padding:20px 16px 28px}
+  .panel>*{break-inside:avoid;margin:0 0 22px}
+  .panel>header,.panel>footer,.panel>.guide,.panel>.span-all{column-span:all}
+  /* guide: numbered steps with the current one highlighted, plus a "do this now" line */
+  .guide{max-width:1240px;margin:0 auto;padding:18px 16px 4px;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px 26px;align-items:start}
+  .guide h2{grid-column:1/-1;margin:0;font-size:19px}
+  .guide ol.steps{list-style:none;margin:0;padding:0;display:grid;gap:8px;counter-reset:s}
+  .guide ol.steps li{counter-increment:s;position:relative;padding:9px 12px 9px 46px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);color:var(--ink);font-size:15px;line-height:1.45;box-shadow:var(--shadow-sm)}
+  .guide ol.steps li::before{content:counter(s);position:absolute;left:12px;top:9px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:700 12px var(--font-mono);background:var(--panel-2);color:var(--ink-2);border:1px solid var(--line)}
+  .guide ol.steps li.current{border-color:var(--teal);box-shadow:0 0 0 2px rgba(14,124,134,.15)}
+  .guide ol.steps li.current::before{background:var(--teal);color:#fff;border-color:var(--teal)}
+  .guide ol.steps li.done{color:var(--muted)}
+  .guide ol.steps li.done::before{content:"\2713";background:var(--green);color:#fff;border-color:var(--green)}
+  .guide ol.steps li b,.guide .now b{color:var(--teal);font-weight:700}
+  .guide .now{border-left:4px solid var(--teal);background:var(--panel);border-radius:var(--r);padding:14px 16px;font-size:16px;line-height:1.5;color:var(--ink);box-shadow:var(--shadow-sm)}
+  .guide .now .k{display:block;font:600 10.5px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:4px}
+  .guide .tips{margin:10px 0 0;padding:0;list-style:none;font-size:13.5px;color:var(--muted);display:grid;gap:4px}
+  @media(max-width:860px){.guide{grid-template-columns:1fr}.panel{columns:1}}
+  /* page mode: the 3D card on top across the full width, the round or task below */
+  .card .stage.wide{aspect-ratio:21/9;min-height:360px}
+  @media(max-width:860px){.card .stage.wide{aspect-ratio:4/3;min-height:0}}
   /* ===== end of theme ===== */
 
   /* page-specific CSS below: light unit board, palette with meaning (see build/theme/THEME.md) */
@@ -295,6 +325,17 @@
   .flat .pn{font:700 .4px "Figtree",sans-serif;fill:#14233A;text-anchor:middle;paint-order:stroke;stroke:#fff;stroke-width:.12}
   .flat .ps{font:500 .26px "Figtree",sans-serif;fill:#66728A;text-anchor:middle;paint-order:stroke;stroke:#fff;stroke-width:.1}
   .flat .pk{font:700 .34px "Figtree",sans-serif;fill:#fff;text-anchor:middle}
+  /* layout v2: each tab reads across the width in two columns on desktop, one on phones */
+  .duo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px 28px;align-items:start}
+  .duo h2{margin-top:0}
+  .quizgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(380px,100%),1fr));gap:10px;align-items:start}
+  .quizgrid .quiz-q{margin:0}
+  .tried{margin-top:14px}
+  .tried table{font-size:12px}
+  .tried td:first-child{font-family:var(--font-body);font-weight:600}
+  #sec-modes .controls{grid-template-columns:repeat(4,minmax(0,1fr))}
+  @media(max-width:860px){.duo{grid-template-columns:1fr}}
+  @media(max-width:520px){#sec-modes .controls{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 /*PAGE_CSS_END*/
 </style>
@@ -311,7 +352,12 @@
 
 <!--PAGE_BODY_START-->
 <div class="app">
-  <section class="stage" id="stage" aria-label="3D model of the 4 West floor at 6:40 a.m. with the manager, charge nurse Kwame Boateng, two new night nurses, and the other night charge nurse. Drag to orbit, use the zoom buttons, click a person to select them.">
+  <header class="lab-head">
+    <p class="eyebrow">MHS 510 · Week 5 · Explorer</p>
+    <h1>Conflict styles explorer</h1>
+    <p class="lede">It is 6:40 a.m. on Wednesday, September 30. Night charge nurse Kwame Boateng is finishing his shift. Last night's incivility report (INC-096) is on your desk, and two new night nurses, Naomi Jean-Baptiste and Priscila Nascimento, have asked to talk. Try each of the five conflict-handling modes as the manager and watch what happens on the floor.</p>
+  </header>
+  <section class="stage" id="stage" aria-label="3D model of the 4 West floor at 6:40 a.m. with the manager, charge nurse Kwame Boateng, two new night nurses, and the other night charge nurse. Drag to orbit, use the zoom buttons, click a person to see their power bases.">
     <div class="hud hud-top">
       <ol class="phases" id="phases" aria-label="Scene steps"></ol>
       <div class="ticks" id="clock">Wed Sep 30 · <b>06:40</b></div>
@@ -331,56 +377,69 @@
         <button type="button" data-view="rooms">Rooms</button>
       </div>
     </div>
-    <div class="nogl" id="nogl" hidden>The 3D unit floor needs WebGL and the 3D libraries, which are not available here. The flat floor plan shows the same rooms, people, and steps, and the panel has every value.</div>
+    <div class="nogl" id="nogl" hidden>The 3D unit floor needs WebGL and the 3D libraries, which are not available here. The flat floor plan shows the same rooms, people, and steps, and the panels below have every value.</div>
+  </section>
+
+  <section class="guide" aria-labelledby="guideTitle">
+    <h2 id="guideTitle">How to use this explorer</h2>
+    <ol class="steps" id="howSteps">
+      <li data-h="1">Under <b>1. Conflict modes</b> below, press one of the five mode buttons. Start with <b>Competing</b>. The floor above loads the same morning, handled with that mode.</li>
+      <li data-h="2">Press <b>Step</b> to move one step forward, or <b>Play</b> to play every step. Read the narration under the mode buttons. On the floor above, watch who the manager talks to and how each person reacts. The four meters show the cost.</li>
+      <li data-h="3">At the <b>Outcome</b> step, note the four meter values. Then press the next mode button. Try all five modes and compare them with the <b>When each mode fits</b> table.</li>
+      <li data-h="4">Press the <b>2. Power bases</b> tab. Press a person's name, tick the bases of power you think that person holds, and press <b>Check</b>. Read why each base is a yes or a no.</li>
+      <li data-h="5">Press the <b>3. Self-check</b> tab and answer the six questions. Each answer shows why it is right or not.</li>
+    </ol>
+    <div>
+      <div class="now" aria-live="polite"><span class="k">Do this now</span><span id="nowText">Press the <b>Competing</b> button under 1. Conflict modes below.</span></div>
+      <ul class="tips">
+        <li>A conflict-handling mode is the way a person responds to a conflict. Thomas and Kilmann place five modes on two scales: assertive (pushing for your own concern) and cooperative (helping with the other person's concern).</li>
+        <li><b>Step back</b> shows the step before again. <b>Reset</b> goes back to step 1 of the same mode.</li>
+        <li>Drag on the floor to turn it. Use <b>+</b>, <b>&minus;</b>, the arrows, and <b>FIT</b> to zoom and move. <b>Station</b> and <b>Rooms</b> jump to those parts of the floor. Click a person on the floor to open their power bases.</li>
+        <li>Keyboard: Space steps, B steps back, R plays or pauses.</li>
+      </ul>
+    </div>
   </section>
 
   <aside class="panel">
-    <header>
-      <p class="eyebrow">MHS 510 · Week 5 · Explorer</p>
-      <h1>Conflict styles explorer</h1>
-      <p class="lede">It is 6:40 a.m. on Wednesday, September 30. Night charge nurse Kwame Boateng is finishing his shift. Last night's incivility report (INC-096) is on your desk, and two new night nurses, Naomi Jean-Baptiste and Priscila Nascimento, have asked to talk. Try each of the five conflict-handling modes as the manager and watch what happens on the floor.</p>
-    </header>
-
-    <div class="spec" aria-label="The facts from the data files">
-      <div><b>11</b><span>incivility reports in six months, 9 on nights (incidents.csv)</span></div>
-      <div><b>8 of 11</b><span>describe a first-year nurse, new graduate, or orientee</span></div>
-      <div><b>3 RNs</b><span>left nights citing the charge nurse relationship, at 9, 12, and 14 months (turnover.csv)</span></div>
-      <div><b>2.62 vs 3.84</b><span>"I can raise a concern without fear", nights vs days (engagement_survey.csv)</span></div>
-    </div>
-
-    <div class="tabs" role="tablist" aria-label="Sections">
+    <div class="tabs span-all" role="tablist" aria-label="Sections">
       <button type="button" role="tab" id="tab-modes" aria-selected="true" aria-controls="sec-modes">1. Conflict modes</button>
       <button type="button" role="tab" id="tab-power" aria-selected="false" aria-controls="sec-power">2. Power bases</button>
       <button type="button" role="tab" id="tab-check" aria-selected="false" aria-controls="sec-check">3. Self-check</button>
     </div>
 
-    <section id="sec-modes" role="tabpanel" aria-labelledby="tab-modes">
-      <h2>Choose the manager's mode</h2>
-      <p class="hint" style="margin-bottom:8px">Thomas and Kilmann describe five ways people handle conflict, placed on two axes: how assertive you are (pushing for your own concern) and how cooperative you are (helping the other person's concern). Pick one, then press Play.</p>
-      <div class="modes" id="modes" role="group" aria-label="Conflict modes"></div>
+    <section id="sec-modes" class="span-all" role="tabpanel" aria-labelledby="tab-modes">
+      <div class="duo">
+        <div>
+          <h2>Choose the manager's mode</h2>
+          <p class="hint" style="margin-bottom:8px">Press a mode button to load that morning on the floor. Then press <b>Step</b> or <b>Play</b>. Each mode shows how assertive and how cooperative it is.</p>
+          <div class="modes" id="modes" role="group" aria-label="Conflict modes"></div>
 
-      <section class="narr" aria-live="polite" style="margin-top:14px">
-        <div class="narr-head"><span class="ptag" id="ptag">Pick a mode</span><span id="stepCount"></span></div>
-        <p id="narration">Choose one of the five modes above. Each one plays the same morning on the floor, step by step, with the same people and the same facts.</p>
-      </section>
-      <div class="controls" style="margin-top:10px">
-        <button type="button" class="btn primary" id="play" disabled>Play</button>
-        <button type="button" class="btn" id="next" disabled>Step</button>
-        <button type="button" class="btn" id="back" disabled>Step back</button>
-        <button type="button" class="btn" id="reset" disabled>Reset</button>
+          <section class="narr" aria-live="polite" style="margin-top:14px">
+            <div class="narr-head"><span class="ptag" id="ptag">Pick a mode</span><span id="stepCount"></span></div>
+            <p id="narration">Press one of the five mode buttons above. Each mode plays the same morning on the floor in four steps and an outcome, with the same people and the same facts.</p>
+          </section>
+          <div class="controls" style="margin-top:10px">
+            <button type="button" class="btn primary" id="play" disabled>Play</button>
+            <button type="button" class="btn" id="next" disabled>Step</button>
+            <button type="button" class="btn" id="back" disabled>Step back</button>
+            <button type="button" class="btn" id="reset" disabled>Reset</button>
+          </div>
+          <div class="speed" style="margin-top:10px"><label for="speed">Speed</label><input type="range" id="speed" min="0.5" max="3" step="0.25" value="1"><output id="speedOut" for="speed">1×</output></div>
+        </div>
+        <div>
+          <h2>What the morning costs <small>live</small></h2>
+          <p class="hint" style="margin-bottom:8px">The meters fill when you pick a mode and change at every step. For relationship and safety, higher is better. For the risk that the conflict comes back, lower is better. Manager time is what the mode costs in minutes this week.</p>
+          <div class="meters" id="meters" aria-live="polite">
+            <div class="meter" style="--mc:var(--green)"><span>Relationship (Kwame and the new nurses)</span><b data-m="rel">–</b><div class="bar"><i data-b="rel"></i></div></div>
+            <div class="meter" style="--mc:var(--teal)"><span>Safety and task (new nurses keep asking for help)</span><b data-m="task">–</b><div class="bar"><i data-b="task"></i></div></div>
+            <div class="meter risk"><span>Risk that the conflict comes back</span><b data-m="back">–</b><div class="bar"><i data-b="back"></i></div></div>
+            <div class="meter time"><span>Manager time this week (minutes)</span><b data-m="time">–</b><div class="bar"><i data-b="time"></i></div></div>
+          </div>
+          <div class="tried" id="tried" aria-live="polite"></div>
+        </div>
       </div>
-      <div class="speed" style="margin-top:10px"><label for="speed">Speed</label><input type="range" id="speed" min="0.5" max="3" step="0.25" value="1"><output id="speedOut" for="speed">1×</output></div>
-      <p class="hint" style="margin-top:6px">Keyboard: Space steps, B steps back, R plays or pauses.</p>
 
-      <h2 style="margin-top:18px">What the morning costs <small>live</small></h2>
-      <div class="meters" id="meters" aria-live="polite">
-        <div class="meter" style="--mc:var(--green)"><span>Relationship (Kwame and the new nurses)</span><b data-m="rel">–</b><div class="bar"><i data-b="rel"></i></div></div>
-        <div class="meter" style="--mc:var(--teal)"><span>Safety and task (new nurses keep asking for help)</span><b data-m="task">–</b><div class="bar"><i data-b="task"></i></div></div>
-        <div class="meter risk"><span>Risk that the conflict comes back</span><b data-m="back">–</b><div class="bar"><i data-b="back"></i></div></div>
-        <div class="meter time"><span>Manager time this week (minutes)</span><b data-m="time">–</b><div class="bar"><i data-b="time"></i></div></div>
-      </div>
-
-      <h2 style="margin-top:18px">When each mode fits</h2>
+      <h2 style="margin-top:22px">When each mode fits</h2>
       <div class="scroll-x"><table class="fit">
         <thead><tr><th>Mode</th><th>Assertive</th><th>Cooperative</th><th>Fits when</th><th>Watch out</th></tr></thead>
         <tbody>
@@ -393,33 +452,50 @@
       </table></div>
     </section>
 
-    <section id="sec-power" role="tabpanel" aria-labelledby="tab-power" hidden>
-      <h2>Who holds which power?</h2>
-      <p class="hint" style="margin-bottom:8px">French and Raven named six bases of power: legitimate (the position), reward (what you can give), coercive (what you can take away or punish), expert (what you know how to do), referent (people want to be like you or be liked by you), and informational (what you know that others need). Pick a person, mark the bases you think they hold on 4 West, and check.</p>
-      <div class="people" id="people" role="group" aria-label="People"></div>
-      <div id="pinfo" class="hint" style="margin:10px 0 8px"></div>
-      <div class="bases" id="bases" role="group" aria-label="Bases of power"></div>
-      <div class="controls" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-top:10px">
-        <button type="button" class="btn primary" id="checkBases">Check</button>
-        <button type="button" class="btn" id="clearBases">Clear</button>
+    <section id="sec-power" class="span-all" role="tabpanel" aria-labelledby="tab-power" hidden>
+      <div class="duo">
+        <div>
+          <h2>Who holds which power?</h2>
+          <p class="hint" style="margin-bottom:8px">French and Raven named six bases of power: legitimate (the position), reward (what you can give), coercive (what you can take away or punish), expert (what you know how to do), referent (people want to be like you or be liked by you), and informational (what you know that others need).</p>
+          <p class="hint" style="margin-bottom:8px">Press a name below. Tick every base you think that person holds on 4 West. Then press <b>Check</b>.</p>
+          <div class="people" id="people" role="group" aria-label="People"></div>
+          <div id="pinfo" class="hint" style="margin:10px 0 8px">No person picked yet.</div>
+          <div class="bases" id="bases" role="group" aria-label="Bases of power"></div>
+          <div class="controls" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-top:10px">
+            <button type="button" class="btn primary" id="checkBases">Check</button>
+            <button type="button" class="btn" id="clearBases">Clear my ticks</button>
+          </div>
+        </div>
+        <div>
+          <div id="basesFb" class="feedback info" hidden></div>
+          <div id="usebox" class="usebox" style="margin-top:10px" hidden></div>
+          <h2 style="margin-top:18px">Influence tactics the manager can pair with each base</h2>
+          <ul class="notice">
+            <li>Rational persuasion (facts and logic): pairs with informational and expert power. The 11 reports and 3 exits are the facts.</li>
+            <li>Consultation (asking the person to help shape the plan): pairs with referent and legitimate power. "How would you build the night check-in?"</li>
+            <li>Coalition (bringing in others who agree): pairs with referent power. Yesenia, Beatriz, and Dalia on the same norm across shifts.</li>
+            <li>Pressure (demands, deadlines, reminders): pairs with legitimate and coercive power. Kept in reserve, and documented when used.</li>
+            <li>Exchange (offering something in return): pairs with reward power. A coaching role, certification support from the $38,800 unspent education budget.</li>
+          </ul>
+        </div>
       </div>
-      <div id="basesFb" class="feedback info" hidden></div>
-      <div id="usebox" class="usebox" style="margin-top:10px" hidden></div>
-      <h2 style="margin-top:18px">Influence tactics the manager can pair with each base</h2>
-      <ul class="notice">
-        <li>Rational persuasion (facts and logic): pairs with informational and expert power. The 11 reports and 3 exits are the facts.</li>
-        <li>Consultation (asking the person to help shape the plan): pairs with referent and legitimate power. "How would you build the night check-in?"</li>
-        <li>Coalition (bringing in others who agree): pairs with referent power. Yesenia, Beatriz, and Dalia on the same norm across shifts.</li>
-        <li>Pressure (demands, deadlines, reminders): pairs with legitimate and coercive power. Kept in reserve, and documented when used.</li>
-        <li>Exchange (offering something in return): pairs with reward power. A coaching role, certification support from the $38,800 unspent education budget.</li>
-      </ul>
     </section>
 
-    <section id="sec-check" role="tabpanel" aria-labelledby="tab-check" hidden>
+    <section id="sec-check" class="span-all" role="tabpanel" aria-labelledby="tab-check" hidden>
       <h2>Self-check</h2>
-      <p class="hint" style="font-size:13.5px;margin-bottom:10px">Six questions. Pick an answer and read why.</p>
-      <div id="quiz"></div>
+      <p class="hint" style="font-size:13.5px;margin-bottom:10px">Six questions. Click the answer you think is right. The explanation appears under the question.</p>
+      <div id="quiz" class="quizgrid"></div>
       <div class="score" id="qscore" style="margin-top:10px"></div>
+    </section>
+
+    <section>
+      <h2>The facts from the data files</h2>
+      <div class="spec" aria-label="The facts from the data files">
+        <div><b>11</b><span>incivility reports in six months, 9 on nights (incidents.csv)</span></div>
+        <div><b>8 of 11</b><span>describe a first-year nurse, new graduate, or orientee</span></div>
+        <div><b>3 RNs</b><span>left nights citing the charge nurse relationship, at 9, 12, and 14 months (turnover.csv)</span></div>
+        <div><b>2.62 vs 3.84</b><span>"I can raise a concern without fear", nights vs days (engagement_survey.csv)</span></div>
+      </div>
     </section>
 
     <section>
@@ -431,17 +507,6 @@
         <li>Power is not only the manager's. Naomi's informational power (what happens at 1 a.m.) is worth more than any memo, and it only flows when speaking up is safe.</li>
       </ul>
     </section>
-
-    <details>
-      <summary>How to use this interactive</summary>
-      <ol class="notice" style="margin:4px 12px 12px;padding-left:20px">
-        <li>Read the four facts at the top. They come from the course data files.</li>
-        <li>Pick a conflict mode and press Play, or use Step and Step back. The floor shows who the manager talks to and how each person reacts; the meters show the cost.</li>
-        <li>Try all five modes and compare the meters, then read the "When each mode fits" table.</li>
-        <li>Open the Power bases tab, pick a person on the floor or off it, mark the bases they hold, and check your answer.</li>
-        <li>Finish with the six self-check questions.</li>
-      </ol>
-    </details>
 
     <footer>Atlantis University · School of Health · MHS 510 Leadership and Organizational Behavior<div class="byline">By Professor De Leon</div></footer>
   </aside>
@@ -506,6 +571,8 @@ function Unit3D(stage, opts) {
   controls.enableDamping = true; controls.dampingFactor = 0.08;
   controls.maxPolarAngle = Math.PI * 0.46; controls.minDistance = 4; controls.maxDistance = 46;
   controls.zoomSpeed = 1.1;
+  // pan: right-drag, Ctrl or Shift plus drag, or two fingers; stays on the floor plane
+  controls.enablePan = true; controls.screenSpacePanning = false; controls.panSpeed = 0.9;
   // keep the mouse wheel inside the 3D view: zoom the floor, do not scroll the page
   stage.addEventListener('wheel', e => e.preventDefault(), {passive: false});
 
@@ -782,11 +849,25 @@ function Unit3D(stage, opts) {
     if (name === 'overview' || !views[name]) {
       // the overview (and FIT) must show the whole floor width, also on narrow phone screens,
       // leaving room for the zoom buttons at the right edge
-      const tanH = Math.tan(T.MathUtils.degToRad(camera.fov / 2)) * camera.aspect;
+      // and, on wide stages, fill the stage: the floor fits both the width and the height of the view
+      const tanV = Math.tan(T.MathUtils.degToRad(camera.fov / 2)), tanH = tanV * camera.aspect;
+      const dist0 = pos.distanceTo(tgt), sinE = Math.max(0.3, (pos.y - tgt.y) / dist0);
       const need = (B.w / 2 + 0.5) / (tanH * 0.92) + B.d * 0.25;
-      f = Math.max(f, need / pos.distanceTo(tgt));
-      controls.maxDistance = Math.max(controls.maxDistance, need * 1.3);
-      if (scene.fog) { scene.fog.near = Math.max(scene.fog.near, need * 1.1); scene.fog.far = Math.max(scene.fog.far, need * 2.6); }
+      const needD = (B.d / 2 * sinE + 0.8) / (tanV * 0.78) + B.d * 0.25;   // 0.78 leaves room for the HUD bars
+      const need2 = Math.max(need, needD);
+      f = need2 / dist0;
+      // phones: when the zoom controls are a column on the right edge, fit the floor in the space to their left
+      const zc = stage.querySelector('.zoomctl'), sw = stage.clientWidth;
+      if (zc && sw && sw < 760 && zc.offsetWidth < sw * 0.4) {
+        const m = zc.offsetWidth + 14, keep = (sw - m) / sw;
+        f = Math.max(need / keep, needD) / dist0;
+        const d = f * dist0, shift = (m / sw) * d * tanH;           // move the view so the floor centers in the free space
+        const fwd = tgt.clone().sub(pos); fwd.y = 0; fwd.normalize();
+        const right = new T.Vector3(-fwd.z, 0, fwd.x);
+        tgt.add(right.clone().multiplyScalar(shift)); pos.add(right.multiplyScalar(shift));
+      }
+      controls.maxDistance = Math.max(controls.maxDistance, need2 * 1.3);
+      if (scene.fog) { scene.fog.near = Math.max(scene.fog.near, need2 * 1.1); scene.fog.far = Math.max(scene.fog.far, need2 * 2.6); }
     }
     pos.sub(tgt).multiplyScalar(f).add(tgt);
     return {pos: pos, tgt: tgt};
@@ -818,28 +899,57 @@ function Unit3D(stage, opts) {
     const p = t.clone().add(off), k = 1 / (gsap.globalTimeline.timeScale() || 1);
     gsap.to(camera.position, {x: p.x, y: p.y, z: p.z, duration: RM ? 0 : 0.45, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
   }
+  // pan buttons (arrows) and arrow keys: slide the view across the floor, in screen directions
+  const PANLIM = {x: B.w / 2 + 1.5, z: B.d / 2 + 1.5};
+  function clampTarget(v) { v.x = Math.max(-PANLIM.x, Math.min(PANLIM.x, v.x)); v.z = Math.max(-PANLIM.z + (B.cz || 0), Math.min(PANLIM.z + (B.cz || 0), v.z)); return v; }
+  function pan(dx, dz) {   // dx: +1 right, -1 left; dz: +1 up (away), -1 down (toward the viewer)
+    const off = camera.position.clone().sub(controls.target), dist = off.length(), step = Math.max(0.6, dist * 0.12);
+    const fwd = new T.Vector3(); camera.getWorldDirection(fwd); fwd.y = 0;
+    if (fwd.lengthSq() < 1e-6) fwd.set(0, 0, -1); fwd.normalize();
+    const right = new T.Vector3(-fwd.z, 0, fwd.x);
+    const tgt = clampTarget(controls.target.clone().add(right.multiplyScalar(dx * step)).add(fwd.multiplyScalar(dz * step)));
+    const pos = tgt.clone().add(off), k = 1 / (gsap.globalTimeline.timeScale() || 1);
+    gsap.to(controls.target, {x: tgt.x, y: tgt.y, z: tgt.z, duration: RM ? 0 : 0.35, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
+    gsap.to(camera.position, {x: pos.x, y: pos.y, z: pos.z, duration: RM ? 0 : 0.35, ease: 'power2.out', overwrite: 'auto'}).timeScale(k);
+  }
+  controls.addEventListener('change', () => { const c = controls.target, x = c.x, z = c.z; clampTarget(c); if (c.x !== x || c.z !== z) camera.position.add(new T.Vector3(c.x - x, 0, c.z - z)); });
   if (opts.zoomUI !== false) {
     if (!document.getElementById('lab3d-zoom-css')) {
       const st = document.createElement('style'); st.id = 'lab3d-zoom-css';
       st.textContent = '.zoomctl{position:absolute;z-index:4;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:2px;padding:4px;background:rgba(255,255,255,.9);border:1px solid #D9D3C8;border-radius:10px;backdrop-filter:blur(6px);box-shadow:0 1px 2px rgba(20,35,58,.08)}' +
         '.zoomctl button{width:38px;height:34px;border:0;border-radius:7px;background:transparent;color:#14233A;font:700 18px/1 "JetBrains Mono",ui-monospace,monospace;cursor:pointer;padding:0}' +
         '.zoomctl button.fit{font-size:10px;letter-spacing:.06em;height:28px}.zoomctl button:hover{background:rgba(14,124,134,.12);color:#0E7C86}' +
-        '.zoomctl button:focus-visible{outline:2px solid #0E7C86;outline-offset:1px}@media(max-width:520px){.zoomctl{right:10px}.zoomctl button{width:34px;height:32px}}';
+        '.zoomctl button:focus-visible{outline:2px solid #0E7C86;outline-offset:1px}' +
+        '.zoomctl .pad{display:grid;grid-template-columns:repeat(3,26px);grid-template-rows:repeat(3,24px);gap:1px;margin:3px 0;padding-top:4px;border-top:1px solid #D9D3C8}' +
+        '.zoomctl .pad button{width:26px;height:24px;font-size:12px}.zoomctl .pad .u{grid-area:1/2}.zoomctl .pad .l{grid-area:2/1}.zoomctl .pad .c{grid-area:2/2;font-size:9px}.zoomctl .pad .r{grid-area:2/3}.zoomctl .pad .d{grid-area:3/2}' +
+        '@media(max-width:520px){.zoomctl{right:10px}.zoomctl button{width:34px;height:32px}.zoomctl .pad{grid-template-columns:repeat(3,28px);grid-template-rows:repeat(3,26px)}.zoomctl .pad button{width:28px;height:26px}}';
       document.head.appendChild(st);
     }
     const box = document.createElement('div'); box.className = 'zoomctl'; box.setAttribute('role', 'group'); box.setAttribute('aria-label', 'Zoom');
     box.innerHTML = '<button type="button" data-z="in" aria-label="Zoom in" title="Zoom in (+)">+</button>' +
       '<button type="button" data-z="out" aria-label="Zoom out" title="Zoom out (-)">&minus;</button>' +
+      '<div class="pad" role="group" aria-label="Move the view">' +
+      '<button type="button" class="u" data-p="u" aria-label="Move the view up" title="Move up (arrow up)">&#9650;</button>' +
+      '<button type="button" class="l" data-p="l" aria-label="Move the view left" title="Move left (arrow left)">&#9664;</button>' +
+      '<button type="button" class="c" data-z="fit" aria-label="Center the view" title="Center the view (0)">&#9679;</button>' +
+      '<button type="button" class="r" data-p="r" aria-label="Move the view right" title="Move right (arrow right)">&#9654;</button>' +
+      '<button type="button" class="d" data-p="d" aria-label="Move the view down" title="Move down (arrow down)">&#9660;</button></div>' +
       '<button type="button" class="fit" data-z="fit" aria-label="Show the whole unit" title="Show the whole unit (0)">FIT</button>';
     stage.appendChild(box);
     ['pointerdown', 'pointerup', 'wheel', 'click'].forEach(ev => box.addEventListener(ev, e => e.stopPropagation()));
     box.addEventListener('click', e => {
       const b = e.target.closest('button'); if (!b) return;
-      if (b.dataset.z === 'in') zoom(0.75); else if (b.dataset.z === 'out') zoom(1.33); else setView(opts.fitView || 'overview');
+      const pd = {l: [-1, 0], r: [1, 0], u: [0, 1], d: [0, -1]}[b.dataset.p];
+      if (pd) pan(pd[0], pd[1]);
+      else if (b.dataset.z === 'in') zoom(0.75); else if (b.dataset.z === 'out') zoom(1.33); else setView(opts.fitView || 'overview');
     });
+    let over = false;
+    stage.addEventListener('pointerenter', () => { over = true; }); stage.addEventListener('pointerleave', () => { over = false; });
     document.addEventListener('keydown', e => {
       const t = e.target, tag = t && t.tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) return;
+      const ak = {ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1]}[e.key];
+      if (ak) { if (over || stage.contains(e.target)) { e.preventDefault(); pan(ak[0], ak[1]); } return; }
       if (e.key === '+' || e.key === '=') zoom(0.75);
       else if (e.key === '-' || e.key === '_') zoom(1.33);
       else if (e.key === '0') setView(opts.fitView || 'overview');
@@ -873,7 +983,7 @@ function Unit3D(stage, opts) {
 
   const labApi = {T: T, scene: scene, camera: camera, controls: controls, renderer: renderer, recs: recs, colors: C, kinds: KIND, roles: ROLE,
     room: room, person: person, walk: walk, set: set, chip: chip, finishPins: finishPins, silkRect: silkRect, zone: zone, label: label, busMat: busMat, trace: trace, glowBus: glowBus,
-    fly: fly, clearPackets: clearPackets, hi: hi, clear: clear, pop: pop, setView: setView, focusOn: focusOn, intro: intro, zoom: zoom, refreshFloor: refreshFloor,
+    fly: fly, clearPackets: clearPackets, hi: hi, clear: clear, pop: pop, setView: setView, focusOn: focusOn, intro: intro, zoom: zoom, pan: pan, refreshFloor: refreshFloor,
     onPick: cb => { pickCb = cb; }, onFrame: f => frames.push(f), unit: unit};
   (window.__labs = window.__labs || []).push(labApi);   // lets tests reach the camera
   return labApi;
@@ -919,6 +1029,11 @@ const $ = s => document.querySelector(s), $$ = s => Array.from(document.querySel
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const COL = {teal: css('--teal'), coral: css('--coral'), amber: css('--amber'), green: css('--green'), violet: css('--violet'), slate: css('--slate')};
 const RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+// guide block: mark the current step (1-based) and say the single next action
+function guide(stepNo, nowHtml) {
+  document.querySelectorAll('#howSteps li').forEach(li => { const n = +li.dataset.h; li.classList.toggle('done', n < stepNo); li.classList.toggle('current', n === stepNo); });
+  if (nowHtml) document.getElementById('nowText').innerHTML = nowHtml;
+}
 
 /* ---------------- the 4 West floor: rooms 401 to 408 on the north side, the office, station, med room, break room and rooms 409 to 412 on the south side ---------------- */
 const ROOMS = [];
@@ -944,19 +1059,20 @@ const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
 function Graphics3D(stage) {
   const lab = Unit3D(stage, {
     floor: {w: 24, d: 12, title: '4 WEST · MED-SURG · 32 BEDS · 06:40', corridors: [{z: 0, w: 3}]},
-    views: {overview: {pos: [0, 19, 15], tgt: [0, 0, 0.5], want: 1.55}, station: {pos: [-7, 9, 8.5], tgt: [-7.5, 0, 1.2], want: 1.5}, rooms: {pos: [5, 9, 7.5], tgt: [5, 0, -1], want: 1.5}}
+    views: {overview: {pos: [0, 19, 15], tgt: [0, 0, 0.5], want: 1.55}, station: {pos: [-6.6, 11, 10.5], tgt: [-6.8, 0, 0.9], want: 1.5}, rooms: {pos: [4.2, 11, 9.8], tgt: [4.2, 0, -0.6], want: 1.5}}
   });
   if (!lab) return null;
   ROOMS.forEach(r => lab.room(r.id, r.x, r.z, r.w, r.d, r.label, {kind: r.kind, num: r.num || r.id}));
   PEOPLE.forEach(p => lab.person(p.id, p.x, p.z, p.role, p.c, {nm: p.nm}));
   lab.zone('patient rooms 401 to 408', 0, -6.3, COL.teal);
-  lab.zone('corridor', 10.5, 0, COL.slate);
+  lab.zone('corridor', 4.4, 0, COL.slate);
   lab.intro();
   const api = {
     kind: '3d',
     reset() {
+      // finish the intro drop first: killing it mid-delay would leave a person floating above the floor
       lab.clear(); lab.clearPackets();
-      PEOPLE.forEach(p => { const r = lab.recs[p.id]; gsap.killTweensOf(r.g.position); r.g.position.set(p.x, 0, p.z); r.x = p.x; r.z = p.z; r.sub.textContent = ''; });
+      PEOPLE.forEach(p => { const r = lab.recs[p.id]; gsap.getTweensOf(r.g.position).forEach(tw => tw.progress(1)); gsap.killTweensOf(r.g.position); r.g.position.set(p.x, 0, p.z); r.x = p.x; r.z = p.z; r.sub.textContent = ''; });
     },
     hi: (id, c) => lab.hi(lab.recs[id], c),
     clear: () => lab.clear(),
@@ -1116,6 +1232,22 @@ const MODES = [
 
 /* ---------------- player ---------------- */
 let mode = null, step = -1, playing = false, timer = null;
+const tried = {};   // mode key -> outcome meters, filled when a mode reaches its Outcome step
+let tab = 'modes';
+function nextUntried() { return MODES.find(m => !tried[m.key]); }
+function renderTried() {
+  const keys = MODES.filter(m => tried[m.key]);
+  $('#tried').innerHTML = keys.length ? '<h3 style="margin:0 0 6px">Outcomes so far (' + keys.length + ' of 5 modes)</h3><div class="scroll-x"><table><thead><tr><th>Mode</th><th>Relationship</th><th>Safety</th><th>Risk</th><th>Minutes</th></tr></thead><tbody>' +
+    keys.map(m => '<tr><td>' + m.name + '</td><td>' + tried[m.key].rel + '</td><td>' + tried[m.key].task + '</td><td>' + tried[m.key].back + '</td><td>' + tried[m.key].time + '</td></tr>').join('') + '</tbody></table></div>' : '';
+}
+function guideModes() {
+  if (!mode) { guide(1, 'Press the <b>Competing</b> button under 1. Conflict modes below.'); return; }
+  if (playing) { guide(2, 'Watch the floor above and read the narration below. Press <b>Pause</b> to stop.'); return; }
+  if (step < 4) { guide(2, 'Read step ' + (step + 1) + ' of 5 in the narration box below. Then press <b>Step</b> for ' + (step < 3 ? 'step ' + (step + 2) : 'the Outcome') + '.'); return; }
+  const m = mode.steps[4].m, nx = nextUntried();
+  if (nx) guide(3, mode.name + ' ends at relationship ' + m.rel + ', safety ' + m.task + ', risk ' + m.back + ', ' + m.time + ' minutes. Now press the <b>' + nx.name + '</b> mode button to compare.');
+  else guide(3, 'You tried all five modes. Compare them in the outcomes table and the When each mode fits table below. Then press the <b>2. Power bases</b> tab.');
+}
 function renderModes() {
   const box = $('#modes'); box.innerHTML = '';
   MODES.forEach(m => {
@@ -1149,20 +1281,22 @@ function show(k, instant) {
   setMeters(s.m, instant);
   renderPhases();
   $('#back').disabled = k <= 0; $('#next').disabled = k >= 4;
+  if (k === 4 && !tried[mode.key]) { tried[mode.key] = s.m; renderTried(); }
   if (hasGSAP && !RM) gsap.fromTo('#narration', {opacity: 0.4}, {opacity: 1, duration: 0.35});
+  if (tab === 'modes') guideModes();
 }
 function pickMode(m) {
   stop(); mode = m; renderModes();
   ['play', 'next', 'back', 'reset'].forEach(id => $('#' + id).disabled = false);
   show(0, false);
 }
-function stop() { playing = false; if (timer) clearTimeout(timer); timer = null; $('#play').textContent = 'Play'; }
+function stop() { const was = playing; playing = false; if (timer) clearTimeout(timer); timer = null; $('#play').textContent = 'Play'; if (was && tab === 'modes') guideModes(); }
 function playLoop() {
   if (!playing) return;
   if (step >= 4) { stop(); return; }
   timer = setTimeout(() => { if (!playing) return; show(step + 1, false); playLoop(); }, 4600 / speed);
 }
-$('#play').onclick = () => { if (!mode) return; if (playing) { stop(); return; } if (step >= 4) show(0, false); playing = true; $('#play').textContent = 'Pause'; playLoop(); };
+$('#play').onclick = () => { if (!mode) return; if (playing) { stop(); return; } if (step >= 4) show(0, false); playing = true; $('#play').textContent = 'Pause'; guideModes(); playLoop(); };
 $('#next').onclick = () => { if (!mode) return; stop(); if (step < 4) show(step + 1, false); };
 $('#back').onclick = () => { if (!mode) return; stop(); if (step > 0) show(step - 1, true); };
 $('#reset').onclick = () => { if (!mode) return; stop(); show(0, true); };
@@ -1176,6 +1310,10 @@ $$('.views button').forEach(b => b.onclick = () => { $$('.views button').forEach
 /* ---------------- tabs ---------------- */
 $$('.tabs [role=tab]').forEach(t => t.onclick = () => {
   $$('.tabs [role=tab]').forEach(x => { x.setAttribute('aria-selected', x === t ? 'true' : 'false'); $('#' + x.getAttribute('aria-controls')).hidden = x !== t; });
+  tab = t.id.slice(4);
+  if (tab === 'modes') guideModes();
+  else if (tab === 'power') guidePower();
+  else guideQuiz();
 });
 function openTab(id) { $('#tab-' + id).click(); }
 
@@ -1210,7 +1348,12 @@ const POWER = [
     why: {exp: 'the unit educator: chest tubes, pumps, insulin double checks', ref: 'praised in 10 of 120 survey comments, more than anyone', leg: 'no authority over staff', rew: 'none', coe: 'none', inf: 'some, about skills gaps'},
     use: 'Exchange and coalition. Skills gaps are half of this conflict (INC-036 was a chest tube, INC-082 a pump). A night skills session is a reward for the new nurses and a relief for Kwame.'}
 ];
-let person = null;
+let person = null, checked = false;
+function guidePower() {
+  if (!person) guide(4, 'Press a name under <b>Who holds which power?</b> below. Start with <b>Kwame Boateng</b>.');
+  else if (!checked) guide(4, 'Tick every base of power you think ' + esc(person.nm) + ' holds. Then press <b>Check</b>.');
+  else guide(4, 'Read why each base is a yes or a no. Then press another name, or press the <b>3. Self-check</b> tab.');
+}
 function renderPeople() {
   const box = $('#people'); box.innerHTML = '';
   POWER.forEach(p => { const b = document.createElement('button'); b.type = 'button'; b.className = 'btn' + (p.on ? '' : ' off'); b.textContent = p.nm + (p.on ? '' : ' · off the floor'); b.setAttribute('aria-pressed', person && person.id === p.id ? 'true' : 'false'); b.onclick = () => selectPerson(p); box.appendChild(b); });
@@ -1224,20 +1367,22 @@ function renderBases(result) {
   });
 }
 function selectPerson(p) {
-  person = p; renderPeople(); renderBases(null); $('#basesFb').hidden = true; $('#usebox').hidden = true;
+  person = p; checked = false; renderPeople(); renderBases(null); $('#basesFb').hidden = true; $('#usebox').hidden = true;
   $('#pinfo').textContent = (PEOPLE.find(x => x.id === p.id) || {}).who || p.nm + ', not on the floor this morning.';
   gfx.clear(); if (p.on) { gfx.hi(p.id, COL.violet); gfx.focus(HOME[p.id].x, HOME[p.id].z, 7); }
+  guidePower();
 }
 $('#checkBases').onclick = () => {
-  if (!person) { $('#basesFb').hidden = false; $('#basesFb').className = 'feedback info'; $('#basesFb').textContent = 'Pick a person first.'; return; }
+  if (!person) { $('#basesFb').hidden = false; $('#basesFb').className = 'feedback info'; $('#basesFb').textContent = 'No person is picked yet. Press a name above the list of bases, tick the bases, then press Check again.'; guidePower(); return; }
   const picked = new Set($$('#bases input:checked').map(i => i.value));
   renderBases({picked});
   const ok = BASES.filter(b => picked.has(b.k) === person.key.includes(b.k)).length;
   const fb = $('#basesFb'); fb.hidden = false; fb.className = 'feedback ' + (ok === 6 ? 'ok' : 'info');
-  fb.innerHTML = '<b>' + ok + ' of 6 bases right.</b> ' + BASES.map(b => '<div style="margin-top:4px"><b>' + b.n + (person.key.includes(b.k) ? ' (yes)' : ' (no)') + ':</b> ' + esc(person.why[b.k] || '') + '</div>').join('');
+  fb.innerHTML = '<b>' + ok + ' of 6 bases right.</b> Green: you ticked a base they hold. Coral: you ticked a base they do not hold. Amber: a base they hold that you missed.' + BASES.map(b => '<div style="margin-top:4px"><b>' + b.n + (person.key.includes(b.k) ? ' (yes)' : ' (no)') + ':</b> ' + esc(person.why[b.k] || '') + '</div>').join('');
   $('#usebox').hidden = false; $('#usebox').innerHTML = '<b>What the manager can use with ' + esc(person.nm) + ':</b> ' + esc(person.use);
+  checked = true; guidePower();
 };
-$('#clearBases').onclick = () => { renderBases(null); $('#basesFb').hidden = true; $('#usebox').hidden = true; };
+$('#clearBases').onclick = () => { renderBases(null); $('#basesFb').hidden = true; $('#usebox').hidden = true; checked = false; if (tab === 'power') guidePower(); };
 gfx.onPick(id => { const p = POWER.find(x => x.id === id); if (p) { openTab('power'); selectPerson(p); } });
 
 /* ---------------- self-check ---------------- */
@@ -1250,6 +1395,11 @@ const QUIZ = [
   {q: 'Pharmacy and the night nurses argue hard about the insulin double-check protocol in a staff meeting, and the protocol gets better. This conflict is...', o: ['dysfunctional, because people argued', 'functional, because it improved the decision', 'lateral violence', 'something the manager should have avoided'], a: 1, why: 'Functional conflict is disagreement about the task that improves the outcome. Dysfunctional conflict is about people and makes the work worse. A manager protects the first kind and stops the second.'}
 ];
 let qDone = {};
+function guideQuiz() {
+  const n = Object.keys(qDone).length, ok = Object.keys(qDone).filter(k => qDone[k] === QUIZ[k].a).length;
+  if (n < QUIZ.length) { const q = QUIZ.findIndex((_, i) => qDone[i] === undefined); guide(5, 'Answer question ' + (q + 1) + ' of ' + QUIZ.length + ' below: click the answer you think is right, then read why.'); }
+  else guide(6, 'Done: ' + ok + ' of 6 right. Read any explanation you missed, or press the <b>1. Conflict modes</b> tab and play a mode again.');
+}
 function renderQuiz() {
   const box = $('#quiz'); box.innerHTML = '';
   QUIZ.forEach((item, qi) => {
@@ -1267,9 +1417,11 @@ function renderQuiz() {
   });
   const n = Object.keys(qDone).length, ok = Object.keys(qDone).filter(k => qDone[k] === QUIZ[k].a).length;
   $('#qscore').innerHTML = n ? '<span class="big">' + ok + '</span> of ' + n + ' answered right' + (n === QUIZ.length ? ' · ' + (ok === 6 ? 'all six.' : 'read the explanations and try the modes again.') : '') : '';
+  if (tab === 'check') guideQuiz();
 }
 
-renderModes(); renderPhases(); renderPeople(); renderBases(null); renderQuiz(); setMeters(null);
+renderModes(); renderPhases(); renderPeople(); renderBases(null); renderQuiz(); setMeters(null); guideModes();
+if (location.hash === '#test') window.__cse = {MODES, POWER, BASES, QUIZ, tried};
 })();
 
 //PAGE_JS_END
